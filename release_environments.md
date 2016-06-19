@@ -36,6 +36,8 @@ Please ensure that these have been setup:
   1. Configure backups in SHIELD
   1. Configure monitoring integration with Bolo
 
+Use the [glossary](glossary.md) for more info.
+
 ![proto-BOSH](/images/proto-BOSH.png)
 
 ### Congratulations
