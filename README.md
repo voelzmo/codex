@@ -4,10 +4,10 @@ Code brings together the years of experience and lessons learned after designing
 
 ## Overview
 
-1. Choose a Infrastructure provider
-1. Designate a network topology
-1. Create a BOSH management environment (proto-BOSH)
-1. Create each release environment for testing (staging/production)
+1. Choose a [Infrastructure](infrastructure.md) provider
+1. Designate a [network](network.md) topology
+1. Create a BOSH [management environment](management_environment.md) (proto-BOSH)
+1. Create each [release environment](release_environments.md) for testing (staging/production)
 
 ![proto-BOSH](/images/proto-BOSH.png)
 
