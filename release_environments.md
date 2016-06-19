@@ -35,3 +35,9 @@ Please ensure that these have been setup:
 1. Configure Runway Concourse pipeline for deployment
 1. Configure backups in SHIELD
 1. Configure monitoring integration with Bolo
+
+![proto-BOSH](/images/proto-BOSH.png)
+
+### Congratulations
+
+The entire system is now setup, give yourself a high five!
