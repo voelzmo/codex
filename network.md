@@ -10,8 +10,8 @@ Here's an example network for an AWS build.
 
 10.10.1.0/24    640ec712 BOSH  (proto-BOSH and site-BOSHes)
 10.10.2.0/24    7a0ec70c INFRA (SHIELD / Bolo / Concourse / Vault)
-10.10.2.0/26 	  SHIELD
-10.10.2.64/26	  Bolo
+10.10.2.0/26    SHIELD
+10.10.2.64/26   Bolo
 10.10.2.128/26  Concourse
 10.10.2.192/26  Vault
 
