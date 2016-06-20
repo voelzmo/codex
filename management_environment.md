@@ -42,7 +42,7 @@ Let's begin.
 
     <pre class="terminal">
     cd ~/code/vault-deployments/aws
-    genesis new environment site prod
+    genesis new environment aws prod
     </pre>
 
 ### Use proto-BOSH to deploy Vault
