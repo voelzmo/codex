@@ -45,7 +45,7 @@ be used to prefix all of the Network ACLs, Subnets and Security
 Groups, so that you can have multiple VPCs under one account
 without going cross-eyed trying to keep them separate.
 
-### Generate an EC3 Key Pair
+### Generate an EC2 Key Pair
 
 The Access Key / Secret Key is used to get access to the Amazon
 Web Services themselves.  In order to properly deploy the NAT and
