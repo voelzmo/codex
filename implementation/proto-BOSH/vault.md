@@ -122,6 +122,21 @@ a manifest file that can be used to deploy Vault.
     NOTE: This is not true HA because all of the zones are in one `availability_zone`.  
     This is for instructional purposes only when trying to quickly setup a proof-of-concept.
 
+1. Run `make manifest` again.
+
+    Each time we make a change to a template, to provide settings that replace what
+    an error is looking for, we can run `make manifest` again to see if we've correctly
+    configured the parameter.
+
+    <pre class="terminal">
+    cd ~/codex/vault-deployments/aws/prod
+    make manifest
+    </pre>
+
+    ![specify_network](/images/specify_network.png)
+
+    Now we can see that less errors are there.
+
 
 ### <a name="toc3"></a> Deploy Vault to infrastructure
 
