@@ -40,13 +40,14 @@ We have a `genesis` template available for Vault.  To use it follow these steps.
 
 ### <a name="toc2"></a> Merge template files together
 
-Now that we've defined a deployment (vault), a site (aws) and an environment (prod)
-we can combine those layers into a specific deployment for BOSH.
+Next we use the tool called `spruce` to merge the `genesis` template together into
+a single manifest that BOSH will use to deploy Vault.
 
-1. Determine necessary configuration changes.
+This process is an iterative process of begining in the `environment` folder where
+the `Makefile` exists, running the command `make manifest` to attempt to generate
+the deployment manifest and paying attention to the output that results.
 
-    In order to determine what configuration changes need to be made run `make manifest`
-    in the environment folder.
+1. Run the `make manifest` command and determine what needs to be configured.
 
     <pre class="terminal">
     cd ~/codex/vault-deployments/aws/prod
