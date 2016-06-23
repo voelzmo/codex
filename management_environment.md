@@ -56,7 +56,7 @@ we can combine those layers into a specific deployment for BOSH.
     in the environment folder.
 
     <pre class="terminal">
-    cd ~/codex/vault-deployments/aws
+    cd ~/codex/vault-deployments/aws/prod
     make manifest
     </pre>
 
@@ -80,7 +80,7 @@ we can combine those layers into a specific deployment for BOSH.
         - range: 10.10.2.0/24
           gateway: 10.10.2.1
           cloud_properties:
-            subnet: subnet-abcd1234
+            subnet: subnet-0ab12c3d
             security_groups: [sg-efgd5678]
           dns: [10.10.2.2]
           reserved:
