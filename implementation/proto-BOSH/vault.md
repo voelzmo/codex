@@ -65,7 +65,7 @@ a manifest file that can be used to deploy Vault.
 1. Read and understand the errors.
 
     A recommended method to iterate through these errors is to take the first message,
-    open a new connection at the top of the deployment and look for what the error
+    open a new connection in the root of deployment project and look for what the error
     is referencing.
 
     Use the first error:
@@ -74,7 +74,7 @@ a manifest file that can be used to deploy Vault.
     $.compilation.cloud_properties.availability_zone: Define the z1 AWS availability zone
     ```
 
-    Go to the top of the deployment folder structure:
+    Search for the error from the root of the project.
 
     <pre class="terminal">
     cd ~/codex/vault-deployments
@@ -97,7 +97,7 @@ a manifest file that can be used to deploy Vault.
           z3: (( param "Define the z3 AWS availability zone" ))
     ```
 
-1. Provide information in the environment template.
+1. Provide values for error in environment template.
 
     In your environment's folder, you'll now define the three AWS availability
     zones for Vault to use.
@@ -135,8 +135,65 @@ a manifest file that can be used to deploy Vault.
 
     ![specify_network](/images/specify_network.png)
 
-    Now we can see that less errors are there.
+    Less errors!
 
+    Run the above steps to "Read and understand the errors" and "Provide values for error in environment template."
+
+    Recommended network settings are:
+
+    ```
+    networks:
+    - name: vault_z1
+      type: manual
+
+      subnets:
+      - range:   10.10.2.0/24
+        gateway: 10.10.2.1
+        dns:     [10.10.0.2]
+
+        reserved:
+        - 10.10.2.2-10.10.2.10
+        static:
+        - 10.10.2.192
+
+        cloud_properties: {subnet: subnet-0ae85b7c}
+
+    - name: vault_z2
+      type: manual
+
+      subnets:
+      - range:   10.10.2.0/24
+        gateway: 10.10.2.1
+        dns:     [10.10.0.2]
+
+        reserved:
+        - 10.10.2.2-10.10.2.10
+        static:
+        - 10.10.2.193
+
+        cloud_properties: {subnet: subnet-0ae85b7c}
+
+    - name: vault_z3
+      type: manual
+
+      subnets:
+      - range:   10.10.2.0/24
+        gateway: 10.10.2.1
+        dns:     [10.10.0.2]
+
+        reserved:
+        - 10.10.2.2-10.10.2.10
+        static:
+        - 10.10.2.194
+
+        cloud_properties: {subnet: subnet-0ae85b7c}    
+    ```
+
+1. Repeat until `make manifest` doesn't error
+
+Once `make manifest` produces no errors, it instead creates a manifest file in the
+`~/codex/vault-deployments/aws/prod/manifests/manifest.yml` which will be used in the
+next step.
 
 ### <a name="toc3"></a> Deploy Vault to infrastructure
 
