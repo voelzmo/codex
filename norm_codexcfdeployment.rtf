@@ -1,0 +1,303 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+{\fonttbl\f0\fswiss\fcharset0 ArialMT;\f1\fswiss\fcharset0 Helvetica;\f2\fmodern\fcharset0 Courier;
+}
+{\colortbl;\red255\green255\blue255;\red17\green85\blue204;\red239\green239\blue239;\red12\green52\blue61;
+\red217\green217\blue217;}
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\vieww13140\viewh15280\viewkind1
+\deftab720
+\pard\pardeftab720\ri0\sl276\slmult1\sb400\sa120\partightenfactor0
+
+\f0\fs40 \cf0 Prerequisites\
+\pard\pardeftab720\ri0\sl276\slmult1\partightenfactor0
+
+\fs22 \cf0 You\'92ll need the following items installed and/or ready to \'93rock\'94 at a minimum:\
+\pard\tx360\tx720\pardeftab720\li720\fi-360\ri0\sl276\slmult1\partightenfactor0
+\ls1\ilvl0\cf2 \uc0\u9679 	{\field{\*\fldinst{HYPERLINK "https://golang.org/"}}{\fldrslt \ul golang}}\cf0  version 1.4 or higher\cf2 \ul \ulc2 \
+\pard\pardeftab720\ri0\sl276\slmult1\partightenfactor0
+\ls1\ilvl0\cf0 \ulnone \
+Getting Started\
+\
+`ssh codex`\
+Assuming you have your SSH configuration set as follows (TODO: footnote, show ~/.ssh/config example), will SSH up to your jumpbox.\
+\
+`yum install golang`\
+Install golang 1.4 or higher.\
+\
+\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrt\brdrs\brdrw10\brdrcf0 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\b \cf0 Commands / Examples
+\b0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\b \cf0 Explanation / Notes
+\b0 \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clcbpat4 \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf3 ssh codex
+\f0\fs22 \cf0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 Get onto your jumpbox\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clcbpat4 \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf3 Search Terms: \'93genesis cf deployment template github\'94
+\f0\fs22 \cf0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 Search for the genesis cf deployment github repository.  The current location is {\field{\*\fldinst{HYPERLINK "https://github.com/starkandwayne/cf-deployment"}}{\fldrslt \cf2 \ul https://github.com/starkandwayne/cf-deployment}}\
+\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clcbpat4 \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf3 Search Terms: \'93certstrap github\'94 to find certstrap
+\f0\fs22 \cf0 \
+\ls1\ilvl0
+\f1\fs20 \cf3 \
+sudo yum install golang\
+cd workspace\
+git clone {\field{\*\fldinst{HYPERLINK "https://github.com/square/certstrap.git"}}{\fldrslt \ul https://github.com/square/certstrap.git}}\
+cd certstrap\
+./build\
+sudo cp ./bin/certstrap /usr/local/bin\
+\
+\cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 Look at the .genesis_deps file to figure out if other software needs to be installed.  In this case we need certstrap which is go program.  The safe, genesis and spruce programs should have been installed already from your earlier deployments  The current location is {\field{\*\fldinst{HYPERLINK "https://github.com/square/certstrap"}}{\fldrslt \cf2 \ul https://github.com/square/certstrap}}\
+Follow certstrap directions for building the certstrap program.\
+\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clcbpat4 \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf3 cd ~/codex
+\f0\fs22 \cf0 \
+\ls1\ilvl0
+\f1\fs20 \cf3 genesis new deployment --template cf-deployment\
+\cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 Now create the cf-deployments directory using genesis.  Check to see if your environment is available under the .templates.  If it is then use the --template command to generate the new deployments directory.   The template name can be either the repository name or repository name minus the -deployment.\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clcbpat4 \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf3 Cd cf-deployments
+\f0\fs22 \cf0 \
+\ls1\ilvl0
+\f1\fs20 \cf3 genesis new site --template aws aws\
+\cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 Now create the site using the template for the iaas of choice.\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clcbpat4 \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf3 genesis new environment aws staging
+\f0\fs22 \cf0 \
+\ls1\ilvl0
+\f1\fs20 \cf3 genesis new environment aws prod\cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 Now create the staging and prod environments.  It takes some time because all the certificates are being generated.\
+\
+NOTE: Ensure your $CWD is `cf-deployments` when running this command; do not `cd` lower or higher after the above template generation. All three commands happen at the same directory hierarchical level.\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrb\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clcbpat4 \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf0 \clbrdrl\brdrs\brdrw20\brdrcf0 \clbrdrb\brdrs\brdrw20\brdrcf0 \clbrdrr\brdrs\brdrw20\brdrcf0 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f2\fs20 \cf3 cd aws/prod
+\fs22 \cf0 \
+\ls1\ilvl0
+\fs20 \cf3 make manifest >/tmp/fixup 2>&1\
+vi /tmp/fixup\cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 Now go ahead and generate the manifest to see what parameters we need to fill in.\
+\
+Alternative to get a list:\
+make manifest | less 2>&1\cell \lastrow\row
+\pard\pardeftab720\ri0\sl276\slmult1\partightenfactor0
+\ls1\ilvl0\cf0 \
+\
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrt\brdrs\brdrw10\brdrcf0 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\b \cf0 Parameter / Ambiguous Name
+\b0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\b \cf0 What it means / Example
+\b0 \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf0 $.meta.cf.base_domain: Enter the Cloud Foundry base domain
+\f0\fs22 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 Example: `aws-prod-cf` (site-env-thing)\
+\
+You can edit the env `properties.yml` file, inheriting object \'93path\'94 based on the output. Given this at the left, you might do\'85\
+\
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf0 ---\
+meta:\
+  cf:\
+    base_domain: cf-aws-prod\
+\
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 If unsure what base_domain should be, refer to `name.yml` in the specific ENV in question.\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf0 ---
+\f0\fs22 \
+\ls1\ilvl0
+\f1\fs20 networks:\
+- name: cf1\
+  subnets:\
+    - range: 10.10.3.0/24\
+      reserved:\
+        - 10.10.3.2 - 10.10.3.9\
+      static:\
+        - 10.10.3.10 - 10.10.3.128\
+      gateway: 10.10.3.1\
+      dns:\
+        - 10.10.0.2\
+      cloud_properties:\
+        security_groups:\
+          - cf\
+        subnet: subnet-7d0ec70b\
+- name: cf2\
+  subnets:\
+    - range: 10.10.9.0/24\
+      reserved:\
+        - 10.10.9.2 - 10.10.9.9\
+      static:\
+        - 10.10.9.10 - 10.10.9.128\
+      gateway: 10.10.9.1\
+      dns:\
+        - 10.10.0.2\
+      cloud_properties:\
+        security_groups:\
+          - cf\
+        subnet: subnet-d89902bc\
+\
+\cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 Using the configuration information from AWS subnets  we got the subnets gateway and dns information.   The subnet ids are also available.   The gateway is subnet.1 and the gateway VPC.1   \
+\
+We are removing the cf2 networking configuration in a later step to save time.\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf0 safe write secret/aws/s3/blobstore aws_access_key_id aws_secret_access_key
+\f0\fs22 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 Added S3 blobstore to the vault and then referenced vault spruce command to pull in the credentials.   This command will prompt you for the access keys.  \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf0 meta:
+\f0\fs22 \
+\ls1\ilvl0
+\f1\fs20   cf:\
+    blobstore_config:\
+      fog_connection:\
+        aws_access_key_id: (( vault secret/aws/s3/blobstore:aws_access_key_id ))\
+        aws_secret_access_key: (( vault secret/aws/s3/blobstore:aws_secret_access_key ))\
+        region: us-west-2\
+\cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 Added the following lines to the aws/prod/credentials.yml file.   \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 The cf3 network is required for the consul to have cluster quorum.   Need to three because consul attempts to avoid a split brain scenario.\cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 \
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f1\fs20 \cf0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0
+\f0\fs22 \cf0 \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 \cell \row
+
+\itap1\trowd \taflags1 \trgaph108\trleft-108 \trwWidth78125\trftsWidth2 \trbrdrl\brdrs\brdrw10\brdrcf0 \trbrdrb\brdrs\brdrw10\brdrcf0 \trbrdrr\brdrs\brdrw10\brdrcf0 
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx4320
+\clvertalt \clshdrawnil \clbrdrt\brdrs\brdrw20\brdrcf5 \clbrdrl\brdrs\brdrw20\brdrcf5 \clbrdrb\brdrs\brdrw20\brdrcf5 \clbrdrr\brdrs\brdrw20\brdrcf5 \clpadt100 \clpadl100 \clpadb100 \clpadr100 \gaph\cellx8640
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 \cell 
+\pard\intbl\itap1\pardeftab720\ri0\partightenfactor0
+\ls1\ilvl0\cf0 \cell \lastrow\row
+\pard\pardeftab720\ri0\sl276\slmult1\partightenfactor0
+\ls1\ilvl0\cf0 \
+}
