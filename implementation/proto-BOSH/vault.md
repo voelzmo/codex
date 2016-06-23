@@ -40,27 +40,35 @@ We have a `genesis` template available for Vault.  To use it follow these steps.
 
 ### <a name="toc2"></a> Merge template files together
 
-Next we use the tool called `spruce` to merge the `genesis` template together into
-a single manifest that BOSH will use to deploy Vault.
+    Next we use the tool called `spruce` to merge the `genesis` template together into
+    a single manifest that BOSH will use to deploy Vault.
 
-This process is an iterative process of beginning in the `environment` folder where
-the `Makefile` exists. Run the command `make manifest` to attempt to generate the
-deployment manifest then pay attention to the resulting output.
+    This process is an iterative process of beginning in the `environment` folder where
+    the `Makefile` exists. Run the command `make manifest` to attempt to generate the
+    deployment manifest then pay attention to the resulting output.
 
-1. Run the `make manifest` command and determine what needs to be configured.
+    Once this process is complete running `make manifest` will exit `0` and have generated
+    a manifest file that can be used to deploy Vault.
+
+1. Run the `make manifest` command.
 
     <pre class="terminal">
     cd ~/codex/vault-deployments/aws/prod
     make manifest
     </pre>
 
+    This will either build a manifest file for you or it will tell you what you
+    need to fix before it can build a working manifest.
+
     ![make_manifest_example](/images/make_manifest_example.png)
+
+1. Read and understand the errors.
 
     A recommended method to iterate through these errors is to take the first message,
     open a new connection at the top of the deployment and look for what the error
     is referencing.
 
-    Using the first error:
+    Use the first error:
 
     ```
     $.compilation.cloud_properties.availability_zone: Define the z1 AWS availability zone
@@ -75,13 +83,10 @@ deployment manifest then pay attention to the resulting output.
 
     ![search_example](/images/search_example.png)
 
-    This informs us to look not in the `.file` folders.  Those are used for inheriting
-    settings between layers that `genesis` manages.
+    TODO: Why can we usually skip the `.foldername` folders?
 
-    Focus then, on the `aws/site/resource_pools.yml` file in this case.  Open it
-    looking inside for the reference to `Define the z1 AWS availability zone`.
-
-    Inside the `aws/site/resource_pools.yml` file we find:
+    Open the file `aws/site/resource_pools.yml` and look for reference to
+    `Define the z1 AWS availability zone`:
 
     ```
     meta:
@@ -91,6 +96,32 @@ deployment manifest then pay attention to the resulting output.
           z2: (( param "Define the z2 AWS availability zone" ))
           z3: (( param "Define the z3 AWS availability zone" ))
     ```
+
+1. Provide information in the environment template.
+
+    In your environment's folder, you'll now define the three AWS availability
+    zones for Vault to use.
+
+    <pre class="terminal">
+    cd ~/codex/vault-deployments/aws/prod
+    vim networking.yml
+    </pre>
+
+    It could look something like this to get you started:
+
+    ```
+    ---
+    meta:
+      aws:
+        azs:
+          z1: us-west-2a
+          z2: us-west-2a
+          z3: us-west-2a
+    ```
+
+    NOTE: This is not true HA because all of the zones are in one `availability_zone`.  
+    This is for instructional purposes only when trying to quickly setup a proof-of-concept.
+
 
 ### <a name="toc3"></a> Deploy Vault to infrastructure
 
