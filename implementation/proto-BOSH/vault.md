@@ -191,7 +191,7 @@ a manifest file that can be used to deploy Vault.
 
 1. Repeat until `make manifest` doesn't error
 
-Once `make manifest` produces no errors, it instead creates a manifest file in the
+  Once `make manifest` produces no errors, it instead creates a manifest file in the
 `~/codex/vault-deployments/aws/prod/manifests/manifest.yml` which will be used in the
 next step.
 
