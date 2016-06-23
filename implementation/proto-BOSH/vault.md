@@ -40,15 +40,15 @@ We have a `genesis` template available for Vault.  To use it follow these steps.
 
 ### <a name="toc2"></a> Merge template files together
 
-    Next we use the tool called `spruce` to merge the `genesis` template together into
-    a single manifest that BOSH will use to deploy Vault.
+Next we use the tool called `spruce` to merge the `genesis` template together into
+a single manifest that BOSH will use to deploy Vault.
 
-    This process is an iterative process of beginning in the `environment` folder where
-    the `Makefile` exists. Run the command `make manifest` to attempt to generate the
-    deployment manifest then pay attention to the resulting output.
+This process is an iterative process of beginning in the `environment` folder where
+the `Makefile` exists. Run the command `make manifest` to attempt to generate the
+deployment manifest then pay attention to the resulting output.
 
-    Once this process is complete running `make manifest` will exit `0` and have generated
-    a manifest file that can be used to deploy Vault.
+Once this process is complete running `make manifest` will exit `0` and have generated
+a manifest file that can be used to deploy Vault.
 
 1. Run the `make manifest` command.
 
