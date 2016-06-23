@@ -71,7 +71,7 @@ deployment manifest then pay attention to the resulting output.
     <pre class="terminal">
     cd ~/codex/vault-deployments
     grep -e 'Define the z1 AWS availability zone' -ir
-    <pre>
+    </pre>
 
     ![search_example](/images/search_example.png)
 
