@@ -1,21 +1,25 @@
 ## Setup Vault
 
-### Generate a Vault deployment manifest
+The process to setup Vault is as such:
 
-The following outlines the process to generate a vault deployment manifest:
+1. [Generate a Vault deployment manifest.](#toc1)
+1. [Merge template files together.](#toc2)
+1. [Deploy Vault to infrastructure.](#toc3)
+1. [Initialize Vault.](#toc4)
+1. [Disperse keys and configure policies and authentication.](#toc5)
+1. [Migrate credentials from proto-BOSH manifest into Vault.](#toc6)
+1. [Re-deploy proto-BOSH (an update) using Vaulted manifests.](#toc7)
 
-1. Setup a deployment, using a template.
-1. For our deployment, generate a site from a template.
-1. Using our site, create an environment.
+### <a name="toc1"></a> Generate a Vault deployment manifest
 
-Let's begin.
+We have a `genesis` template available for Vault.  To use it follow these steps.
 
 1. Setup a deployment, using a template.
 
     <pre class="terminal">
     mkdir -p ~/codex
     cd ~/codex
-    genesis new deployment --template vault vault
+    genesis new deployment --template vault
     </pre>
 
 1. For our deployment, generate a site from a template.  This can be a name of your infrastructure provider or datacenter location.
@@ -32,7 +36,7 @@ Let's begin.
     genesis new environment aws prod
     </pre>
 
-### Use `genesis` to build manifest
+### <a name="toc2"></a> Merge template files together
 
 Now that we've defined a deployment (vault), a site (aws) and an environment (prod)
 we can combine those layers into a specific deployment for BOSH.
@@ -82,10 +86,12 @@ we can combine those layers into a specific deployment for BOSH.
             static_ips: (( static_ips 0 1 2 ))
     ```
 
-### Use proto-BOSH to deploy Vault
+### <a name="toc3"></a> Deploy Vault to infrastructure
 
-1. Initialize Vault, disperse keys and configure policies / authentication
+### <a name="toc4"></a> Initialize Vault
 
-1. Migrate credentials from proto-BOSH manifest into Vault
+### <a name="toc5"></a> Disperse keys and configure policies and authentication
 
-1. Re-deploy proto-BOSH (an update) using Vaulted manifests
+### <a name="toc6"></a> Migrate credentials from proto-BOSH manifest into Vault
+
+### <a name="toc7"></a> Re-deploy proto-BOSH (an update) using Vaulted manifests
