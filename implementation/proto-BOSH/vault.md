@@ -43,9 +43,9 @@ We have a `genesis` template available for Vault.  To use it follow these steps.
 Next we use the tool called `spruce` to merge the `genesis` template together into
 a single manifest that BOSH will use to deploy Vault.
 
-This process is an iterative process of begining in the `environment` folder where
-the `Makefile` exists, running the command `make manifest` to attempt to generate
-the deployment manifest and paying attention to the output that results.
+This process is an iterative process of beginning in the `environment` folder where
+the `Makefile` exists. Run the command `make manifest` to attempt to generate the
+deployment manifest then pay attention to the resulting output.
 
 1. Run the `make manifest` command and determine what needs to be configured.
 
@@ -54,39 +54,42 @@ the deployment manifest and paying attention to the output that results.
     make manifest
     </pre>
 
-    See figure below for example:
-
     ![make_manifest_example](/images/make_manifest_example.png)
 
-    We want our Vault to be HA by using Consul and assigning it three IP
-    addresses across availability zones.
+    A recommended method to iterate through these errors is to take the first message,
+    open a new connection at the top of the deployment and look for what the error
+    is referencing.
 
-    For example in the `networking.yml` file we can give three static IP
-    addresses to the vault deployment by defining them with the `static` list in
-    the `networks` dictionary.
+    Using the first error:
 
     ```
-    ---
-    networks:
-      - name: vault
-        type: manual
-        subnets:
-        - range: 10.10.2.0/24
-          gateway: 10.10.2.1
-          cloud_properties:
-            subnet: subnet-0ab12c3d
-            security_groups: [sg-efgd5678]
-          dns: [10.10.2.2]
-          reserved:
-            - 10.10.2.2 - 10.10.2.191
-          static:
-            - 10.10.2.192 - 10.10.2.194 # first 3
+    $.compilation.cloud_properties.availability_zone: Define the z1 AWS availability zone
+    ```
 
-    jobs:
-      - name: vault
-        networks:
-          - name: vault
-            static_ips: (( static_ips 0 1 2 ))
+    Go to the top of the deployment folder structure:
+
+    <pre class="terminal">
+    cd ~/codex/vault-deployments
+    grep -e 'Define the z1 AWS availability zone' -ir
+    <pre>
+
+    ![search_example](/images/search_example.png)
+
+    This informs us to look not in the `.file` folders.  Those are used for inheriting
+    settings between layers that `genesis` manages.
+
+    Focus then, on the `aws/site/resource_pools.yml` file in this case.  Open it
+    looking inside for the reference to `Define the z1 AWS availability zone`.
+
+    Inside the `aws/site/resource_pools.yml` file we find:
+
+    ```
+    meta:
+      aws:
+        azs:
+          z1: (( param "Define the z1 AWS availability zone" ))
+          z2: (( param "Define the z2 AWS availability zone" ))
+          z3: (( param "Define the z3 AWS availability zone" ))
     ```
 
 ### <a name="toc3"></a> Deploy Vault to infrastructure
