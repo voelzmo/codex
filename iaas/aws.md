@@ -66,7 +66,10 @@ Otherwise, it just plain won't work.
 ## Terraform
 
 Now we can put it all together and build out your shiny new VPC in
-Amazon.  Start with the following `aws.tfvars` file:
+Amazon.  For this step, you're going to want to be in the
+`terraform/aws` sub-directory of this repository.
+
+Start with the following `aws.tfvars` file:
 
 ```
 aws_access_key = "..."
