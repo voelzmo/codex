@@ -17,6 +17,11 @@ any resources that successfully completed. Please address the error
 above and apply again to incrementally change your infrastructure.
 ```
 
+aws.tf is not really _hard-coded_ to use us-west-2.  It
+provides that as a default region if you didn't choose one.  You
+can set this in your `aws.tfvars` file, where you set up your
+access key / secret key / etc. **-jhunt**
+
 2. Which then on the next `make apply` led me to this wonder of subnets....
 ```
 Error applying plan:
@@ -31,3 +36,11 @@ Instead, your Terraform state file has been partially updated with
 any resources that successfully completed. Please address the error
 above and apply again to incrementally change your infrastructure.
 ``` 
+
+Your tfstate file has references to all the stuff it stood up
+before it got to the EC2 instances, but then you changed the
+region that you were working in.  Terraform can't handle that (and
+indeed, AWS can't _migrate_ subnets from region to region).  You
+could have done a `make destroy` with the old region in place, and
+udpated `aws.tfvars` and then a new `make apply`.  Or, you could
+have generated a new keypair in us-west-2. **-jhunt**
