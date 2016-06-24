@@ -4,7 +4,7 @@
 
 BOSH's cloud provider interface (CPI) list continues to grow.  Currently documented and supported are:
 
-* AWS (here's a [Terrraform configuration][iaas/aws.md])
+* AWS (here's a [Terrraform configuration](iaas/aws.md))
 * Azure
 * OpenStack
 * vSphere
