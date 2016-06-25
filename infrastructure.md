@@ -6,7 +6,7 @@
 
 BOSH's cloud provider interface (CPI) list continues to grow.  Click on links below for infrastructure specific steps an preparation.
 
-* [AWS](infrastructure/aws.md))
+* [AWS](infrastructure/aws.md)
 * Azure
 * [OpenStack](infrastructure/openstack.md)
 * RackHD
