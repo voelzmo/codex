@@ -1,17 +1,21 @@
+[README](README.md) > **Infrastructure**
+
 ## Infrastructure
 
 ### Choosing a Provider
 
-BOSH's cloud provider interface (CPI) list continues to grow.  Currently documented and supported are:
+BOSH's cloud provider interface (CPI) list continues to grow.  Click on links below for infrastructure specific steps an preparation.
 
-* AWS (here's a [Terrraform configuration](iaas/aws.md))
+* [AWS](infrastructure/aws.md))
 * Azure
-* OpenStack
-* vSphere
+* [OpenStack](infrastructure/openstack.md)
 * RackHD
 * Warden/Garden
 * VirtualBox
+* vSphere
 
-### Design a Network
+### Confirm Network Design
 
-Once you know where you're going to build, [setting up the network](network.md) will help when making decisions on building your management or release environments.
+Once you know which infrastructure you'll use, [a default network topology](network.md) can help guide you to a final layout.
+
+Infrastructure specific networking tips are also covered.
