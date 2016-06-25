@@ -8,8 +8,9 @@ Please ensure that these have been setup:
 
   * [Infrastructure Provider](infrastructure.md)
   * [Network Topology](network.md)
+  * [Initialize proto-BOSH](initialize.md)
 
-### Setup proto-BOSH Services
+### Setup Services
 
 After the proto-BOSH has been bootstrapped, it's time to setup
 the management services.

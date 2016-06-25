@@ -4,4 +4,5 @@
 
 How to setup the proto-BOSH with bosh-init.
 
-TODO: add the steps that are important.
+TODO: steps that differentiate from a standard bosh-init to help create bosh releases for
+child BOSH environments.

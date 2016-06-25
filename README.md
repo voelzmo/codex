@@ -7,8 +7,8 @@ Codex brings together the years of experience and lessons learned after designin
 1. Choose a [infrastructure](infrastructure.md) provider.
 1. Designate a [network](network.md) topology.
 1. [Initialize](initialize.md) a proto-BOSH director.
-1. Setup key software on the [management environment](manage.md) (proto-BOSH).
-1. Create each [release environment](release.md) for staged (staging/production) testing of releases.
+1. Setup key software on the proto-BOSH [management environment](manage.md).
+1. Create each BOSH [release environment](release.md) for incremental testing of releases.
 
 ![proto-BOSH](/images/proto-BOSH.png)
 
