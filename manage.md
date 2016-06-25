@@ -14,7 +14,7 @@ Please ensure that these have been setup:
 
 After the proto-BOSH has been initialized, each of these management services are brought up to provide services.
 
-1. [Setup vault](manage/vault.md) to store secrets.  Deploys with `genesis` templates.
+1. [Setup vault](manage/vault.md) to store secrets.  Integrates with `genesis` driven templates once initialized and configured.  Best to setup first.
 
 1. [Setup bolo](manage/bolo.md) and gain deeper insights into metrics of the hardware of the infrastructure.
 

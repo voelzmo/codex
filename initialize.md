@@ -4,8 +4,12 @@
 
 How to setup the proto-BOSH with bosh-init.
 
-TODO: steps that differentiate from a standard bosh-init to help create bosh releases for
-child BOSH environments.
+TODO: steps that differentiate from a standard bosh-init to help create bosh releases for child BOSH environments.
+
+TODO: ensure that we have `jumpbox` full instructions.
+
+  * Installed `jumpbox`
+  * Ran `sudo /usr/local/bin/jumpbox system` to have `safe` and other tools for Vault setup.
 
 ### Setup Management Environment
 

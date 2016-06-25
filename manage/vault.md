@@ -1,4 +1,4 @@
-[README](../../README.md) > [Management Environment](../../manage.md) > manage/proto-BOSH/**vault**
+[README](../README.md) > [Management Environment](../manage.md) > manage/proto-BOSH/**vault**
 
 ## Setup Vault
 
@@ -197,7 +197,29 @@ next step.
 
 ### <a name="toc3"></a> Deploy Vault to infrastructure
 
+1. To begin the process of deploying we'll run `make deploy` and we'll get back any errors of what's missing.
+
+    Here's what's required to do a vault release:
+
+    ```
+    bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/consul-boshrelease?v=20
+    bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/vault-boshrelease?v=0.4.0
+    bosh upload stemcell https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3232.8
+    ```
+
+    To find a version URL go to [http://bosh.io/releases](http://bosh.io/releases), find the release and pay attention to the version.
+
 ### <a name="toc4"></a> Initialize Vault
+
+TODO: separate into steps and descriptions.
+
+safe target "http://10.10.2.192:8200" prod
+safe vault init
+safe vault unseal
+safe auth
+safe set secret/handshake initialized=true
+safe tree
+safe get secret/handshake
 
 ### <a name="toc5"></a> Disperse keys and configure policies and authentication
 
