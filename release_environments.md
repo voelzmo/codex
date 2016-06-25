@@ -6,7 +6,7 @@ Please ensure that these have been setup:
 
   * [Infrastructure Provider](infrastructure.md)
   * [Network Topology](network.md)
-  * [Management Environment](management_environment.md)
+  * [Management Environment](manage.md)
 
 ### Setup a Release Environment
 

@@ -1,3 +1,3 @@
-[README](../../README.md) > [Management Environment](../../management_environment.md) > implementation/proto-BOSH/**bolo**
+[README](../../README.md) > [Management Environment](../../manage.md) > implementation/proto-BOSH/**bolo**
 
 ## Setup Bolo

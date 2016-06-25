@@ -1,4 +1,4 @@
-[README](../README.md) > **Network**
+[README](README.md) > **Network**
 
 ## Network
 
@@ -35,4 +35,4 @@ TODO: Could use some love with regard to a "generic" version with CIDR ranges th
 
 ### Setup the management environment
 
-Once the infrastructure and network are readNow it's time to setup the [management environment](management_environment.md) that will enable each release environment to be more resilient and flexible.
+Once the infrastructure and network are readNow it's time to setup the [management environment](manage.md) that will enable each release environment to be more resilient and flexible.
