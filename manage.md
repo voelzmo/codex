@@ -14,14 +14,14 @@ Please ensure that these have been setup:
 After the proto-BOSH has been bootstrapped, it's time to setup
 the management services.
 
-1. [Setup vault](implementation/proto-BOSH/vault.md).
+1. [Setup vault](manage/proto-BOSH/vault.md).
 
-1. [Setup bolo](implementation/proto-BOSH/bolo.md).
+1. [Setup bolo](manage/proto-BOSH/bolo.md).
 
-1. [Setup concourse](implementation/proto-BOSH/concourse.md).
+1. [Setup concourse](manage/proto-BOSH/concourse.md).
 
-1. [Setup shield](implementation/proto-BOSH/shield.md).
+1. [Setup shield](manage/proto-BOSH/shield.md).
 
 ### Release Environment
 
-Now it's time to build each subsequent [Release Environment](release_environments.md).
+Now it's time to build each subsequent [Release Environment](release.md).
