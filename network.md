@@ -33,6 +33,6 @@ TODO: Could use some love with regard to a "generic" version with CIDR ranges th
 * VirtualBox
 * vSphere
 
-### Setup the management environment
+### Initialize the proto-BOSH Director
 
-Once the infrastructure and network are readNow it's time to setup the [management environment](manage.md) that will enable each release environment to be more resilient and flexible.
+Once the infrastructure and network are ready, it's time to [initialize](initialize.md) the proto-BOSH Director that can be used to create and manage subsequent release BOSH environments.
