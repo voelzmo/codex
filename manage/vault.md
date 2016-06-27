@@ -88,7 +88,9 @@ a manifest file that can be used to deploy Vault.
     THese directories should be ignored even if a match is found.   If the noise bothers you can have grep
     ignore those directories.
 
+    ```
     grep -Ri --exclude-dir='\.[a-z]*|bin' -e <pattern>
+    ```
 
     Open the file `aws/site/resource_pools.yml` and look for reference to
     `Define the z1 AWS availability zone`:
@@ -216,18 +218,59 @@ next step.
 
 ### <a name="toc4"></a> Initialize Vault
 
-TODO: separate into steps and descriptions.
+1. Target the vault server with `safe`.
 
-safe target "http://10.10.2.192:8200" prod
-safe vault init
-safe vault unseal
-safe auth
-safe set secret/handshake initialized=true
-safe tree
-safe get secret/handshake
+
+    ```
+    safe target "http://10.10.2.192:8200" prod
+    ```
+
+1. We're going to run the `init` command which will output the keys we need to unseal the vault.
+
+    ```
+    safe vault init
+    ```
+
+    Take note of the output the five keys and `Initial Root Token`.  They will be required as input next.
+
+1. Unseal the vault, you'll need to use at least three of the five unique keys.
+
+   Vault uses [Shamir's Secret Sharing](https://www.vaultproject.io/docs/concepts/seal.html) algorithm to split and recreate a master key.  Once enough shards of the key are given, the master key will unseal the vault.
+
+    ```
+    safe vault unseal
+    safe vault unseal
+    safe vault unseal
+    ```
+
+1. Now we're ready to use the `Initial Root Token` to authenticate to vault.
+
+    ```
+    safe auth
+    ```
+
+1. Verify you can work with an unsealed vault.
+
+    ```
+    $ safe set secret/handshake initialized=true
+    initialized: true
+    $ safe tree
+    .
+    └── secret
+        └── handshake
+    $ safe get secret/handshake
+    --- # secret/handshake
+    initialized: "true"
+    ```
 
 ### <a name="toc5"></a> Disperse keys and configure policies and authentication
 
+TODO: @jhunt or @geofffranks how do we do this?
+
 ### <a name="toc6"></a> Migrate credentials from proto-BOSH manifest into Vault
 
+TODO: @jhunt or @geofffranks how do we do this?
+
 ### <a name="toc7"></a> Re-deploy proto-BOSH (an update) using Vaulted manifests
+
+TODO: @jhunt or @geofffranks how do we do this?
