@@ -16,6 +16,8 @@ TBD Do we want a best practice on path ordering?
 
 Consider using a key name that matches to the manifest key name.  Make it easy for the next person to recognize the usage just by looking at its path and keyname.  The manifest level could be made part of the path or incorporated into the key name.
 
+Stay consistent with the path and keyname style already used in the a deployment manifest.   The inconsistency drives us ADD types crazy and it looks unprofessional.
+
 Avoid placing multiple secrets under the same path and key.  Secret rotation is easier if there is
 only one secret to worry about.
 
