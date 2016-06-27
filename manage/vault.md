@@ -1,4 +1,4 @@
-[README](../README.md) > [Management Environment](../manage.md) > manage/proto-BOSH/**vault**
+[README](../README.md) > [Management Environment](../manage.md) > manage/**vault**
 
 ## Setup Vault
 
