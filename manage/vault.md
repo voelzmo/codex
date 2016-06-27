@@ -83,7 +83,12 @@ a manifest file that can be used to deploy Vault.
 
     ![search_example](/images/search_example.png)
 
-    TODO: Why can we usually skip the `.foldername` folders?
+    You will see dot directory names like .global, .site and .templates in your deployment directory.
+    These directories are used by the tools for additional data input  or for the generated output.
+    THese directories should be ignored even if a match is found.   If the noise bothers you can have grep
+    ignore those directories.
+
+    grep -Ri --exclude-dir='\.[a-z]*|bin' -e <pattern>
 
     Open the file `aws/site/resource_pools.yml` and look for reference to
     `Define the z1 AWS availability zone`:
