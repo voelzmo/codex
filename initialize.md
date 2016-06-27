@@ -13,7 +13,7 @@ How to setup the proto-BOSH with bosh-init.
 7. Fill out any parameters that remain to be set, in the environment level, until `make manifest` succeeds. Start with any of the `$.meta.*` properties, since `spruce` does not 
 8. Deploy via `make deploy`
 9. Make sure **NOT** to commit anything to the repo **YET**. Once you deploy Vault, you will move all the creds there.
-10. Pause, while you deploy vault (TODO: where should this link to for vault deployments)
+10. Pause, while you [deploy Vault](https://github.com/starkandwayne/codex/blob/master/manage/vault.md)
 11. Resume! Take the creds generated for your proto-bosh and stick them into Vault via `safe set <path> <key>`
 12. Update the `bosh-deployments/<site_name>/proto/*.yml` files to replace the credential overrides with the `(( vault "<path>:<key>" ))` Spruce operator
 13. Ensure the changes to be committed do not contain any sensitive material
