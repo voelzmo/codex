@@ -731,20 +731,55 @@ resource "aws_route_table_association" "prod-cf-svc-3" {
 ##   ### ##     ## ##    ## ##       ##    ##
 ##    ## ##     ##  ######  ########  ######
 
-resource "aws_network_acl" "prod" {
+resource "aws_network_acl" "hardened" {
   vpc_id = "${aws_vpc.default.id}"
   subnet_ids = [
-    "${aws_subnet.prod-infra.id}",
-    "${aws_subnet.prod-edge-1.id}",
-    "${aws_subnet.prod-edge-2.id}",
-    "${aws_subnet.prod-cf-1.id}",
-    "${aws_subnet.prod-cf-2.id}",
-    "${aws_subnet.prod-cf-3.id}",
-    "${aws_subnet.prod-svc-1.id}",
-    "${aws_subnet.prod-svc-2.id}",
-    "${aws_subnet.prod-svc-3.id}"
+    "${aws_subnet.dev-infra-1.id}",
+    "${aws_subnet.dev-infra-2.id}",
+    "${aws_subnet.dev-infra-3.id}",
+    "${aws_subnet.dev-cf-edge-1.id}",
+    "${aws_subnet.dev-cf-edge-2.id}",
+    "${aws_subnet.dev-cf-core-1.id}",
+    "${aws_subnet.dev-cf-core-2.id}",
+    "${aws_subnet.dev-cf-core-3.id}",
+    "${aws_subnet.dev-cf-runtime-1.id}",
+    "${aws_subnet.dev-cf-runtime-2.id}",
+    "${aws_subnet.dev-cf-runtime-3.id}",
+    "${aws_subnet.dev-cf-svc-1.id}",
+    "${aws_subnet.dev-cf-svc-2.id}",
+    "${aws_subnet.dev-cf-svc-3.id}",
+
+    "${aws_subnet.staging-infra-1.id}",
+    "${aws_subnet.staging-infra-2.id}",
+    "${aws_subnet.staging-infra-3.id}",
+    "${aws_subnet.staging-cf-edge-1.id}",
+    "${aws_subnet.staging-cf-edge-2.id}",
+    "${aws_subnet.staging-cf-core-1.id}",
+    "${aws_subnet.staging-cf-core-2.id}",
+    "${aws_subnet.staging-cf-core-3.id}",
+    "${aws_subnet.staging-cf-runtime-1.id}",
+    "${aws_subnet.staging-cf-runtime-2.id}",
+    "${aws_subnet.staging-cf-runtime-3.id}",
+    "${aws_subnet.staging-cf-svc-1.id}",
+    "${aws_subnet.staging-cf-svc-2.id}",
+    "${aws_subnet.staging-cf-svc-3.id}",
+
+    "${aws_subnet.prod-infra-1.id}",
+    "${aws_subnet.prod-infra-2.id}",
+    "${aws_subnet.prod-infra-3.id}",
+    "${aws_subnet.prod-cf-edge-1.id}",
+    "${aws_subnet.prod-cf-edge-2.id}",
+    "${aws_subnet.prod-cf-core-1.id}",
+    "${aws_subnet.prod-cf-core-2.id}",
+    "${aws_subnet.prod-cf-core-3.id}",
+    "${aws_subnet.prod-cf-runtime-1.id}",
+    "${aws_subnet.prod-cf-runtime-2.id}",
+    "${aws_subnet.prod-cf-runtime-3.id}",
+    "${aws_subnet.prod-cf-svc-1.id}",
+    "${aws_subnet.prod-cf-svc-2.id}",
+    "${aws_subnet.prod-cf-svc-3.id}"
   ]
-  tags { Name = "${var.aws_vpc_name}-prod" }
+  tags { Name = "${var.aws_vpc_name}-hardened" }
 
 
 
@@ -844,8 +879,8 @@ resource "aws_network_acl" "prod" {
     protocol   = "icmp"
     icmp_type  = "0"
     icmp_code  = "-1"
-    to_port = "0"
-    from_port = "0"
+    to_port    = "0"
+    from_port  = "0"
     cidr_block = "0.0.0.0/0"
     action     = "allow"
   }
