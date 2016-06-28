@@ -38,7 +38,7 @@ Please ensure that these have been setup:
 
 Use the [glossary](glossary.md) for more info.
 
-![proto-BOSH](/images/proto-BOSH.png)
+![overview](/images/overview.png)
 
 ### Congratulations
 

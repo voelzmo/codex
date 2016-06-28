@@ -17,6 +17,6 @@ to choose your IaaS provider.  We have guides for the following:
 1. Setup key software on the proto-BOSH [management environment](manage.md).
 1. Create each BOSH [release environment](release.md) for incremental testing of releases.
 
-![proto-BOSH](/images/proto-BOSH.png)
+![overview](/images/overview.png)
 
 In the above diagram, BOSH (1) is the proto-BOSH, while BOSH (2) and BOSH (3) are the per-site BOSH directors.
