@@ -18,25 +18,25 @@ We have a `genesis` template available for Vault.  To use it follow these steps.
 
 1. Setup a deployment, using a template.
 
-    <pre class="terminal">
-    mkdir -p ~/codex
-    cd ~/codex
-    genesis new deployment --template vault
-    </pre>
+    ```
+    $ mkdir -p ~/ops
+    $ cd ~/ops
+    $ genesis new deployment --template vault
+    ```
 
 1. For our deployment, generate a site from a template.  This can be a name of your infrastructure provider or datacenter location.
 
-    <pre class="terminal">
-    cd ~/codex/vault-deployments
-    genesis new site --template aws aws
-    </pre>
+    ```
+    $ cd ~/ops/vault-deployments
+    $ genesis new site --template aws aws
+    ```
 
 1. Using our site, create an environment.  For instance, if we're creating the `prod` for Production in the "aws" site, we'd run:
 
-    <pre class="terminal">
-    cd ~/codex/vault-deployments/aws
-    genesis new environment aws prod
-    </pre>
+    ```
+    $ cd ~/ops/vault-deployments/aws
+    $ genesis new environment aws prod
+    ```
 
 ### <a name="toc2"></a> Merge template files together
 
@@ -52,10 +52,10 @@ a manifest file that can be used to deploy Vault.
 
 1. Run the `make manifest` command.
 
-    <pre class="terminal">
-    cd ~/codex/vault-deployments/aws/prod
-    make manifest
-    </pre>
+    ```
+    $ cd ~/ops/vault-deployments/aws/prod
+    $ make manifest
+    ```
 
     This will either build a manifest file for you or it will tell you what you
     need to fix before it can build a working manifest.
@@ -76,10 +76,10 @@ a manifest file that can be used to deploy Vault.
 
     Search for the error from the root of the project.
 
-    <pre class="terminal">
-    cd ~/codex/vault-deployments
-    grep -e 'Define the z1 AWS availability zone' -ir
-    </pre>
+    ```
+    $ cd ~/ops/vault-deployments
+    $ grep -e 'Define the z1 AWS availability zone' -ir
+    ```
 
     ![search_example](/images/search_example.png)
 
@@ -109,10 +109,10 @@ a manifest file that can be used to deploy Vault.
     In your environment's folder, you'll now define the three AWS availability
     zones for Vault to use.
 
-    <pre class="terminal">
-    cd ~/codex/vault-deployments/aws/prod
-    vim networking.yml
-    </pre>
+    ```
+    $ cd ~/ops/vault-deployments/aws/prod
+    $ vim networking.yml
+    ```
 
     It could look something like this to get you started:
 
@@ -135,10 +135,10 @@ a manifest file that can be used to deploy Vault.
     an error is looking for, we can run `make manifest` again to see if we've correctly
     configured the parameter.
 
-    <pre class="terminal">
-    cd ~/codex/vault-deployments/aws/prod
-    make manifest
-    </pre>
+    ```
+    $ cd ~/ops/vault-deployments/aws/prod
+    $ make manifest
+    ```
 
     ![specify_network](/images/specify_network.png)
 
@@ -199,7 +199,7 @@ a manifest file that can be used to deploy Vault.
 1. Repeat until `make manifest` doesn't error
 
   Once `make manifest` produces no errors, it instead creates a manifest file in the
-`~/codex/vault-deployments/aws/prod/manifests/manifest.yml` which will be used in the
+`~/ops/vault-deployments/aws/prod/manifests/manifest.yml` which will be used in the
 next step.
 
 ### <a name="toc3"></a> Deploy Vault to infrastructure
@@ -209,9 +209,9 @@ next step.
     Here's what's required to do a vault release:
 
     ```
-    bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/consul-boshrelease?v=20
-    bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/vault-boshrelease?v=0.4.0
-    bosh upload stemcell https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3232.8
+    $ bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/consul-boshrelease?v=20
+    $ bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/vault-boshrelease?v=0.4.0
+    $ bosh upload stemcell https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3232.8
     ```
 
     To find a version URL go to [http://bosh.io/releases](http://bosh.io/releases), find the release and pay attention to the version.
@@ -222,13 +222,13 @@ next step.
 
 
     ```
-    safe target "http://10.10.2.192:8200" prod
+    $ safe target "http://10.10.2.192:8200" prod
     ```
 
 1. We're going to run the `init` command which will output the keys we need to unseal the vault.
 
     ```
-    safe vault init
+    $ safe vault init
     ```
 
     Take note of the output the five keys and `Initial Root Token`.  They will be required as input next.
@@ -238,15 +238,15 @@ next step.
    Vault uses [Shamir's Secret Sharing](https://www.vaultproject.io/docs/concepts/seal.html) algorithm to split and recreate a master key.  Once enough shards of the key are given, the master key will unseal the vault.
 
     ```
-    safe vault unseal
-    safe vault unseal
-    safe vault unseal
+    $ safe vault unseal
+    $ safe vault unseal
+    $ safe vault unseal
     ```
 
 1. Now we're ready to use the `Initial Root Token` to authenticate to vault.
 
     ```
-    safe auth
+    $ safe auth
     ```
 
 1. Verify you can work with an unsealed vault.
