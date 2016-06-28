@@ -3,3 +3,4 @@
 *.tfvars
 *.tfplan
 *.tfstate
+properties.yml

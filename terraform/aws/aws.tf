@@ -132,6 +132,9 @@ resource "aws_route_table_association" "dmz" {
   subnet_id      = "${aws_subnet.dmz.id}"
   route_table_id = "${aws_route_table.external.id}"
 }
+output "aws.network.dmz.subnet" {
+  value = "${aws_subnet.dmz.id}"
+}
 
 ###############################################################
 # GLOBAL - Global Infrastructure
@@ -153,6 +156,9 @@ resource "aws_route_table_association" "global-infra-1" {
   subnet_id      = "${aws_subnet.global-infra-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.global-infra-1.subnet" {
+  value = "${aws_subnet.global-infra-1.id}"
+}
 resource "aws_subnet" "global-infra-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.2.0/24"
@@ -163,6 +169,9 @@ resource "aws_route_table_association" "global-infra-2" {
   subnet_id      = "${aws_subnet.global-infra-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.global-infra-2.subnet" {
+  value = "${aws_subnet.global-infra-2.id}"
+}
 resource "aws_subnet" "global-infra-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.3.0/24"
@@ -172,6 +181,9 @@ resource "aws_subnet" "global-infra-3" {
 resource "aws_route_table_association" "global-infra-3" {
   subnet_id      = "${aws_subnet.global-infra-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.global-infra-3.subnet" {
+  value = "${aws_subnet.global-infra-3.id}"
 }
 
 
@@ -196,6 +208,9 @@ resource "aws_route_table_association" "dev-infra-1" {
   subnet_id      = "${aws_subnet.dev-infra-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.dev-infra-1.subnet" {
+  value = "${aws_subnet.dev-infra-1.id}"
+}
 resource "aws_subnet" "dev-infra-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.17.0/24"
@@ -206,6 +221,9 @@ resource "aws_route_table_association" "dev-infra-2" {
   subnet_id      = "${aws_subnet.dev-infra-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.dev-infra-2.subnet" {
+  value = "${aws_subnet.dev-infra-2.id}"
+}
 resource "aws_subnet" "dev-infra-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.18.0/24"
@@ -215,6 +233,9 @@ resource "aws_subnet" "dev-infra-3" {
 resource "aws_route_table_association" "dev-infra-3" {
   subnet_id      = "${aws_subnet.dev-infra-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.dev-infra-3.subnet" {
+  value = "${aws_subnet.dev-infra-3.id}"
 }
 
 ###############################################################
@@ -234,6 +255,9 @@ resource "aws_route_table_association" "dev-cf-edge-1" {
   subnet_id      = "${aws_subnet.dev-cf-edge-1.id}"
   route_table_id = "${aws_route_table.external.id}"
 }
+output "aws.network.dev-cf-edge-1.subnet" {
+  value = "${aws_subnet.dev-cf-edge-1.id}"
+}
 resource "aws_subnet" "dev-cf-edge-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.19.128/25"
@@ -243,6 +267,9 @@ resource "aws_subnet" "dev-cf-edge-2" {
 resource "aws_route_table_association" "dev-cf-edge-2" {
   subnet_id      = "${aws_subnet.dev-cf-edge-2.id}"
   route_table_id = "${aws_route_table.external.id}"
+}
+output "aws.network.dev-cf-edge-2.subnet" {
+  value = "${aws_subnet.dev-cf-edge-2.id}"
 }
 
 ###############################################################
@@ -262,6 +289,9 @@ resource "aws_route_table_association" "dev-cf-core-1" {
   subnet_id      = "${aws_subnet.dev-cf-core-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.dev-cf-core-1.subnet" {
+  value = "${aws_subnet.dev-cf-core-1.id}"
+}
 resource "aws_subnet" "dev-cf-core-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.21.0/24"
@@ -272,6 +302,9 @@ resource "aws_route_table_association" "dev-cf-core-2" {
   subnet_id      = "${aws_subnet.dev-cf-core-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.dev-cf-core-2.subnet" {
+  value = "${aws_subnet.dev-cf-core-2.id}"
+}
 resource "aws_subnet" "dev-cf-core-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.22.0/24"
@@ -281,6 +314,9 @@ resource "aws_subnet" "dev-cf-core-3" {
 resource "aws_route_table_association" "dev-cf-core-3" {
   subnet_id      = "${aws_subnet.dev-cf-core-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.dev-cf-core-3.subnet" {
+  value = "${aws_subnet.dev-cf-core-3.id}"
 }
 
 ###############################################################
@@ -299,6 +335,9 @@ resource "aws_route_table_association" "dev-cf-runtime-1" {
   subnet_id      = "${aws_subnet.dev-cf-runtime-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.dev-cf-runtime-1.subnet" {
+  value = "${aws_subnet.dev-cf-runtime-1.id}"
+}
 resource "aws_subnet" "dev-cf-runtime-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.24.0/24"
@@ -309,6 +348,9 @@ resource "aws_route_table_association" "dev-cf-runtime-2" {
   subnet_id      = "${aws_subnet.dev-cf-runtime-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.dev-cf-runtime-2.subnet" {
+  value = "${aws_subnet.dev-cf-runtime-2.id}"
+}
 resource "aws_subnet" "dev-cf-runtime-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.25.0/24"
@@ -318,6 +360,9 @@ resource "aws_subnet" "dev-cf-runtime-3" {
 resource "aws_route_table_association" "dev-cf-runtime-3" {
   subnet_id      = "${aws_subnet.dev-cf-runtime-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.dev-cf-runtime-3.subnet" {
+  value = "${aws_subnet.dev-cf-runtime-3.id}"
 }
 
 ###############################################################
@@ -336,6 +381,9 @@ resource "aws_route_table_association" "dev-cf-svc-1" {
   subnet_id      = "${aws_subnet.dev-cf-svc-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.dev-cf-svc-1.subnet" {
+  value = "${aws_subnet.dev-cf-svc-1.id}"
+}
 resource "aws_subnet" "dev-cf-svc-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.27.0/24"
@@ -346,6 +394,9 @@ resource "aws_route_table_association" "dev-cf-svc-2" {
   subnet_id      = "${aws_subnet.dev-cf-svc-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.dev-cf-svc-2.subnet" {
+  value = "${aws_subnet.dev-cf-svc-2.id}"
+}
 resource "aws_subnet" "dev-cf-svc-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.28.0/24"
@@ -355,6 +406,9 @@ resource "aws_subnet" "dev-cf-svc-3" {
 resource "aws_route_table_association" "dev-cf-svc-3" {
   subnet_id      = "${aws_subnet.dev-cf-svc-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.dev-cf-svc-3.subnet" {
+  value = "${aws_subnet.dev-cf-svc-3.id}"
 }
 
 ###############################################################
@@ -378,6 +432,9 @@ resource "aws_route_table_association" "staging-infra-1" {
   subnet_id      = "${aws_subnet.staging-infra-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.staging-infra-1.subnet" {
+  value = "${aws_subnet.staging-infra-1.id}"
+}
 resource "aws_subnet" "staging-infra-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.33.0/24"
@@ -388,6 +445,9 @@ resource "aws_route_table_association" "staging-infra-2" {
   subnet_id      = "${aws_subnet.staging-infra-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.staging-infra-2.subnet" {
+  value = "${aws_subnet.staging-infra-2.id}"
+}
 resource "aws_subnet" "staging-infra-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.34.0/24"
@@ -397,6 +457,9 @@ resource "aws_subnet" "staging-infra-3" {
 resource "aws_route_table_association" "staging-infra-3" {
   subnet_id      = "${aws_subnet.staging-infra-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.staging-infra-3.subnet" {
+  value = "${aws_subnet.staging-infra-3.id}"
 }
 
 ###############################################################
@@ -416,6 +479,9 @@ resource "aws_route_table_association" "staging-cf-edge-1" {
   subnet_id      = "${aws_subnet.staging-cf-edge-1.id}"
   route_table_id = "${aws_route_table.external.id}"
 }
+output "aws.network.staging-cf-edge-1.subnet" {
+  value = "${aws_subnet.staging-cf-edge-1.id}"
+}
 resource "aws_subnet" "staging-cf-edge-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.35.128/25"
@@ -425,6 +491,9 @@ resource "aws_subnet" "staging-cf-edge-2" {
 resource "aws_route_table_association" "staging-cf-edge-2" {
   subnet_id      = "${aws_subnet.staging-cf-edge-2.id}"
   route_table_id = "${aws_route_table.external.id}"
+}
+output "aws.network.staging-cf-edge-2.subnet" {
+  value = "${aws_subnet.staging-cf-edge-2.id}"
 }
 
 ###############################################################
@@ -444,6 +513,9 @@ resource "aws_route_table_association" "staging-cf-core-1" {
   subnet_id      = "${aws_subnet.staging-cf-core-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.staging-cf-core-1.subnet" {
+  value = "${aws_subnet.staging-cf-core-1.id}"
+}
 resource "aws_subnet" "staging-cf-core-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.37.0/24"
@@ -454,6 +526,9 @@ resource "aws_route_table_association" "staging-cf-core-2" {
   subnet_id      = "${aws_subnet.staging-cf-core-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.staging-cf-core-2.subnet" {
+  value = "${aws_subnet.staging-cf-core-2.id}"
+}
 resource "aws_subnet" "staging-cf-core-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.38.0/24"
@@ -463,6 +538,9 @@ resource "aws_subnet" "staging-cf-core-3" {
 resource "aws_route_table_association" "staging-cf-core-3" {
   subnet_id      = "${aws_subnet.staging-cf-core-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.staging-cf-core-3.subnet" {
+  value = "${aws_subnet.staging-cf-core-3.id}"
 }
 
 ###############################################################
@@ -481,6 +559,9 @@ resource "aws_route_table_association" "staging-cf-runtime-1" {
   subnet_id      = "${aws_subnet.staging-cf-runtime-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.staging-cf-runtime-1.subnet" {
+  value = "${aws_subnet.staging-cf-runtime-1.id}"
+}
 resource "aws_subnet" "staging-cf-runtime-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.40.0/24"
@@ -491,6 +572,9 @@ resource "aws_route_table_association" "staging-cf-runtime-2" {
   subnet_id      = "${aws_subnet.staging-cf-runtime-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.staging-cf-runtime-2.subnet" {
+  value = "${aws_subnet.staging-cf-runtime-2.id}"
+}
 resource "aws_subnet" "staging-cf-runtime-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.41.0/24"
@@ -500,6 +584,9 @@ resource "aws_subnet" "staging-cf-runtime-3" {
 resource "aws_route_table_association" "staging-cf-runtime-3" {
   subnet_id      = "${aws_subnet.staging-cf-runtime-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.staging-cf-runtime-3.subnet" {
+  value = "${aws_subnet.staging-cf-runtime-3.id}"
 }
 
 ###############################################################
@@ -518,6 +605,9 @@ resource "aws_route_table_association" "staging-cf-svc-1" {
   subnet_id      = "${aws_subnet.staging-cf-svc-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.staging-cf-svc-1.subnet" {
+  value = "${aws_subnet.staging-cf-svc-1.id}"
+}
 resource "aws_subnet" "staging-cf-svc-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.43.0/24"
@@ -528,6 +618,9 @@ resource "aws_route_table_association" "staging-cf-svc-2" {
   subnet_id      = "${aws_subnet.staging-cf-svc-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.staging-cf-svc-2.subnet" {
+  value = "${aws_subnet.staging-cf-svc-2.id}"
+}
 resource "aws_subnet" "staging-cf-svc-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.44.0/24"
@@ -537,6 +630,9 @@ resource "aws_subnet" "staging-cf-svc-3" {
 resource "aws_route_table_association" "staging-cf-svc-3" {
   subnet_id      = "${aws_subnet.staging-cf-svc-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.staging-cf-svc-3.subnet" {
+  value = "${aws_subnet.staging-cf-svc-3.id}"
 }
 
 ###############################################################
@@ -560,6 +656,9 @@ resource "aws_route_table_association" "prod-infra-1" {
   subnet_id      = "${aws_subnet.prod-infra-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.prod-infra-1.subnet" {
+  value = "${aws_subnet.prod-infra-1.id}"
+}
 resource "aws_subnet" "prod-infra-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.49.0/24"
@@ -570,6 +669,9 @@ resource "aws_route_table_association" "prod-infra-2" {
   subnet_id      = "${aws_subnet.prod-infra-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.prod-infra-2.subnet" {
+  value = "${aws_subnet.prod-infra-2.id}"
+}
 resource "aws_subnet" "prod-infra-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.50.0/24"
@@ -579,6 +681,9 @@ resource "aws_subnet" "prod-infra-3" {
 resource "aws_route_table_association" "prod-infra-3" {
   subnet_id      = "${aws_subnet.prod-infra-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.prod-infra-3.subnet" {
+  value = "${aws_subnet.prod-infra-3.id}"
 }
 
 ###############################################################
@@ -598,6 +703,9 @@ resource "aws_route_table_association" "prod-cf-edge-1" {
   subnet_id      = "${aws_subnet.prod-cf-edge-1.id}"
   route_table_id = "${aws_route_table.external.id}"
 }
+output "aws.network.prod-cf-edge-1.subnet" {
+  value = "${aws_subnet.prod-cf-edge-1.id}"
+}
 resource "aws_subnet" "prod-cf-edge-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.51.128/25"
@@ -607,6 +715,9 @@ resource "aws_subnet" "prod-cf-edge-2" {
 resource "aws_route_table_association" "prod-cf-edge-2" {
   subnet_id      = "${aws_subnet.prod-cf-edge-2.id}"
   route_table_id = "${aws_route_table.external.id}"
+}
+output "aws.network.prod-cf-edge-2.subnet" {
+  value = "${aws_subnet.prod-cf-edge-2.id}"
 }
 
 ###############################################################
@@ -626,6 +737,9 @@ resource "aws_route_table_association" "prod-cf-core-1" {
   subnet_id      = "${aws_subnet.prod-cf-core-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.prod-cf-core-1.subnet" {
+  value = "${aws_subnet.prod-cf-core-1.id}"
+}
 resource "aws_subnet" "prod-cf-core-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.53.0/24"
@@ -636,6 +750,9 @@ resource "aws_route_table_association" "prod-cf-core-2" {
   subnet_id      = "${aws_subnet.prod-cf-core-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.prod-cf-core-2.subnet" {
+  value = "${aws_subnet.prod-cf-core-2.id}"
+}
 resource "aws_subnet" "prod-cf-core-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.54.0/24"
@@ -645,6 +762,9 @@ resource "aws_subnet" "prod-cf-core-3" {
 resource "aws_route_table_association" "prod-cf-core-3" {
   subnet_id      = "${aws_subnet.prod-cf-core-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.prod-cf-core-3.subnet" {
+  value = "${aws_subnet.prod-cf-core-3.id}"
 }
 
 ###############################################################
@@ -663,6 +783,9 @@ resource "aws_route_table_association" "prod-cf-runtime-1" {
   subnet_id      = "${aws_subnet.prod-cf-runtime-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.prod-cf-runtime-1.subnet" {
+  value = "${aws_subnet.prod-cf-runtime-1.id}"
+}
 resource "aws_subnet" "prod-cf-runtime-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.56.0/24"
@@ -673,6 +796,9 @@ resource "aws_route_table_association" "prod-cf-runtime-2" {
   subnet_id      = "${aws_subnet.prod-cf-runtime-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.prod-cf-runtime-2.subnet" {
+  value = "${aws_subnet.prod-cf-runtime-2.id}"
+}
 resource "aws_subnet" "prod-cf-runtime-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.57.0/24"
@@ -682,6 +808,9 @@ resource "aws_subnet" "prod-cf-runtime-3" {
 resource "aws_route_table_association" "prod-cf-runtime-3" {
   subnet_id      = "${aws_subnet.prod-cf-runtime-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.prod-cf-runtime-3.subnet" {
+  value = "${aws_subnet.prod-cf-runtime-3.id}"
 }
 
 ###############################################################
@@ -700,6 +829,9 @@ resource "aws_route_table_association" "prod-cf-svc-1" {
   subnet_id      = "${aws_subnet.prod-cf-svc-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.prod-cf-svc-1.subnet" {
+  value = "${aws_subnet.prod-cf-svc-1.id}"
+}
 resource "aws_subnet" "prod-cf-svc-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.59.0/24"
@@ -710,6 +842,9 @@ resource "aws_route_table_association" "prod-cf-svc-2" {
   subnet_id      = "${aws_subnet.prod-cf-svc-2.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
+output "aws.network.prod-cf-svc-2.subnet" {
+  value = "${aws_subnet.prod-cf-svc-2.id}"
+}
 resource "aws_subnet" "prod-cf-svc-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.60.0/24"
@@ -719,6 +854,9 @@ resource "aws_subnet" "prod-cf-svc-3" {
 resource "aws_route_table_association" "prod-cf-svc-3" {
   subnet_id      = "${aws_subnet.prod-cf-svc-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.prod-cf-svc-3.subnet" {
+  value = "${aws_subnet.prod-cf-svc-3.id}"
 }
 
 
@@ -1057,6 +1195,9 @@ resource "aws_eip" "nat" {
   instance = "${aws_instance.nat.id}"
   vpc      = true
 }
+output "box.nat.public" {
+  value = "${aws_eip.nat.public_ip}"
+}
 
 
 
@@ -1080,4 +1221,7 @@ resource "aws_instance" "bastion" {
 resource "aws_eip" "bastion" {
   instance = "${aws_instance.bastion.id}"
   vpc      = true
+}
+output "box.bastion.public" {
+  value = "${aws_eip.bastion.public_ip}"
 }

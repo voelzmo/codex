@@ -2,6 +2,7 @@ SHELL := $(SHELL) -e
 VARS_FILE  := aws.tfvars
 PLAN_FILE  := aws.tfplan
 STATE_FILE := aws.tfstate
+OUT_FILE   := properties.yml
 
 all: manifest deploy
 
@@ -11,6 +12,7 @@ manifest:
 
 deploy:
 	terraform apply -var-file ${VARS_FILE}
+	terraform output | ./yamler meta tf > ${OUT_FILE}
 
 destroy:
 	terraform plan -destroy -var-file ${VARS_FILE} -out ${PLAN_FILE}
