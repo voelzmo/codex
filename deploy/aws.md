@@ -1,5 +1,3 @@
-[README](../README.md) > [Infrastructure](../infrastructure.md) > **AWS**
-
 # Setting up an AWS VPC
 
 So you want to deploy Cloud Foundry to good old Amazon Web
@@ -69,7 +67,10 @@ Otherwise, it just plain won't work.
 
 Now we can put it all together and build out your shiny new VPC in
 Amazon.  For this step, you're going to want to be in the
-`terraform/aws` sub-directory of this repository.
+`terraform/aws` sub-directory of this repository.  This Terraform
+configuration directly matches the [Network Plan](../network/plan.md)
+for the demo environment.  For deploying in production, you may
+need to tweak or rewrite.
 
 Start with the following `aws.tfvars` file:
 
@@ -92,7 +93,7 @@ terraform get -update
 terraform plan -var-file aws.tfvars -out aws.tfplan
 Refreshing Terraform state prior to plan...
 
-<snipp>
+<snip>
 
 Plan: 33 to add, 0 to change, 0 to destroy.
 ```
@@ -113,3 +114,5 @@ Key, and spin up all the things it needs.  When it finishes, you
 should be left with a bunch of subnets, configured network ACLs,
 security groups, routing tables, a NAT instance (for public
 internet connectivity) and a Bastion host.
+
+Next up: [Setting up the Bastion Host](bastion.md)
