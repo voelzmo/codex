@@ -490,6 +490,8 @@ All that's left is to try to deploy it:
 > style of deployment.  How do we want to handle that?  Does
 > Genesis need an update for a `--type` flag to `new env`?
 
+> TODO: i also had to copy the aws key up to the bastion host.
+
 ```
 $ make deploy
 No existing genesis-created bosh-init statefile detected. Please
@@ -519,9 +521,52 @@ compiling all the things.  End-to-end, this is going to take about
 a half an hour, so you probably want to go play [a game][slither]
 or grab a cup of tea.)
 
-TODO: flesh out the rest of this, once my test bosh-init succeeds.
+...
 
-TODO: i had to copy the aws key up to the bastion host.
+All done?  Verify the deployment by trying to `bosh target` the
+newly-deployed Director.  First you're going to need to get the
+password out of our proto-Vault.
+
+```
+$ safe get secret/aws/proto/bosh/users/admin
+--- # secret/mgmt/proto/bosh/users/admin
+password: super-secret
+```
+
+Then, run target the director:
+
+```
+$ bosh target https://10.4.1.4:25555 proto-bosh
+Target set to `aws-proto-bosh'
+Your username: admin
+Enter password:
+Logged in as `admin'
+
+$ bosh status
+Config
+             ~/.bosh_config
+
+Director
+  Name       aws-proto-bosh
+  URL        https://10.4.1.4:25555
+  Version    1.3232.2.0 (00000000)
+  User       admin
+  UUID       a43bfe93-d916-4164-9f51-c411ee2110b2
+  CPI        aws_cpi
+  dns        disabled
+  compiled_package_cache disabled
+  snapshots  disabled
+
+Deployment
+  not set
+```
+
+All set!
+
+Before you move onto the next step, you should commit your local
+deployment files to version control, and push them up _somewhere_.
+It's ok, thanks to Vault, there are no credentials or anything
+sensitive in the Genesis template files.
 
 ## Vault
 
@@ -658,16 +703,68 @@ easier since our network plan allocates a different `/24` to each
 zone network, meaning that only the third octet has to change from
 zone to zone (x.x.1.x for zone 1, x.x.2.x for zone 2, etc.)
 
-Now, let's try a `make manifest` again:
+Now, let's try a `make manifest` again (no output is a good sign):
 
 ```
 $ make manifest
 ```
 
+And then we can deploy via the proto-BOSH director:
+
+```
+$ make deploy
+Acting as user 'admin' on 'aws-proto-bosh'
+Checking whether release consul/20 already exists...NO
+Using remote release `https://bosh.io/d/github.com/cloudfoundry-community/consul-boshrelease?v=20'
+
+Director task 1
+
+```
+
+Thanks to Genesis, we don't even have to upload the BOSH releases
+(or stemcells) ourselves!
+
 TODO: start here
 
 
 ## Migrating Credentials
+
+You should now have two `safe` targets, one for the proto-Vault
+(named 'proto') and another for the real Vault (named 'ops'):
+
+```
+$ safe targets
+TODO
+```
+
+Our `ops` Vault should be empty; we can verify that with `safe
+tree`:
+
+```
+$ safe target ops -- tree
+TODO
+```
+
+`safe` sports a handy import/export feature that can be used to
+move credentials securely between Vaults, without touching disk,
+which is exactly what we need to migrate from our proto-Vault to
+our real one:
+
+```
+$ safe target proto -- export secret |\
+  safe target ops   -- import
+TODO
+$ safe target ops -- tree
+```
+
+Voila!  We now have all of our credentials in our real Vault, and
+we can kill the proto-Vault server process!
+
+```
+$ sudo pkill vault
+```
+
+Next: [Deploying Bolo Monitoring][bolo.md]
 
 [DRY]:         https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 [spruce-129]:  https://github.com/geofffranks/spruce/issues/129
