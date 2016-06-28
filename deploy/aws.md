@@ -83,12 +83,12 @@ aws_key_name = "bosh-ec2-key"
 
 (substituting your actual values, of course)
 
-As a quick pre-flight check, run `make plan` to compile your
+As a quick pre-flight check, run `make manifest` to compile your
 Terraform plan and suss out any issues with naming, missing
 variables, configuration, etc.:
 
 ```
-$ make plan
+$ make manifest
 terraform get -update
 terraform plan -var-file aws.tfvars -out aws.tfplan
 Refreshing Terraform state prior to plan...
@@ -103,10 +103,10 @@ this is the first time you've done this, all of your changes
 should be additions.  The numbers may differ from the above
 output, and that's okay.
 
-Now, to pull the trigger, run `make apply`:
+Now, to pull the trigger, run `make deploy`:
 
 ```
-$ make apply
+$ make deploy
 ```
 
 Terraform will connect to AWS, using your Access Key and Secret

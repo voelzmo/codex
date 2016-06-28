@@ -3,13 +3,13 @@ VARS_FILE  := aws.tfvars
 PLAN_FILE  := aws.tfplan
 STATE_FILE := aws.tfstate
 
-all: plan apply
+all: manifest deploy
 
-plan:
+manifest:
 	terraform get -update
 	terraform plan -var-file ${VARS_FILE} -out ${PLAN_FILE}
 
-apply:
+deploy:
 	terraform apply -var-file ${VARS_FILE}
 
 destroy:
@@ -20,4 +20,4 @@ clean:
 	rm -f ${PLAN_FILE}
 	rm -f ${STATE_FILE}
 
-.PHONY: all plan apply destroy clean
+.PHONY: all manifest deploy destroy clean
