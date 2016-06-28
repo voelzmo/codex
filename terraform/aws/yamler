@@ -2,8 +2,6 @@
 use strict;
 use warnings;
 
-use YAML qw/Dump/;
-
 sub wrap {
 	my ($v, $k, @k) = @_;
 	return { $k => (@k ? wrap($v, @k) : $v) };
@@ -18,6 +16,18 @@ sub merge {
 		}
 	}
 }
+sub yaml {
+	my ($o, $pre) = @_;
+	for my $k (keys %$o) {
+		print "$pre$k:";
+		if (ref($o->{$k})) {
+			print "\n";
+			yaml($o->{$k}, "$pre  ");
+		} else {
+			print " $o->{$k}\n";
+		}
+	}
+}
 
 my $prefix = join('.', @ARGV);
 $prefix = "meta" unless $prefix;
@@ -28,4 +38,4 @@ while (<STDIN>) {
 	merge($DATA, wrap($value, split(/\./, $key)));
 }
 
-print Dump($DATA);
+yaml($DATA, '');
