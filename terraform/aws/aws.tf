@@ -134,7 +134,7 @@ resource "aws_route_table_association" "dmz" {
 }
 
 ###############################################################
-# INFRANET - Subnet for Infrastructural Services
+# GLOBAL - Global Infrastructure
 #
 # This includes the following:
 #   - proto-BOSH
@@ -143,107 +143,581 @@ resource "aws_route_table_association" "dmz" {
 #   - Concourse (for deployment automation)
 #   - Bolo
 #
-resource "aws_subnet" "infranet" {
-  vpc_id     = "${aws_vpc.default.id}"
-  cidr_block = "${var.network}.1.0/24"
-  tags { Name = "${var.aws_vpc_name}-infranet" }
+resource "aws_subnet" "global-infra-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.1.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-global-infra-1" }
 }
-resource "aws_route_table_association" "infranet" {
-  subnet_id      = "${aws_subnet.infranet.id}"
+resource "aws_route_table_association" "global-infra-1" {
+  subnet_id      = "${aws_subnet.global-infra-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "global-infra-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.2.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-global-infra-2" }
+}
+resource "aws_route_table_association" "global-infra-2" {
+  subnet_id      = "${aws_subnet.global-infra-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "global-infra-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.3.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-global-infra-3" }
+}
+resource "aws_route_table_association" "global-infra-3" {
+  subnet_id      = "${aws_subnet.global-infra-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
 
-resource "aws_subnet" "prod-infra" {
+
+###############################################################
+# DEV-INFRA - Development Site Infrastructure
+#
+#  Primarily used for BOSH directors, deployed by proto-BOSH
+#
+#  Also reserved for situations where you prefer to have
+#  dedicated, per-site infrastructure (SHIELD, Bolo, etc.)
+#
+#  Three zone-isolated networks are provided for HA and
+#  fault-tolerance in deployments that support / require it.
+#
+resource "aws_subnet" "dev-infra-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.16.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-dev-infra" }
+}
+resource "aws_route_table_association" "dev-infra-1" {
+  subnet_id      = "${aws_subnet.dev-infra-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "dev-infra-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.17.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-dev-infra" }
+}
+resource "aws_route_table_association" "dev-infra-2" {
+  subnet_id      = "${aws_subnet.dev-infra-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "dev-infra-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.18.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-dev-infra" }
+}
+resource "aws_route_table_association" "dev-infra-3" {
+  subnet_id      = "${aws_subnet.dev-infra-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# DEV-CF-EDGE - Cloud Foundry Routers
+#
+#  These subnets are separate from the rest of Cloud Foundry
+#  to ensure that we can properly ACL the public-facing HTTP
+#  routers independent of the private core / services.
+#
+resource "aws_subnet" "dev-cf-edge-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.19.0/25"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-edge-1" }
+}
+resource "aws_route_table_association" "dev-cf-edge-1" {
+  subnet_id      = "${aws_subnet.dev-cf-edge-1.id}"
+  route_table_id = "${aws_route_table.external.id}"
+}
+resource "aws_subnet" "dev-cf-edge-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.19.128/25"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-edge-2" }
+}
+resource "aws_route_table_association" "dev-cf-edge-2" {
+  subnet_id      = "${aws_subnet.dev-cf-edge-2.id}"
+  route_table_id = "${aws_route_table.external.id}"
+}
+
+###############################################################
+# DEV-CF-CORE - Cloud Foundry Core
+#
+#  These subnets contain the private core components of Cloud
+#  Foundry.  They are separate for reasons of isolation via
+#  Network ACLs.
+#
+resource "aws_subnet" "dev-cf-core-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.20.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-core-1" }
+}
+resource "aws_route_table_association" "dev-cf-core-1" {
+  subnet_id      = "${aws_subnet.dev-cf-core-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "dev-cf-core-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.21.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-core-2" }
+}
+resource "aws_route_table_association" "dev-cf-core-2" {
+  subnet_id      = "${aws_subnet.dev-cf-core-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "dev-cf-core-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.22.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-core-3" }
+}
+resource "aws_route_table_association" "dev-cf-core-3" {
+  subnet_id      = "${aws_subnet.dev-cf-core-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# DEV-CF-RUNTIME - Cloud Foundry Runtime
+#
+#  These subnets house the Cloud Foundry application runtime
+#  (either DEA-next or Diego).
+#
+resource "aws_subnet" "dev-cf-runtime-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.23.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-runtime-1" }
+}
+resource "aws_route_table_association" "dev-cf-runtime-1" {
+  subnet_id      = "${aws_subnet.dev-cf-runtime-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "dev-cf-runtime-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.24.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-runtime-2" }
+}
+resource "aws_route_table_association" "dev-cf-runtime-2" {
+  subnet_id      = "${aws_subnet.dev-cf-runtime-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "dev-cf-runtime-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.25.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-runtime-3" }
+}
+resource "aws_route_table_association" "dev-cf-runtime-3" {
+  subnet_id      = "${aws_subnet.dev-cf-runtime-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# DEV-CF-SVC - Cloud Foundry Services
+#
+#  These subnets house Service Broker deployments for
+#  Cloud Foundry Marketplace services.
+#
+resource "aws_subnet" "dev-cf-svc-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.26.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-svc-1" }
+}
+resource "aws_route_table_association" "dev-cf-svc-1" {
+  subnet_id      = "${aws_subnet.dev-cf-svc-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "dev-cf-svc-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.27.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-svc-2" }
+}
+resource "aws_route_table_association" "dev-cf-svc-2" {
+  subnet_id      = "${aws_subnet.dev-cf-svc-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "dev-cf-svc-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.28.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-svc-3" }
+}
+resource "aws_route_table_association" "dev-cf-svc-3" {
+  subnet_id      = "${aws_subnet.dev-cf-svc-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# STAGING-INFRA - Staging Site Infrastructure
+#
+#  Primarily used for BOSH directors, deployed by proto-BOSH
+#
+#  Also reserved for situations where you prefer to have
+#  dedicated, per-site infrastructure (SHIELD, Bolo, etc.)
+#
+#  Three zone-isolated networks are provided for HA and
+#  fault-tolerance in deployments that support / require it.
+#
+resource "aws_subnet" "staging-infra-1" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.32.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-prod-infra" }
+  tags { Name = "${var.aws_vpc_name}-staging-infra" }
 }
-resource "aws_route_table_association" "prod-infra" {
-  subnet_id      = "${aws_subnet.prod-infra.id}"
+resource "aws_route_table_association" "staging-infra-1" {
+  subnet_id      = "${aws_subnet.staging-infra-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
-
-resource "aws_subnet" "prod-edge-1" {
+resource "aws_subnet" "staging-infra-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.33.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-staging-infra" }
+}
+resource "aws_route_table_association" "staging-infra-2" {
+  subnet_id      = "${aws_subnet.staging-infra-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "staging-infra-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.34.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-prod-edge-1" }
+  tags { Name = "${var.aws_vpc_name}-staging-infra" }
 }
-resource "aws_route_table_association" "prod-edge-1" {
-  subnet_id      = "${aws_subnet.prod-edge-1.id}"
-  route_table_id = "${aws_route_table.external.id}"
-}
-resource "aws_subnet" "prod-edge-2" {
-  vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.network}.35.0/24"
-  availability_zone = "${var.aws_region}${var.aws_az2}"
-  tags { Name = "${var.aws_vpc_name}-prod-edge-2" }
-}
-resource "aws_route_table_association" "prod-edge-2" {
-  subnet_id      = "${aws_subnet.prod-edge-2.id}"
-  route_table_id = "${aws_route_table.external.id}"
-}
-
-resource "aws_subnet" "prod-cf-1" {
-  vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.network}.36.0/23"
-  availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-prod-cf-1" }
-}
-resource "aws_route_table_association" "prod-cf-1" {
-  subnet_id      = "${aws_subnet.prod-cf-1.id}"
-  route_table_id = "${aws_route_table.internal.id}"
-}
-resource "aws_subnet" "prod-cf-2" {
-  vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.network}.38.0/23"
-  availability_zone = "${var.aws_region}${var.aws_az2}"
-  tags { Name = "${var.aws_vpc_name}-prod-cf-2" }
-}
-resource "aws_route_table_association" "prod-cf-2" {
-  subnet_id      = "${aws_subnet.prod-cf-2.id}"
-  route_table_id = "${aws_route_table.internal.id}"
-}
-resource "aws_subnet" "prod-cf-3" {
-  vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.network}.40.0/23"
-  availability_zone = "${var.aws_region}${var.aws_az3}"
-  tags { Name = "${var.aws_vpc_name}-prod-cf-3" }
-}
-resource "aws_route_table_association" "prod-cf-3" {
-  subnet_id      = "${aws_subnet.prod-cf-3.id}"
+resource "aws_route_table_association" "staging-infra-3" {
+  subnet_id      = "${aws_subnet.staging-infra-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
 
-resource "aws_subnet" "prod-svc-1" {
+###############################################################
+# STAGING-CF-EDGE - Cloud Foundry Routers
+#
+#  These subnets are separate from the rest of Cloud Foundry
+#  to ensure that we can properly ACL the public-facing HTTP
+#  routers independent of the private core / services.
+#
+resource "aws_subnet" "staging-cf-edge-1" {
   vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.network}.42.0/23"
+  cidr_block        = "${var.network}.35.0/25"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-prod-svc-1" }
+  tags { Name = "${var.aws_vpc_name}-staging-cf-edge-1" }
 }
-resource "aws_route_table_association" "prod-svc-1" {
-  subnet_id      = "${aws_subnet.prod-svc-1.id}"
-  route_table_id = "${aws_route_table.internal.id}"
+resource "aws_route_table_association" "staging-cf-edge-1" {
+  subnet_id      = "${aws_subnet.staging-cf-edge-1.id}"
+  route_table_id = "${aws_route_table.external.id}"
 }
-resource "aws_subnet" "prod-svc-2" {
+resource "aws_subnet" "staging-cf-edge-2" {
   vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.network}.44.0/23"
+  cidr_block        = "${var.network}.35.128/25"
   availability_zone = "${var.aws_region}${var.aws_az2}"
-  tags { Name = "${var.aws_vpc_name}-prod-svc-2" }
+  tags { Name = "${var.aws_vpc_name}-staging-cf-edge-2" }
 }
-resource "aws_route_table_association" "prod-svc-2" {
-  subnet_id      = "${aws_subnet.prod-svc-2.id}"
+resource "aws_route_table_association" "staging-cf-edge-2" {
+  subnet_id      = "${aws_subnet.staging-cf-edge-2.id}"
+  route_table_id = "${aws_route_table.external.id}"
+}
+
+###############################################################
+# STAGING-CF-CORE - Cloud Foundry Core
+#
+#  These subnets contain the private core components of Cloud
+#  Foundry.  They are separate for reasons of isolation via
+#  Network ACLs.
+#
+resource "aws_subnet" "staging-cf-core-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.36.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-core-1" }
+}
+resource "aws_route_table_association" "staging-cf-core-1" {
+  subnet_id      = "${aws_subnet.staging-cf-core-1.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
-resource "aws_subnet" "prod-svc-3" {
+resource "aws_subnet" "staging-cf-core-2" {
   vpc_id            = "${aws_vpc.default.id}"
-  cidr_block        = "${var.network}.46.0/23"
-  availability_zone = "${var.aws_region}${var.aws_az3}"
-  tags { Name = "${var.aws_vpc_name}-prod-svc-3" }
+  cidr_block        = "${var.network}.37.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-core-2" }
 }
-resource "aws_route_table_association" "prod-svc-3" {
-  subnet_id      = "${aws_subnet.prod-svc-3.id}"
+resource "aws_route_table_association" "staging-cf-core-2" {
+  subnet_id      = "${aws_subnet.staging-cf-core-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "staging-cf-core-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.38.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-core-3" }
+}
+resource "aws_route_table_association" "staging-cf-core-3" {
+  subnet_id      = "${aws_subnet.staging-cf-core-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# STAGING-CF-RUNTIME - Cloud Foundry Runtime
+#
+#  These subnets house the Cloud Foundry application runtime
+#  (either DEA-next or Diego).
+#
+resource "aws_subnet" "staging-cf-runtime-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.39.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-runtime-1" }
+}
+resource "aws_route_table_association" "staging-cf-runtime-1" {
+  subnet_id      = "${aws_subnet.staging-cf-runtime-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "staging-cf-runtime-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.40.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-runtime-2" }
+}
+resource "aws_route_table_association" "staging-cf-runtime-2" {
+  subnet_id      = "${aws_subnet.staging-cf-runtime-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "staging-cf-runtime-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.41.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-runtime-3" }
+}
+resource "aws_route_table_association" "staging-cf-runtime-3" {
+  subnet_id      = "${aws_subnet.staging-cf-runtime-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# STAGING-CF-SVC - Cloud Foundry Services
+#
+#  These subnets house Service Broker deployments for
+#  Cloud Foundry Marketplace services.
+#
+resource "aws_subnet" "staging-cf-svc-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.42.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-svc-1" }
+}
+resource "aws_route_table_association" "staging-cf-svc-1" {
+  subnet_id      = "${aws_subnet.staging-cf-svc-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "staging-cf-svc-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.43.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-svc-2" }
+}
+resource "aws_route_table_association" "staging-cf-svc-2" {
+  subnet_id      = "${aws_subnet.staging-cf-svc-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "staging-cf-svc-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.44.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-svc-3" }
+}
+resource "aws_route_table_association" "staging-cf-svc-3" {
+  subnet_id      = "${aws_subnet.staging-cf-svc-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# PROD-INFRA - Production Site Infrastructure
+#
+#  Primarily used for BOSH directors, deployed by proto-BOSH
+#
+#  Also reserved for situations where you prefer to have
+#  dedicated, per-site infrastructure (SHIELD, Bolo, etc.)
+#
+#  Three zone-isolated networks are provided for HA and
+#  fault-tolerance in deployments that support / require it.
+#
+resource "aws_subnet" "prod-infra-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.48.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-prod-infra" }
+}
+resource "aws_route_table_association" "prod-infra-1" {
+  subnet_id      = "${aws_subnet.prod-infra-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "prod-infra-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.49.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-prod-infra" }
+}
+resource "aws_route_table_association" "prod-infra-2" {
+  subnet_id      = "${aws_subnet.prod-infra-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "prod-infra-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.50.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-prod-infra" }
+}
+resource "aws_route_table_association" "prod-infra-3" {
+  subnet_id      = "${aws_subnet.prod-infra-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# PROD-CF-EDGE - Cloud Foundry Routers
+#
+#  These subnets are separate from the rest of Cloud Foundry
+#  to ensure that we can properly ACL the public-facing HTTP
+#  routers independent of the private core / services.
+#
+resource "aws_subnet" "prod-cf-edge-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.51.0/25"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-edge-1" }
+}
+resource "aws_route_table_association" "prod-cf-edge-1" {
+  subnet_id      = "${aws_subnet.prod-cf-edge-1.id}"
+  route_table_id = "${aws_route_table.external.id}"
+}
+resource "aws_subnet" "prod-cf-edge-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.51.128/25"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-edge-2" }
+}
+resource "aws_route_table_association" "prod-cf-edge-2" {
+  subnet_id      = "${aws_subnet.prod-cf-edge-2.id}"
+  route_table_id = "${aws_route_table.external.id}"
+}
+
+###############################################################
+# PROD-CF-CORE - Cloud Foundry Core
+#
+#  These subnets contain the private core components of Cloud
+#  Foundry.  They are separate for reasons of isolation via
+#  Network ACLs.
+#
+resource "aws_subnet" "prod-cf-core-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.52.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-core-1" }
+}
+resource "aws_route_table_association" "prod-cf-core-1" {
+  subnet_id      = "${aws_subnet.prod-cf-core-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "prod-cf-core-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.53.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-core-2" }
+}
+resource "aws_route_table_association" "prod-cf-core-2" {
+  subnet_id      = "${aws_subnet.prod-cf-core-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "prod-cf-core-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.54.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-core-3" }
+}
+resource "aws_route_table_association" "prod-cf-core-3" {
+  subnet_id      = "${aws_subnet.prod-cf-core-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# PROD-CF-RUNTIME - Cloud Foundry Runtime
+#
+#  These subnets house the Cloud Foundry application runtime
+#  (either DEA-next or Diego).
+#
+resource "aws_subnet" "prod-cf-runtime-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.55.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-runtime-1" }
+}
+resource "aws_route_table_association" "prod-cf-runtime-1" {
+  subnet_id      = "${aws_subnet.prod-cf-runtime-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "prod-cf-runtime-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.56.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-runtime-2" }
+}
+resource "aws_route_table_association" "prod-cf-runtime-2" {
+  subnet_id      = "${aws_subnet.prod-cf-runtime-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "prod-cf-runtime-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.57.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-runtime-3" }
+}
+resource "aws_route_table_association" "prod-cf-runtime-3" {
+  subnet_id      = "${aws_subnet.prod-cf-runtime-3.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+
+###############################################################
+# PROD-CF-SVC - Cloud Foundry Services
+#
+#  These subnets house Service Broker deployments for
+#  Cloud Foundry Marketplace services.
+#
+resource "aws_subnet" "prod-cf-svc-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.58.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-svc-1" }
+}
+resource "aws_route_table_association" "prod-cf-svc-1" {
+  subnet_id      = "${aws_subnet.prod-cf-svc-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "prod-cf-svc-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.59.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-svc-2" }
+}
+resource "aws_route_table_association" "prod-cf-svc-2" {
+  subnet_id      = "${aws_subnet.prod-cf-svc-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+resource "aws_subnet" "prod-cf-svc-3" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.60.0/24"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-svc-3" }
+}
+resource "aws_route_table_association" "prod-cf-svc-3" {
+  subnet_id      = "${aws_subnet.prod-cf-svc-3.id}"
   route_table_id = "${aws_route_table.internal.id}"
 }
 
@@ -464,6 +938,13 @@ resource "aws_security_group" "dmz" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+  # Allow all traffic through the NAT from inside the VPC
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["${var.network}.0.0/16"]
   }
 
 
