@@ -115,4 +115,4 @@ should be left with a bunch of subnets, configured network ACLs,
 security groups, routing tables, a NAT instance (for public
 internet connectivity) and a Bastion host.
 
-Next up: [Setting up the Bastion Host](bastion.md)
+Next up: [Setting up the Bastion Host](../bastion.md)
