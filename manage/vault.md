@@ -27,14 +27,14 @@ We have a `genesis` template available for Vault.  To use it follow these steps.
 1. For our deployment, generate a site from a template.  This can be a name of your infrastructure provider or datacenter location.
 
     ```
-    $ cd ~/ops/vault-deployments
+    $ cd vault-deployments/
     $ genesis new site --template aws aws
     ```
 
 1. Using our site, create an environment.  For instance, if we're creating the `prod` for Production in the "aws" site, we'd run:
 
     ```
-    $ cd ~/ops/vault-deployments/aws
+    $ cd aws/
     $ genesis new environment aws prod
     ```
 
@@ -50,10 +50,9 @@ deployment manifest then pay attention to the resulting output.
 Once this process is complete running `make manifest` will exit `0` and have generated
 a manifest file that can be used to deploy Vault.
 
-1. Run the `make manifest` command.
+1. Run the `make manifest` command from the `~/ops/vault-deployments/aws/prod` folder.
 
     ```
-    $ cd ~/ops/vault-deployments/aws/prod
     $ make manifest
     ```
 
@@ -154,14 +153,14 @@ a manifest file that can be used to deploy Vault.
       type: manual
 
       subnets:
-      - range:   10.10.2.0/24
-        gateway: 10.10.2.1
-        dns:     [10.10.0.2]
+      - range:   10.4.1.16/28
+        gateway: 10.4.1.16
+        dns:     [10.4.1.2]
 
         reserved:
-        - 10.10.2.2-10.10.2.10
+        - 10.4.1.2-10.4.1.18
         static:
-        - 10.10.2.192
+        - 10.4.1.3
 
         cloud_properties: {subnet: subnet-0ae85b7c}
 
