@@ -16,9 +16,9 @@ that front).
 ## Proto-Vault
 
 BOSH has secrets.  Lots of them.  Components like NATS and the
-database that rely on secure passwords for inter-component
+database rely on secure passwords for inter-component
 interaction.  Ideally, we'd have a spinning Vault for storing our
-credentials in, so that we don't have them on-disk or in a git
+credentials, so that we don't have them on-disk or in a git
 repository somewhere.
 
 However, we are starting from almost nothing, so we don't have the
