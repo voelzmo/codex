@@ -4,8 +4,8 @@ Open Issues
 (This is a place to put any issues with deployments, problems
  encountered while running scripts, missing tooling, bugs, etc.)
 
-1. Need the `certstrap` utility on the Jumpbox BOSH release to
-   make the cf-deployments go easier.  [GH jumpbox-boshrelease#6][1]
+1. ~~Need the `certstrap` utility on the Jumpbox BOSH release to
+   make the cf-deployments go easier.~~  [GH jumpbox-boshrelease#6][1]
 2. The `cf-deployment` template needs a [README that explains][2] what
    all of the `(( param ... ))` calls are for, and what they should
    be set to.
