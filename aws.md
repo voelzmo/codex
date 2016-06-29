@@ -1235,9 +1235,66 @@ etc.
 
 ## Deploying Concourse
 
-etc.
+If we're not already targeting the ops vault, do so now to save frustration later.
+
+```
+$ safe target "http://10.4.1.16:8200" ops
+Now targeting ops at http://10.4.1.16:8200
+```
+
+From the `~/ops` folder let's generate a new `concourse` deployment, using the `--template` flag.
+
+```
+$ genesis new deployment --template concourse
+$ cd concourse-deployments/
+```
+
+Inside the `global` deployment level goes the site level definition.  For this concourse setup we'll use an `aws` template for an `aws` site.
+
+```
+$ genesis new site --template aws aws
+Created site aws (from template aws):
+/home/tbird/ops/concourse-deployments/aws
+├── README
+└── site
+    ├── disk-pools.yml
+    ├── jobs.yml
+    ├── networks.yml
+    ├── properties.yml
+    ├── releases
+    ├── resource-pools.yml
+    ├── stemcell
+    │   ├── name
+    │   └── version
+    └── update.yml
+
+2 directories, 10 files
+```
+
+Finally now, because our vault is setup and targeted correctly we can generate our `environment` level configurations.  And begin the process of setting up the specific parameters for our environment.
+
+```
+$ genesis new environment aws ops
+$ cd aws/ops
+$ make manifest
+11 error(s) detected:
+ - $.compilation.cloud_properties.availability_zone: What availability zone should your concourse VMs be in?
+ - $.jobs.haproxy.templates.haproxy.properties.ha_proxy.ssl_pem: Want ssl? define a pem
+ - $.jobs.web.templates.atc.properties.external_url: What is the external URL for this concourse?
+ - $.meta.availability_zone: What availability zone should your concourse VMs be in?
+ - $.meta.external_url: What is the external URL for this concourse?
+ - $.meta.ssl_pem: Want ssl? define a pem
+ - $.networks.concourse.subnets: Specify your concourse subnet
+ - $.resource_pools.db.cloud_properties.availability_zone: What availability zone should your concourse VMs be in?
+ - $.resource_pools.haproxy.cloud_properties.availability_zone: What availability zone should your concourse VMs be in?
+ - $.resource_pools.web.cloud_properties.availability_zone: What availability zone should your concourse VMs be in?
+ - $.resource_pools.workers.cloud_properties.availability_zone: What availability zone should your concourse VMs be in?
 
 
+Failed to merge templates; bailing...
+Makefile:22: recipe for target 'manifest' failed
+make: *** [manifest] Error 5
+```
 
 
 
