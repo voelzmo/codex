@@ -169,6 +169,7 @@ Finally, let's create our new environment, and name it `proto`
 
 ```
 $ cd aws
+$ genesis new environment --type bosh-init aws proto
 Running env setup hook: ~/ops/bosh-deployments/.env_hooks/setup
 
  proto  http://127.0.0.1:8200
