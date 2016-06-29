@@ -355,7 +355,7 @@ Once more, with feeling:
 $ make manifest
 2 error(s) detected:
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
- - $.properties.shield.agent.authorized_keys: Specify the SSH public key from this environment's SHIELD daemon
+ - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
 
 
 Failed to merge templates; bailing...
@@ -406,7 +406,7 @@ $ cat credentials.yml
 properties:
   shield:
     agent:
-      authorized_keys:
+      daemon_public_key:
         - (( vault "secret/aws/proto/shield/keys/core:public" ))
 ```
 
