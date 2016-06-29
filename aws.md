@@ -362,7 +362,7 @@ Finally, let's create our new environment, and name it `proto`
 (that's `aws/proto`, formally speaking).
 
 ```
-$ cd aws
+$ genesis new environment --type bosh-init aws proto
 Running env setup hook: ~/ops/bosh-deployments/.env_hooks/setup
 
  proto  http://127.0.0.1:8200
@@ -429,7 +429,7 @@ $ make manifest
  - $.properties.aws.default_security_groups: What Security Groups?
  - $.properties.aws.region: What AWS region are you going to use?
  - $.properties.aws.secret_access_key: Please supply an AWS Secret Key
- - $.properties.shield.agent.authorized_keys: Specify the SSH public key from this environment's SHIELD daemon
+ - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
  - $.resource_pools.bosh.cloud_properties.availability_zone: What
 Availability Zone will BOSH be in?
 
@@ -503,7 +503,7 @@ $ make manifest`
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
  - $.properties.aws.default_key_name: What is your full key name?
  - $.properties.aws.default_security_groups: What Security Groups?
- - $.properties.shield.agent.authorized_keys: Specify the SSH public key from this environment's SHIELD daemon
+ - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
 
 
 Failed to merge templates; bailing...
@@ -548,7 +548,7 @@ Once more, with feeling:
 $ make manifest
 2 error(s) detected:
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
- - $.properties.shield.agent.authorized_keys: Specify the SSH public key from this environment's SHIELD daemon
+ - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
 
 
 Failed to merge templates; bailing...
@@ -599,8 +599,7 @@ $ cat credentials.yml
 properties:
   shield:
     agent:
-      authorized_keys:
-        - (( vault "secret/aws/proto/shield/keys/core:public" ))
+      daemon_public_key: (( vault "secret/aws/proto/shield/keys/core:public" ))
 ```
 
 You may want to take this opportunity to migrate
