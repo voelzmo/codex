@@ -26,6 +26,8 @@ variable "aws_az3"        { default = "c" }
 #
 #    amzn-ami-vpc-nat-hvm-2014.03.2.x86_64-gp2
 #
+# The username to log into the nat box is `ec2-user'
+#
 variable "aws_nat_ami" {
   default = {
     us-east-1      = "ami-4c9e4b24"
@@ -49,6 +51,8 @@ variable "aws_nat_ami" {
 #    ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-20160610
 #
 # (Note: this AMI is missing from the Seoul [ap-northeast-2] region)
+#
+# The username to log into the bastion is `ubuntu'
 #
 variable "aws_ubuntu_ami" {
   default = {

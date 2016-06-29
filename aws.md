@@ -146,10 +146,11 @@ IaaS provider to figure out what IP address the bastion host can
 be accessed at.  For example, on AWS, find the `bastion` EC2
 instance and note its Elastic IP address.
 
-You're going to need to SSH into the bastion host, and
-unfortunately, that is also provider-specific.  In AWS, you'll
-just SSH to the Elastic IP, using the private half of the EC2
-keypair you generated.  Other IaaS's may have other requirements.
+You're going to need to SSH into the bastion host (as the `ubuntu`
+user), and unfortunately, that is also provider-specific.  In AWS,
+you'll just SSH to the Elastic IP, using the private half of the
+EC2 keypair you generated.  Other IaaS's may have other
+requirements.
 
 Once on the bastion host, you'll want to use the `jumpbox` script,
 which you can get off of Github, like so:
