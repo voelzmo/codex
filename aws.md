@@ -70,7 +70,7 @@ Otherwise, it just plain won't work.
 Now we can put it all together and build out your shiny new VPC in
 Amazon.  For this step, you're going to want to be in the
 `terraform/aws` sub-directory of this repository.  This Terraform
-configuration directly matches the [Network Plan](../network/plan.md)
+configuration directly matches the [Network Plan][netplan]
 for the demo environment.  For deploying in production, you may
 need to tweak or rewrite.
 
@@ -622,7 +622,7 @@ make: *** [manifest] Error 5
 
 So it's down to networking.
 
-Refer back to your [Network Plan](network/plan.md), and find the
+Refer back to your [Network Plan][netplan], and find the
 subnet for the proto-BOSH.  If you're using the plan in this
 repository, that would be `10.4.1.0/24`, and we're allocating
 `10.4.1.0/28` to our BOSH director.  Our `networking.yml` file,
@@ -804,7 +804,7 @@ Vault is pretty self-contained, and doesn't have any secrets of
 its own.  All you have to supply is your network configuration,
 and any IaaS settings.
 
-Referring back to our [Network Plan][network/plan.md] again, we
+Referring back to our [Network Plan][netplan] again, we
 find that Vault should be striped across three zone-isolated
 networks:
 
@@ -979,5 +979,7 @@ etc.
 [spruce-129]:  https://github.com/geofffranks/spruce/issues/129
 [aws-subnets]: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html
 [slither]:     http://slither.io
+
+[netplan]:     network.md
 
 [1]: https://github.com/jhunt/jumpbox
