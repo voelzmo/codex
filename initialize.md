@@ -7,6 +7,7 @@ How to setup the proto-BOSH with bosh-init.
 1. Log into your bastion host
 2. Create a directory for your deployments
 3. Create your BOSH deployments repo: `genesis new deployment --template bosh`
+  * Make sure you have [Genesis][1], [Safe][2], and [Spruce][3] installed on the bastion host. These are all in `Homebrew`.
 4. Go inside your new repo (`bosh-deployments`), and create a new site based on your infrastructure: `genesis new site --template <aws|vsphere|openstack> <site_name>` 
 5. Create your proto-bosh environment: `genesis new environment --type bosh-init <site_name> proto`
 6. Go inside `<site_name>/proto`, and run `make manifest`
@@ -28,3 +29,7 @@ TODO: ensure that we have `jumpbox` full instructions.
 ### Setup Management Environment
 
 Now it's time to setup the [management environment](manage.md) that will enable each release environment to be more resilient and flexible.
+
+[1]: https://github.com/starkandwayne/genesis
+[2]: https://github.com/jhunt/safe
+[3]: https://github.com/geofffranks/spruce
