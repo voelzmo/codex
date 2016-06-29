@@ -420,6 +420,10 @@ Created environment aws/proto:
 0 directories, 10 files
 ```
 
+(Note: don't forget that `--type bosh-init` flag, it's very
+important. otherwise, you'll run into problems with your
+deployment)
+
 The template helpfully generated all new credentials for us and
 stored them in our proto-Vault, under the `secret/aws/proto/bosh`
 subtree.  Later, we'll migrate this subtree over to our real
