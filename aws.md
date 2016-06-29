@@ -485,17 +485,17 @@ meta:
   aws:
     region: us-west-2
     azs:
-      z1: (( concat meta.aws.region "b" ))
-    access_key: (( vault "secret/proto/aws:access_key" ))
-    secret_key: (( vault "secret/proto/aws:secret_key" ))
+      z1: (( concat meta.aws.region "a" ))
+    access_key: (( vault "secret/aws:access_key" ))
+    secret_key: (( vault "secret/aws:secret_key" ))
 ```
 
 I use the `(( concat ... ))` operator to [DRY][DRY] up the
 configuration.  This way, if we need to move the BOSH director to
 a different region (for whatever reason) we just change
-`meta.aws.region` and the availability zone just tacks on "b".
+`meta.aws.region` and the availability zone just tacks on "a".
 
-(We use the "b" availability zone because that's where our subnet
+(We use the "a" availability zone because that's where our subnet
 is located.)
 
 I also configured the AWS access and secret keys by pointing
@@ -549,8 +549,8 @@ meta:
     region: us-west-2
     azs:
       z1: (( concat meta.aws.region "a" ))
-    access_key: (( vault "secret/proto/aws:access_key" ))
-    secret_key: (( vault "secret/proto/aws:secret_key" ))
+    access_key: (( vault "secret/aws:access_key" ))
+    secret_key: (( vault "secret/aws:secret_key" ))
 
 cloud_provider:
   ssh_tunnel:
