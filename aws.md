@@ -662,8 +662,8 @@ networks:
         gateway:  10.4.1.1
         dns:     [10.4.1.2]
         cloud_properties:
-          subnet: subnet-xxxxxxxx
-          security_groups: [bosh]
+          subnet: subnet-xxxxxxxx # <-- your AWS Subnet ID
+          security_groups: [wide-open]
         reserved:
           - 10.4.1.2 - 10.4.1.3    # Amazon reserves these
             # proto-BOSH is in 10.4.1.0/28
@@ -865,8 +865,8 @@ networks:
         gateway:  10.4.1.1
         dns:     [10.4.1.2]
         cloud_properties:
-          subnet: subnet-xxxxxxxx
-          security_groups: [bosh]
+          subnet: subnet-xxxxxxxx  # <--- your AWS Subnet ID
+          security_groups: [wide-open]
         reserved:
           - 10.4.1.2 - 10.4.1.3    # Amazon reserves these
           - 10.4.1.4 - 10.4.1.15   # Allocated to other deployments
@@ -881,8 +881,8 @@ networks:
         gateway:  10.4.2.1
         dns:     [10.4.2.2]
         cloud_properties:
-          subnet: subnet-yyyyyyyy
-          security_groups: [bosh]
+          subnet: subnet-yyyyyyyy  # <--- your AWS Subnet ID
+          security_groups: [wide-open]
         reserved:
           - 10.4.2.2 - 10.4.2.3    # Amazon reserves these
           - 10.4.2.4 - 10.4.2.15   # Allocated to other deployments
@@ -897,8 +897,8 @@ networks:
         gateway:  10.4.3.1
         dns:     [10.4.3.2]
         cloud_properties:
-          subnet: subnet-zzzzzzzz
-          security_groups: [bosh]
+          subnet: subnet-zzzzzzzz  # <--- your AWS Subnet ID
+          security_groups: [wide-open]
         reserved:
           - 10.4.3.2 - 10.4.3.3    # Amazon reserves these
           - 10.4.3.4 - 10.4.3.15   # Allocated to other deployments
