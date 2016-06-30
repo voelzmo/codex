@@ -277,7 +277,42 @@ Unseal Progress: 0
 High-Availability Enabled: true
     Mode: standby
     Leader: http://10.30.1.16:8200
+
+
+$ safe target proto
+Now targeting proto at http://127.0.0.1:8200
+$ safe export secret >proto.sercrests
 $ safe target proda
 Now targeting proda at http://10.30.1.16:8200
-$
+$ safe import <proto.secrests
+wrote secret/aws/proto/bosh/blobstore/director
+wrote secret/aws/proto/bosh/nats
+wrote secret/aws/proto/bosh/users/admin
+wrote secret/handshake
+wrote secret/aws/proto/bosh/blobstore/agent
+wrote secret/aws/proto/bosh/db
+wrote secret/aws/proto/bosh/users/hm
+wrote secret/aws/proto/bosh/vcap
+wrote secret/aws/proto/shield/keys/core
+$ safe tree
+.
+└── secret
+    ├── aws/
+    │   └── proto/
+    │       ├── bosh/
+    │       │   ├── blobstore/
+    │       │   │   ├── agent
+    │       │   │   └── director
+    │       │   ├── db
+    │       │   ├── nats
+    │       │   ├── users/
+    │       │   │   ├── admin
+    │       │   │   └── hm
+    │       │   └── vcap
+    │       └── shield/
+    │           └── keys/
+    │               └── core
+    └── handshake
 ```
+
+
