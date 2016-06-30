@@ -1296,7 +1296,119 @@ Makefile:22: recipe for target 'manifest' failed
 make: *** [manifest] Error 5
 ```
 
+## Deploying Cloud Foundry
 
+Before you begin, please ensure that the jumpbox user has been installed and `certstrap` has been installed.
+
+TODO: @norm is working on a PR for this in the `jumpbox` repo.
+
+Let's generate the Cloud Foundry deployment with a `genesis` template.
+
+```
+$ cd ~/ops
+$ genesis new deployment --template cf-deployment
+```
+
+Now we need to create our AWS site inside our Cloud Foundry deployment.
+
+```
+$ cd cf-deployment/
+$ genesis new site --template aws aws
+```
+
+From the site level now we can create each of the staging and production environments we want (or more based on requirements) for a client.
+
+From `~/ops/cf-deployment/` we can run this because we're specifying the site as part of the parameters.
+
+```
+$ genesis new environment aws staging
+$ genesis new environment aws prod
+```
+
+All the templates are generated now.  It's time to go into one of the environments and begin the process of providing the environment speicifc parameters that apply to the site/environment we're deploying to.
+
+Let's begin with staging.
+
+```
+$ cd aws/staging
+$ make manifest
+TODO output goes here...
+```
+
+If we look at:
+
+```
+$.meta.cf.base_domain: Enter the Cloud Foundry base domain
+```
+
+You can edit the env `properties.yml` file, inheriting object “path” based on the output. Given this at the left, you might do…
+
+```
+---
+meta:
+  cf:
+    base_domain: cf-aws-prod
+```
+
+If unsure what base_domain should be, refer to `name.yml` in the specific ENV in question.
+
+Using the configuration information from AWS subnets  we got the subnets gateway and dns information.   The subnet ids are also available.   The gateway is subnet.1 and the gateway VPC.1
+
+We are removing the cf2 networking configuration in a later step to save time.
+
+```
+---
+networks:
+- name: cf1
+  subnets:
+    - range: 10.10.3.0/24
+      reserved:
+        - 10.10.3.2 - 10.10.3.9
+      static:
+        - 10.10.3.10 - 10.10.3.128
+      gateway: 10.10.3.1
+      dns:
+        - 10.10.0.2
+      cloud_properties:
+        security_groups:
+          - cf
+        subnet: subnet-7d0ec70b
+- name: cf2
+  subnets:
+    - range: 10.10.9.0/24
+      reserved:
+        - 10.10.9.2 - 10.10.9.9
+      static:
+        - 10.10.9.10 - 10.10.9.128
+      gateway: 10.10.9.1
+      dns:
+        - 10.10.0.2
+      cloud_properties:
+        security_groups:
+          - cf
+        subnet: subnet-d89902bc
+```
+
+Added S3 blobstore to the vault and then referenced vault spruce command to pull in the credentials.   This command will prompt you for the access keys.
+
+```
+$ safe write secret/aws/s3/blobstore aws_access_key_id
+$ safe write secret/aws/s3/blobstore aws_secret_access_key
+```
+
+Added the following lines to the aws/prod/credentials.yml file.
+
+```
+meta:
+  cf:
+    blobstore_config:
+      fog_connection:
+        aws_access_key_id: (( vault secret/aws/s3/blobstore:aws_access_key_id ))
+        aws_secret_access_key: (( vault secret/aws/s3/blobstore:aws_secret_access_key ))
+        region: us-west-2
+```
+
+The cf3 network is required for the consul to have cluster quorum.   Need to three because consul attempts to avoid a split brain scenario.
 
 [aws-subnets]: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html
 [bolo]:        https://github.com/cloudfoundry-community/bolo-boshrelease
