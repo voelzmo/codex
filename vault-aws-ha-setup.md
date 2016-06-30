@@ -5,7 +5,7 @@ storage across the nodes. Vault recommends using Consul to provide its HA capabi
 The passive nodes will forward all requests to the active node. This means vault ports (default 82000) need to be open across availability zones.
 
 All Vaults nodes need to be running the same version since we do not if there
-are storage structure changes.  The upgrade path could be tricky since Vault does not support zero downtime deployments. 
+are storage structure changes.  The upgrade path could be tricky since Vault does not support zero downtime deployments.
 
 Vault documentation is actually written quite well.  Instead of regurgitating
 it all, I will quote their docs and point you to their page where I found information..
@@ -31,8 +31,8 @@ HA Storage Backends | Supported BY
 ------------ | -------------
 consul | Hashicorp
 etcd |  Community
-zookeeper | Community 
-dynamodb | Community 
+zookeeper | Community
+dynamodb | Community
 
 No HA support for the following storage backends:
 
@@ -315,4 +315,54 @@ $ safe tree
     └── handshake
 ```
 
+## Vault Best Practices
 
+Our best practice is to have a single vault/safe for all deployment environments.
+This may not be possible because of security requirement preconditions or network topology.
+In these cases place the additional vault deployments as high as possible in the
+platform/global/site/environment structure.
+
+Do not take shortcuts on the vault paths.   Use the fullest path necessary to define your secret.
+The path should correespond as if you only had one vault for your secrets.
+It will make things easier if the vault data needs to be combined or split out into different vaults over time.
+
+TBD Do we want a best practice on path ordering?
+* deployment/platform/global/site/environment/manifest:key
+* platform/global/site/environment/deployment/manifest:key
+* many other choices
+
+Consider using a key name that matches to the manifest key name.  Make it easy for the next person to recognize the usage just by looking at its path and keyname.  The manifest level could be made part of the path or incorporated into the key name.
+
+Stay consistent with the path and keyname style already used in the a deployment manifest.   The inconsistency drives us ADD types crazy and it looks unprofessional.
+
+Avoid placing multiple secrets under the same path and key.  Secret rotation is easier if there is
+only one secret to worry about.
+
+Do your best to have single definition for your secret.   This will simplify the process when
+secrets needs to be rotated.  When this is not possible because we are using multiple vaults,
+, create some documentation right away about secret dependency.  Failures will occur quickly if the duplicated
+secret values get out of synced.
+
+Consider placing related secret data such as username and host address in the vault under the same path as the secret.   It should avoid manually updating all the various deployments if that data is duplicated in the manifest files.
+
+## Setup Cloud Foundry
+
+Cloud Foundry uses Consul by Hashicorp for various purposes, but its
+distributed datacenter high availability that needs some extra explanation.
+Many high availability software packages allows you to run with a single
+node cluster for its degraded mode. Consul does not. Consul defines an available cluster by having a quorum of nodes defined by the following formula (nodes/2) + 1 >= 2
+If you do not have at least two nodes in your cluster, your cluster does
+not have a quorum and your cluster is marked unavailable.
+
+Even in a two node configuration, you do not have high availability
+since one node going down means you do not have a quorum and thus no cluster.
+So you need at least three nodes to have high availability. Consul's degraded mode is a two node cluster.
+
+What does mean for running cloud foundry on Amazon Web Services?
+You will want to have three availability zones.
+An availability zone is an independent datacenter (power, machines, networking, etc) but also has low latency network to its sister availability zones.
+An availability zone corresponds to the Consul cluster node.
+
+If you define the three cloud foundry instances in only two
+availability zones, you have some minimal level of high availability
+It is not the strongest strongest high availability since losing an availability zone that has the two cloud foundry instances would make Consul lose its quorum.
