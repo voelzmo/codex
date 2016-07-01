@@ -188,6 +188,9 @@ You should run `jumpbox user` now, as juser:
 $ sudo -iu juser
 $ jumpbox user
 <snip>
+$ mkdir ~/.ssh
+$ vim ~/.ssh/authorized_keys
+$ chmod 600 ~/.ssh/authorized_keys
 $ logout
 ```
 
@@ -434,7 +437,7 @@ can create a manifest, or (a more likely case) we still have to
 provide some critical information:
 
 ```
-$ cd proto
+$ cd aws/proto
 $ make manifest
 19 error(s) detected:
  - $.cloud_provider.properties.aws.access_key_id: Please supply an AWS Access Key
