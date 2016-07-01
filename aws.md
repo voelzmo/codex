@@ -157,6 +157,7 @@ You can check your SSH keypair by comparing the Amazon fingerprints.
 On the Web UI, you can check the uploaded key on the [key page][amazon-keys].
 
 If you prefer the Amazon CLI, you can run (replacing bosh with your key name):
+
 ```
 $ aws ec2 describe-key-pairs --region us-east-1 --key-name bosh|JSON.sh -b| grep 'KeyFingerprint'|awk '{ print $2 }' -
 "05:ad:67:04:2a:62:e3:fb:e6:0a:61:fb:13:c7:6e:1b"
@@ -164,11 +165,13 @@ $
 ```
 
 You check your private key you are using with:
+
 ```
 $ openssl pkey -in ~/.ssh/bosh.pem -pubout -outform DER | openssl md5 -c
 (stdin)= 05:ad:67:04:2a:62:e3:fb:e6:0a:61:fb:13:c7:6e:1b
 $
-````
+```
+
 (on OS X you need to `brew install openssl` to get OpenSSL 1.0.x and use that version)
 
 Once on the bastion host, you'll want to use the `jumpbox` script,
@@ -724,13 +727,19 @@ total 8
 -rw-r--r-- 1 jhunt staff 4572 Jun 28 14:24 manifest.yml
 ```
 
-All that's left is to try to deploy it:
-
 > TODO: I had to `echo bosh-init > .type` to engage the bosh-init
 > style of deployment.  How do we want to handle that?  Does
 > Genesis need an update for a `--type` flag to `new env`?
 
 > TODO: i also had to copy the aws key up to the bastion host.
+
+Before we can deploy we need to upload the stemcell:
+
+```
+$ bosh upload stemcell https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3232.8
+```
+
+With the `stemcell` in place, let's give the deploy a whirl:
 
 ```
 $ make deploy
