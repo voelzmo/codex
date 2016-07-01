@@ -421,12 +421,26 @@ a manifest file that can be used to deploy Vault.
 
     ```
     $ make manifest
+    10 error(s) detected:
+     - $.compilation.cloud_properties.availability_zone: Define the z1 AWS availability zone
+     - $.meta.aws.azs.z1: Define the z1 AWS availability zone
+     - $.meta.aws.azs.z2: Define the z2 AWS availability zone
+     - $.meta.aws.azs.z3: Define the z3 AWS availability zone
+     - $.networks.vault_z1.subnets: Specify the z1 network for vault
+     - $.networks.vault_z2.subnets: Specify the z2 network for vault
+     - $.networks.vault_z3.subnets: Specify the z3 network for vault
+     - $.resource_pools.small_z1.cloud_properties.availability_zone: Define the z1 AWS availability zone
+     - $.resource_pools.small_z2.cloud_properties.availability_zone: Define the z2 AWS availability zone
+     - $.resource_pools.small_z3.cloud_properties.availability_zone: Define the z3 AWS availability zone
+
+
+    Failed to merge templates; bailing...
+    Makefile:22: recipe for target 'manifest' failed
+    make: *** [manifest] Error 5
     ```
 
     This will either build a manifest file for you or it will tell you what you
     need to fix before it can build a working manifest.
-
-    ![make_manifest_example](/images/make_manifest_example.png)
 
 1. Read and understand the errors.
 
