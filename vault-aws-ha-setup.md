@@ -1,8 +1,8 @@
 # Vault
 
-Vault provides an active/passive high availability(HA) service using shared
-storage across the nodes. Vault recommends using Consul to provide its HA capability.
-The passive nodes will forward all requests to the active node. This means vault ports (default 82000) need to be open across availability zones.
+Vault provides an active/passive high availability(HA) service using shared storage across the nodes. Vault recommends using Consul to provide its HA capability.
+
+The passive nodes will forward all requests to the active node. This means Vault ports (default 8200) need to be open across availability zones.  The default Vault port is 8200.
 
 All Vaults nodes need to be running the same version since we do not if there
 are storage structure changes.  The upgrade path could be tricky since Vault does not support zero downtime deployments.
@@ -92,13 +92,13 @@ $ vi vault-prod-info
 $ vault --help unseal
 Usage: vault unseal [options] [key]
 
-  Unseal the vault by entering a portion of the master key. Once all
+  Unseal the Vault by entering a portion of the master key. Once all
   portions are entered, the Vault will be unsealed.
 
   Every Vault server initially starts as sealed. It cannot perform any
   operation except unsealing until it is sealed. Secrets cannot be accessed
-  in any way until the vault is unsealed. This command allows you to enter
-  a portion of the master key to unseal the vault.
+  in any way until the Vault is unsealed. This command allows you to enter
+  a portion of the master key to unseal the Vault.
 
   The unseal key can be specified via the command line, but this is
   not recommended. The key may then live in your terminal history. This
@@ -317,14 +317,14 @@ $ safe tree
 
 ## Vault Best Practices
 
-Our best practice is to have a single vault/safe for all deployment environments.
+Our best practice is to have a single Vault/safe for all deployment environments.
 This may not be possible because of security requirement preconditions or network topology.
-In these cases place the additional vault deployments as high as possible in the
+In these cases place the additional Vault deployments as high as possible in the
 platform/global/site/environment structure.
 
-Do not take shortcuts on the vault paths.   Use the fullest path necessary to define your secret.
-The path should correespond as if you only had one vault for your secrets.
-It will make things easier if the vault data needs to be combined or split out into different vaults over time.
+Do not take shortcuts on the Vault paths.   Use the fullest path necessary to define your secret.
+The path should correespond as if you only had one Vault for your secrets.
+It will make things easier if the Vault data needs to be combined or split out into different vaults over time.
 
 TBD Do we want a best practice on path ordering?
 * deployment/platform/global/site/environment/manifest:key
@@ -343,7 +343,7 @@ secrets needs to be rotated.  When this is not possible because we are using mul
 , create some documentation right away about secret dependency.  Failures will occur quickly if the duplicated
 secret values get out of synced.
 
-Consider placing related secret data such as username and host address in the vault under the same path as the secret.   It should avoid manually updating all the various deployments if that data is duplicated in the manifest files.
+Consider placing related secret data such as username and host address in the Vault under the same path as the secret.   It should avoid manually updating all the various deployments if that data is duplicated in the manifest files.
 
 ## Setup Cloud Foundry
 
@@ -361,15 +361,12 @@ So you need at least three nodes to have high availability. Consul's degraded mo
 What does mean for running cloud foundry on Amazon Web Services?
 You will want to have three availability zones.
 An availability zone is an independent datacenter (power, machines, networking, etc) but also has low latency network to its sister availability zones.
+
 An availability zone corresponds to the Consul cluster node.
 
-If you define the three cloud foundry instances in only two
-availability zones, you have some minimal level of high availability
-It is not the strongest strongest high availability since losing an availability zone that has the two cloud foundry instances would make Consul lose its quorum.
+If you define the three cloud foundry instances in only two availability zones, you have some minimal level of high availability.  It is not the strongest strongest high availability since losing an availability zone that has the two cloud foundry instances would make Consul lose its quorum.
 
 ## Setup Vault
-
-The process to setup Vault is as such:
 
 1. [Generate a Vault deployment manifest.](#toc1)
 1. [Merge template files together.](#toc2)
@@ -594,7 +591,7 @@ next step.
 
 1. To begin the process of deploying we'll run `make deploy` and we'll get back any errors of what's missing.
 
-    Here's what's required to do a vault release:
+    Here's what's required to do a Vault release:
 
     ```
     $ bosh upload release https://bosh.io/d/github.com/cloudfoundry-community/consul-boshrelease?v=20
@@ -606,14 +603,14 @@ next step.
 
 ### <a name="toc4"></a> Initialize Vault
 
-1. Target the vault server with `safe`.
+1. Target the Vault server with `safe`.
 
 
     ```
     $ safe target "http://10.10.2.192:8200" prod
     ```
 
-1. We're going to run the `init` command which will output the keys we need to unseal the vault.
+1. We're going to run the `init` command which will output the keys we need to unseal the Vault.
 
     ```
     $ safe vault init
@@ -621,9 +618,9 @@ next step.
 
     Take note of the output the five keys and `Initial Root Token`.  They will be required as input next.
 
-1. Unseal the vault, you'll need to use at least three of the five unique keys.
+1. Unseal the Vault, you'll need to use at least three of the five unique keys.
 
-   Vault uses [Shamir's Secret Sharing](https://www.vaultproject.io/docs/concepts/seal.html) algorithm to split and recreate a master key.  Once enough shards of the key are given, the master key will unseal the vault.
+   Vault uses [Shamir's Secret Sharing](https://www.vaultproject.io/docs/concepts/seal.html) algorithm to split and recreate a master key.  Once enough shards of the key are given, the master key will unseal the Vault.
 
     ```
     $ safe vault unseal
@@ -631,7 +628,7 @@ next step.
     $ safe vault unseal
     ```
 
-1. Now we're ready to use the `Initial Root Token` to authenticate to vault.
+1. Now we're ready to use the `Initial Root Token` to authenticate to Vault.
 
     ```
     $ safe auth
