@@ -519,9 +519,16 @@ a manifest file that can be used to deploy Vault.
     ```
     $ cd ~/ops/vault-deployments/aws/prod
     $ make manifest
-    ```
+    3 error(s) detected:
+     - $.networks.vault_z1.subnets: Specify the z1 network for vault
+     - $.networks.vault_z2.subnets: Specify the z2 network for vault
+     - $.networks.vault_z3.subnets: Specify the z3 network for vault
 
-    ![specify_network](/images/specify_network.png)
+
+    Failed to merge templates; bailing...
+    Makefile:22: recipe for target 'manifest' failed
+    make: *** [manifest] Error 5
+    ```
 
     Less errors!
 
