@@ -459,9 +459,10 @@ a manifest file that can be used to deploy Vault.
     ```
     $ cd ~/ops/vault-deployments
     $ grep -e 'Define the z1 AWS availability zone' -ir
+    .templates/aws/resource-pools.yml:      z1: (( param "Define the z1 AWS availability zone" ))
+    aws/site/resource-pools.yml:      z1: (( param "Define the z1 AWS availability zone" ))
+    aws/proto/.site/resource-pools.yml:      z1: (( param "Define the z1 AWS availability zone" ))
     ```
-
-    ![search_example](/images/search_example.png)
 
     You will see dot directory names like .global, .site and .templates in your deployment directory.
     These directories are used by the tools for additional data input  or for the generated output.
