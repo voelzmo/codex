@@ -1327,6 +1327,22 @@ Makefile:22: recipe for target 'manifest' failed
 make: *** [manifest] Error 5
 ```
 
+## Consul and Cloud Foundry
+
+[Cloud Foundry uses Consul][cfconsul] by HashiCorp help make DNS resolution smooth and keeping track of what's going on with the components running in the Cloud Foundry system.
+
+While many High Availability software packages allows you to run with a single node cluster as a degraded mode, Consul does not.  Consul defines an available cluster by having a quorum of nodes defined by the following formula:
+
+```
+(nodes/2) + 1 >= 2
+```
+
+Instead, Consul's degraded mode is a two node cluster, when a cluster does not have a quorum the cluster is marked unavailable.  This means you'd need to have at least three nodes to have High Availability.
+
+Even in a two node configuration, you do not have High Availability since one node going down means you do not have a quorum and thus no cluster.
+
+What does mean for running Cloud Foundry on Amazon Web Services?  **Three availability zones is recommended.**
+
 ## Deploying Cloud Foundry
 
 Before you begin, please ensure that the jumpbox user has been installed and `certstrap` has been installed.
@@ -1443,6 +1459,7 @@ The cf3 network is required for the consul to have cluster quorum.   Need to thr
 
 [aws-subnets]: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html
 [bolo]:        https://github.com/cloudfoundry-community/bolo-boshrelease
+[cfconsul]:    https://docs.cloudfoundry.org/concepts/architecture/#bbs-consul
 [DRY]:         https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 [jumpbox]:     https://github.com/jhunt/jumpbox
 [netplan]:     network.md

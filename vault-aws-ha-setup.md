@@ -4,24 +4,22 @@ Vault provides an active/passive high availability(HA) service using shared stor
 
 The passive nodes will forward all requests to the active node. This means Vault ports (default 8200) need to be open across availability zones.  The default Vault port is 8200.
 
-All Vaults nodes need to be running the same version since we do not if there
-are storage structure changes.  The upgrade path could be tricky since Vault does not support zero downtime deployments.
+All Vaults nodes need to be running the same version since we do not if there are storage structure changes.  The upgrade path could be tricky since Vault does not support zero downtime deployments.
 
-Vault documentation is actually written quite well.  Instead of regurgitating
-it all, I will quote their docs and point you to their page where I found information..
+Vault documentation is actually written quite well.  Instead of regurgitating it all, I will quote their docs and point you to their page where I found information.
 
 https://www.vaultproject.io/docs/internals/high-availability.html
 > Certain storage backends, such as Consul, provide additional coordination functions that enable Vault to run in an HA configuration. When supported by the backend, Vault will automatically run in HA mode without additional configuration.
 
 > When running in HA mode, Vault servers have two additional states they can be in: standby and active. For multiple Vault servers sharing a storage backend, only a single instance will be active at any time while all other instances are hot standbys.
 
- https://www.vaultproject.io/docs/internals/high-availability.html
+https://www.vaultproject.io/docs/internals/high-availability.html
 >The active server operates in a standard fashion and processes all requests. The standby servers do not process requests, and instead redirect to the active Vault. Meanwhile, if the active server is sealed, fails, or loses network connectivity then one of the standbys will take over and become the active instance.
 
->It is important to note that only ***unsealed*** servers act as a standby. If a server is still in the sealed state, then it cannot act as a standby as it would be unable to serve any requests should the active server fail.
+>It is important to note that only **unsealed** servers act as a standby. If a server is still in the sealed state, then it cannot act as a standby as it would be unable to serve any requests should the active server fail.
 
 https://www.vaultproject.io/docs/install/upgrade.html
-> Please note that Vault ***does not support** true zero-downtime upgrades, but with proper upgrade procedure the downtime should be very short (a few hundred milliseconds to a second depending on how the speed of access to the storage backend).
+> Please note that Vault **does not support** true zero-downtime upgrades, but with proper upgrade procedure the downtime should be very short (a few hundred milliseconds to a second depending on how the speed of access to the storage backend).
 
 https://www.vaultproject.io/docs/config/
 >Please note: The only physical backends actively maintained by HashiCorp are **consul**, inmem, and file. The other backends are community-derived and community-supported. We include them in the hope that they will be useful to those users that wish to utilize them, but they receive minimal validation and testing from HashiCorp, and HashiCorp staff may not be knowledgeable about the data store being utilized. If you encounter problems with them, we will attempt to help you, but may refer you to the backend author.
@@ -46,7 +44,7 @@ No HA support for the following storage backends:
 
 # Commands used to activate Vault
 
-```bash
+```
 $ safe targets
 
  proda  http://10.30.1.16:8200
@@ -323,7 +321,7 @@ In these cases place the additional Vault deployments as high as possible in the
 platform/global/site/environment structure.
 
 Do not take shortcuts on the Vault paths.   Use the fullest path necessary to define your secret.
-The path should correespond as if you only had one Vault for your secrets.
+The path should correspond as if you only had one Vault for your secrets.
 It will make things easier if the Vault data needs to be combined or split out into different vaults over time.
 
 TBD Do we want a best practice on path ordering?
@@ -331,9 +329,9 @@ TBD Do we want a best practice on path ordering?
 * platform/global/site/environment/deployment/manifest:key
 * many other choices
 
-Consider using a key name that matches to the manifest key name.  Make it easy for the next person to recognize the usage just by looking at its path and keyname.  The manifest level could be made part of the path or incorporated into the key name.
+Consider using a key name that matches to the manifest key name.  Make it easy for the next person to recognize the usage just by looking at its path and key name.  The manifest level could be made part of the path or incorporated into the key name.
 
-Stay consistent with the path and keyname style already used in the a deployment manifest.   The inconsistency drives us ADD types crazy and it looks unprofessional.
+Stay consistent with the path and key name style already used in the a deployment manifest.   The inconsistency drives us ADD types crazy and it looks unprofessional.
 
 Avoid placing multiple secrets under the same path and key.  Secret rotation is easier if there is
 only one secret to worry about.
@@ -344,27 +342,6 @@ secrets needs to be rotated.  When this is not possible because we are using mul
 secret values get out of synced.
 
 Consider placing related secret data such as username and host address in the Vault under the same path as the secret.   It should avoid manually updating all the various deployments if that data is duplicated in the manifest files.
-
-## Setup Cloud Foundry
-
-Cloud Foundry uses Consul by Hashicorp for various purposes, but its
-distributed datacenter high availability that needs some extra explanation.
-Many high availability software packages allows you to run with a single
-node cluster for its degraded mode. Consul does not. Consul defines an available cluster by having a quorum of nodes defined by the following formula (nodes/2) + 1 >= 2
-If you do not have at least two nodes in your cluster, your cluster does
-not have a quorum and your cluster is marked unavailable.
-
-Even in a two node configuration, you do not have high availability
-since one node going down means you do not have a quorum and thus no cluster.
-So you need at least three nodes to have high availability. Consul's degraded mode is a two node cluster.
-
-What does mean for running cloud foundry on Amazon Web Services?
-You will want to have three availability zones.
-An availability zone is an independent datacenter (power, machines, networking, etc) but also has low latency network to its sister availability zones.
-
-An availability zone corresponds to the Consul cluster node.
-
-If you define the three cloud foundry instances in only two availability zones, you have some minimal level of high availability.  It is not the strongest strongest high availability since losing an availability zone that has the two cloud foundry instances would make Consul lose its quorum.
 
 ## Setup Vault
 
