@@ -152,6 +152,25 @@ you'll just SSH to the Elastic IP, using the private half of the
 EC2 keypair you generated.  Other IaaS's may have other
 requirements.
 
+You can check your SSH keypair by comparing the Amazon fingerprints.  
+
+On the Web UI, you can check the uploaded key on the [key page][amazon-keys].
+
+If you prefer the Amazon CLI, you can run (replacing bosh with your key name):
+```
+$ aws ec2 describe-key-pairs --region us-east-1 --key-name bosh|JSON.sh -b| grep 'KeyFingerprint'|awk '{ print $2 }' -
+"05:ad:67:04:2a:62:e3:fb:e6:0a:61:fb:13:c7:6e:1b"
+$
+```
+
+You check your private key you are using with:
+```
+$ openssl pkey -in ~/.ssh/bosh.pem -pubout -outform DER | openssl md5 -c
+(stdin)= 05:ad:67:04:2a:62:e3:fb:e6:0a:61:fb:13:c7:6e:1b
+$
+````
+(on OS X you need to `brew install openssl` to get OpenSSL 1.0.x and use that version)
+
 Once on the bastion host, you'll want to use the `jumpbox` script,
 which you can get off of Github, like so:
 
@@ -1420,3 +1439,4 @@ The cf3 network is required for the consul to have cluster quorum.   Need to thr
 [netplan]:     network.md
 [spruce-129]:  https://github.com/geofffranks/spruce/issues/129
 [slither]:     http://slither.io
+[amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#KeyPairs:sort=keyName
