@@ -2,7 +2,7 @@
 
 1. [Best Practices](#toc1)
 1. [High Availability](#toc2)
-  1. [High Availability Storage Backends](#toc3)
+  1. [Storage Backends](#toc3)
 1. [Unsealing a High Availability Vault](#toc4)
 1. [Migrating Keys](#toc5)
 
@@ -38,7 +38,7 @@ All Vaults nodes need to be running the same version since we do not if there ar
 
 > Please note that Vault **does not support** true zero-downtime upgrades, but with proper upgrade procedure the downtime should be very short (a few hundred milliseconds to a second depending on how the speed of access to the storage backend).
 
-### <a name="toc3"></a> High Availability Storage Backends
+### <a name="toc3"></a> Storage Backends
 
 HA Storage Backends | Supported By
 ------------------- | -------------
