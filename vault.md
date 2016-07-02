@@ -10,7 +10,9 @@
 
 * One Vault or One Vault Per Environment
 
-This may not be possible because of security requirement preconditions or network topology.  In these cases place the additional Vault deployments as high as possible in the environment structure.
+This may not be possible because of security requirement preconditions or
+network topology.  In these cases place the additional Vault deployments as
+high as possible in the environment structure.
 
 * Be consistent with a descriptive, reusable and unique path
 
@@ -28,15 +30,25 @@ $ safe set secret/aws access_key secret_key
 
 ## <a name="toc2"></a> High Availability
 
-Vault provides an active/passive [high availability(HA)][ha] service using shared storage across the nodes. Vault recommends using Consul to provide its HA capability.
+Vault provides an active/passive [high availability(HA)][ha] service using
+shared storage across the nodes. Vault recommends using Consul to provide its
+HA capability.
 
-The passive nodes will forward all requests to the active node. This means Vault ports need to be open via TCP.  The default Vault port is 8200.
+The passive nodes will forward all requests to the active node. This means Vault
+ ports need to be open via TCP.  The default Vault port is 8200.
 
->It is important to note that only **unsealed** servers act as a standby. If a server is still in the sealed state, then it cannot act as a standby as it would be unable to serve any requests should the active server fail.
+>It is important to note that only **unsealed** servers act as a standby. If a
+server is still in the sealed state, then it cannot act as a standby as it would
+ be unable to serve any requests should the active server fail.
 
-All Vaults nodes need to be running the same version since we do not if there are storage structure changes.  The [upgrade path][upgrade] could be tricky since Vault does not support zero downtime deployments.
+All Vaults nodes need to be running the same version since we do not if there
+are storage structure changes.  The [upgrade path][upgrade] could be tricky
+since Vault does not support zero downtime deployments.
 
-> Please note that Vault **does not support** true zero-downtime upgrades, but with proper upgrade procedure the downtime should be very short (a few hundred milliseconds to a second depending on how the speed of access to the storage backend).
+> Please note that Vault **does not support** true zero-downtime upgrades, but
+with proper upgrade procedure the downtime should be very short (a few hundred
+milliseconds to a second depending on how the speed of access to the storage
+backend).
 
 ### <a name="toc3"></a> Storage Backends
 
@@ -59,7 +71,8 @@ The following storage backends exist for Vault, but do not have a HA option:
 
 ## <a name="toc4"></a> Unsealing a High Availability Vault
 
-This example will show a three node cluster being unsealed incrementally and the resulting status output at each stage.
+This example will show a three node cluster being unsealed incrementally and
+the resulting status output at each stage.
 
 Here's what we have to begin with:
 
@@ -90,7 +103,8 @@ Code: 400. Errors:
 !! exit status 1
 ```
 
-The initialize command will generate a master key for the Vault that we'll use to unseal the Vault.
+The initialize command will generate a master key for the Vault that we'll use
+to unseal the Vault.
 
 ```
 $ safe vault init
@@ -110,11 +124,15 @@ Vault does not store the master key. Without at least 3 keys,
 your Vault will remain permanently sealed.
 ```
 
-Vault uses [Shamir's Secret Sharing](https://www.vaultproject.io/docs/concepts/seal.html) algorithm to split and recreate a master key.  Once enough shards of the key are given, the master key will unseal the Vault.
+Vault uses [Shamir's Secret Sharing][shamir] algorithm to split and recreate a
+master key.  Once enough shards of the key are given, the master key will unseal
+ the Vault.
 
-If the keys are lost and the Vault needs to be re initialized all previous secrets and encrypted data is lost.
+If the keys are lost and the Vault needs to be re initialized all previous
+secrets and encrypted data is lost.
 
-We've already got our first node in our sights with `proda` targeted... Time to crack the Vault.
+We've already got our first node in our sights with `proda` targeted... Time to
+ crack the Vault.
 
 ```
 $ safe vault unseal
@@ -149,7 +167,8 @@ High-Availability Enabled: true
     Leader: http://10.30.1.16:8200
 ```
 
-We can see that our `proda` is the leader, it's active and it's got HA enabled.  What happens though when we look at the next node?
+We can see that our `proda` is the leader, it's active and it's got HA enabled.
+  What happens though when we look at the next node?
 
 ```
 $ safe target prodb
@@ -201,7 +220,8 @@ High-Availability Enabled: true
     Leader: http://10.30.1.16:8200
 ```
 
-And now `prodb` is part of the HA cluster **and** it's in standby.  We'll move on to `prodc`, next.
+And now `prodb` is part of the HA cluster **and** it's in standby.  We'll move
+on to `prodc`, next.
 
 ```
 $ safe target prodc
@@ -257,7 +277,8 @@ All nodes are either active or standby and unsealed.
 
 ## <a name="toc5"></a> Migrating Keys
 
-If you were going to migrate from `proto` to `proda` Vault, you'd begin by targeting the `proto` vault.
+If you were going to migrate from `proto` to `proda` Vault, you'd begin by
+targeting the `proto` vault.
 
 ```
 $ safe target proto
@@ -292,7 +313,8 @@ wrote secret/aws/proto/bosh/vcap
 wrote secret/aws/proto/shield/keys/core
 ```
 
-And finally you can test that the `proda` received the imported values bye viewing database.
+And finally you can test that the `proda` received the imported values by
+viewing database.
 
 ```
 $ safe tree
@@ -318,3 +340,4 @@ $ safe tree
 
 [ha]:      https://www.vaultproject.io/docs/internals/high-availability.html
 [upgrade]: https://www.vaultproject.io/docs/install/upgrade.html
+[shamir]:  https://www.vaultproject.io/docs/concepts/seal.html
