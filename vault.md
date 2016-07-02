@@ -4,6 +4,7 @@
 1. [High Availability](#toc2)
   1. [High Availability Storage Backends](#toc3)
 1. [Unsealing a High Availability Vault](#toc4)
+1. [Migrating Keys](#toc5)
 
 ## <a name="toc1"></a> Best Practices
 
@@ -29,7 +30,7 @@ $ safe set secret/aws access_key secret_key
 
 Vault provides an active/passive [high availability(HA)][ha] service using shared storage across the nodes. Vault recommends using Consul to provide its HA capability.
 
-The passive nodes will forward all requests to the active node. This means Vault ports (default 8200) need to be open across availability zones.  The default Vault port is 8200.
+The passive nodes will forward all requests to the active node. This means Vault ports need to be open via TCP.  The default Vault port is 8200.
 
 >It is important to note that only **unsealed** servers act as a standby. If a server is still in the sealed state, then it cannot act as a standby as it would be unable to serve any requests should the active server fail.
 
@@ -58,6 +59,10 @@ The following storage backends exist for Vault, but do not have a HA option:
 
 ## <a name="toc4"></a> Unsealing a High Availability Vault
 
+This example will show a three node cluster being unsealed incrementally and the resulting status output at each stage.
+
+Here's what we have to begin with:
+
 ```
 $ safe targets
 
@@ -65,7 +70,11 @@ $ safe targets
  prodb  http://10.30.2.16:8200
  prodc  http://10.30.3.16:8200
  proto  http://127.0.0.1:8200
+```
 
+Let's target the first server:
+
+```
 $ safe target proda
 Now targeting proda at http://10.30.1.16:8200
 
@@ -79,7 +88,11 @@ Code: 400. Errors:
 
 * server is not yet initialized
 !! exit status 1
+```
 
+The initialize command will generate a master key for the Vault that we'll use to unseal the Vault.
+
+```
 $ safe vault init
 Key 1: 04f3bf668a9e9741d14afe03666cef4ad778382a44b21200b0e721bd2c78c18a01
 Key 2: a5cab4dc25f25eb8b0ef6d12ca4799f1b9b75d4b2029999596d2ca3757f80dfa02
@@ -95,39 +108,35 @@ to unseal it again.
 
 Vault does not store the master key. Without at least 3 keys,
 your Vault will remain permanently sealed.
+```
 
 Vault uses [Shamir's Secret Sharing](https://www.vaultproject.io/docs/concepts/seal.html) algorithm to split and recreate a master key.  Once enough shards of the key are given, the master key will unseal the Vault.
 
+If the keys are lost and the Vault needs to be re initialized all previous secrets and encrypted data is lost.
 
-$ ls
-codex  vault-proto-info
+We've already got our first node in our sights with `proda` targeted... Time to crack the Vault.
 
-$ vi vault-prod-info
-#**************************************************
-# copied and pasted keys into vault-prod-info file
-# fubar if you lose these values.
-#**************************************************
+```
+$ safe vault unseal
+Key (will be hidden):
+Sealed: true
+Key Shares: 5
+Key Threshold: 3
+Unseal Progress: 1      <- keep an eye on progress
 
 $ safe vault unseal
 Key (will be hidden):
 Sealed: true
 Key Shares: 5
 Key Threshold: 3
-Unseal Progress: 1
-
-$ safe vault unseal
-Key (will be hidden):
-Sealed: true
-Key Shares: 5
-Key Threshold: 3
-Unseal Progress: 2
+Unseal Progress: 2      <- watch the progress
 
 $ safe vault unseal
 Key (will be hidden):
 Sealed: false
 Key Shares: 5
 Key Threshold: 3
-Unseal Progress: 0
+Unseal Progress: 0      <- 0 progress is unsealed
 
 $ safe vault status
 Sealed: false
@@ -138,7 +147,11 @@ Unseal Progress: 0
 High-Availability Enabled: true
     Mode: active
     Leader: http://10.30.1.16:8200
+```
 
+We can see that our `proda` is the leader, it's active and it's got HA enabled.  What happens though when we look at the next node?
+
+```
 $ safe target prodb
 Now targeting prodb at http://10.30.2.16:8200
 
@@ -151,7 +164,11 @@ Unseal Progress: 0
 High-Availability Enabled: true
     Mode: sealed
 !! exit status 2
+```
 
+So HA is enabled but it's sealed! Can we fix it? YES WE CAN!
+
+```
 $ safe vault unseal
 Key (will be hidden):
 Sealed: true
@@ -182,7 +199,11 @@ Unseal Progress: 0
 High-Availability Enabled: true
     Mode: standby
     Leader: http://10.30.1.16:8200
+```
 
+And now `prodb` is part of the HA cluster **and** it's in standby.  We'll move on to `prodc`, next.
+
+```
 $ safe target prodc
 Now targeting prodc at http://10.30.3.16:8200
 
@@ -195,7 +216,11 @@ Unseal Progress: 0
 High-Availability Enabled: true
     Mode: sealed
 !! exit status 2
+```
 
+FINISH HIM!
+
+```
 $ safe vault unseal
 Key (will be hidden):
 Sealed: true
@@ -225,60 +250,37 @@ Unseal Progress: 0
 
 High-Availability Enabled: true
     Mode: standby
-    Leader: http://10.30.1.16:8200
+    Leader: http://10.30.3.16:8200
+```
 
-#**********************************
-# Now showing things are proper now
-#**********************************
+All nodes are either active or standby and unsealed.
 
-$ safe target proda
-Now targeting proda at http://10.30.1.16:8200
+## <a name="toc5"></a> Migrating Keys
 
-$ safe vault status
-Sealed: false
-Key Shares: 5
-Key Threshold: 3
-Unseal Progress: 0
+If you were going to migrate from `proto` to `proda` Vault, you'd begin by targeting the `proto` vault.
 
-High-Availability Enabled: true
-    Mode: active
-    Leader: http://10.30.1.16:8200
-
-$ safe target prodb
-Now targeting prodb at http://10.30.2.16:8200
-
-$ safe vault status
-Sealed: false
-Key Shares: 5
-Key Threshold: 3
-Unseal Progress: 0
-
-High-Availability Enabled: true
-    Mode: standby
-    Leader: http://10.30.1.16:8200
-
-$ safe target prodc
-Now targeting prodc at http://10.30.3.16:8200
-
-$ safe vault status
-Sealed: false
-Key Shares: 5
-Key Threshold: 3
-Unseal Progress: 0
-
-High-Availability Enabled: true
-    Mode: standby
-    Leader: http://10.30.1.16:8200
-
+```
 $ safe target proto
 Now targeting proto at http://127.0.0.1:8200
+```
 
-$ safe export secret >proto.sercrests
+And then export the secrets to a file:
 
+```
+$ safe export secret >proto.secrets
+```
+
+Target the destination Vault, like `proda`.
+
+```
 $ safe target proda
 Now targeting proda at http://10.30.1.16:8200
+```
 
-$ safe import <proto.secrests
+Import the secrets into the Vault.
+
+```
+$ safe import <proto.secrets
 wrote secret/aws/proto/bosh/blobstore/director
 wrote secret/aws/proto/bosh/nats
 wrote secret/aws/proto/bosh/users/admin
@@ -288,7 +290,11 @@ wrote secret/aws/proto/bosh/db
 wrote secret/aws/proto/bosh/users/hm
 wrote secret/aws/proto/bosh/vcap
 wrote secret/aws/proto/shield/keys/core
+```
 
+And finally you can test that the `proda` received the imported values bye viewing database.
+
+```
 $ safe tree
 .
 └── secret
