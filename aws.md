@@ -997,8 +997,9 @@ which is exactly what we need to migrate from our proto-Vault to
 our real one:
 
 ```
-$ safe target proto -- export secret |\
-  safe target ops   -- import
+$ safe target proto
+$ safe export secret |\
+  safe target ops -- import
 TODO
 $ safe target ops -- tree
 ```
