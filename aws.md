@@ -866,9 +866,9 @@ Referring back to our [Network Plan][netplan] again, we
 find that Vault should be striped across three zone-isolated
 networks:
 
-  - *10.4.1.16/28* in zone 1 (a)
-  - *10.4.2.16/28* in zone 2 (b)
-  - *10.4.3.16/28* in zone 3 (c)
+  - **10.4.1.16/28** in zone 1 (a)
+  - **10.4.2.16/28** in zone 2 (b)
+  - **10.4.3.16/28** in zone 3 (c)
 
 First, lets do our AWS-specific region/zone configuration:
 
