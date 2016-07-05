@@ -92,6 +92,9 @@ aws_region = "us-east-1"
 network = "10.42"
 ```
 
+NOTE: We recommend [a region with three availability zones][az] for production level
+environments.
+
 As a quick pre-flight check, run `make manifest` to compile your
 Terraform plan and suss out any issues with naming, missing
 variables, configuration, etc.:
@@ -1467,3 +1470,4 @@ The cf3 network is required for the consul to have cluster quorum.   Need to thr
 [spruce-129]:  https://github.com/geofffranks/spruce/issues/129
 [slither]:     http://slither.io
 [amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#KeyPairs:sort=keyName
+[az]:          http://aws.amazon.com/about-aws/global-infrastructure/
