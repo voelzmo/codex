@@ -1266,7 +1266,156 @@ collectors, and deployment properties.
 
 ## Deploying SHIELD Backups
 
-etc.
+SHIELD is our backup solution.  We use it to configure and
+schedule regular backups of data systems that are important to our
+running operation, like the BOSH database, Concourse, and Cloud
+Foundry.
+
+We'll start out with the Genesis template for SHIELD:
+
+```
+$ cd ~/ops
+$ genesis new deployment --template shield
+$ cd shield-deployments
+```
+
+Now we can set up our `aws` site using the `aws` template, with a
+`proto` environment inside of it:
+
+```
+$ genesis new site --template aws aws
+$ genesis new environment aws proto
+$ cd aws/proto
+$ make manifest
+5 error(s) detected:
+ - $.compilation.cloud_properties.availability_zone: What availability zone is SHIELD deployed to?
+ - $.meta.az: What availability zone is SHIELD deployed to?
+ - $.networks.shield.subnets: Specify your shield subnet
+ - $.properties.shield.daemon.ssh_private_key: Specify the SSH private key that the daemon will use to talk to the agents
+ - $.resource_pools.small.cloud_properties.availability_zone: What availability zone is SHIELD deployed to?
+
+
+Failed to merge templates; bailing...
+Makefile:22: recipe for target 'manifest' failed
+make: *** [manifest] Error 5
+```
+
+By now, this should be old hat.  According to the [Network
+Plan][netplan], the SHIELD deployment belongs in the
+**10.4.1.32/28** network, in zone 1 (a).  Let's put that
+information into `properties.yml`:
+
+```
+$ cat properties.yml
+---
+meta:
+  az: us-west-2a
+```
+
+As we found with Vault, the `/28` range is actually in it's outer
+`/24` range, since we're just using the `/28` subdivision for
+convenience.
+
+```
+$ cat networking.yml
+---
+networks:
+  - name: shield
+    subnets:
+      - range:    10.4.1.0/24
+        gateway:  10.4.1.1
+        dns:     [10.4.1.2]
+        cloud_properties:
+          subnet: subnet-xxxxxxxx  # <--- your AWS Subnet ID
+          security_groups: [wide-open]
+        reserved:
+          - 10.4.1.2 - 10.4.1.3    # Amazon reserves these
+          - 10.4.1.4 - 10.4.1.31   # Allocated to other deployments
+            # SHIELD is in 10.4.1.32/28
+          - 10.4.1.48 - 10.4.1.254 # Allocated to other deployments
+        static:
+          - 10.4.1.32 - 10.4.1.34
+```
+
+(Don't forget to change your `subnet` to match your AWS VPC
+configuration.)
+
+Finally, if you recall, we already generated an SSH keypair for
+SHIELD, so that we could pre-deploy the pubic key to our
+Proto-BOSH.  We stuck it in the Vault, at
+`secret/aws/proto/shield/keys/core`, so let's get it back out for this
+deployment:
+
+```
+$ cat credentials.yml
+---
+properties:
+  shield:
+    daemon:
+      ssh_private_key: (( vault meta.vault_prefix "/keys/core:private"))
+```
+
+Now, our `make manifest` should succeed (and not complain)
+
+```
+$ make manifest
+```
+
+Time to deploy!
+
+```
+$ make deploy
+Acting as user 'admin' on 'aws-proto-bosh'
+Checking whether release shield/6.3.0 already exists...NO
+Using remote release `https://bosh.io/d/github.com/starkandwayne/shield-boshrelease?v=6.3.0'
+
+Director task 13
+  Started downloading remote release > Downloading remote release
+
+```
+
+Once that's complete, you will be able to access your SHIELD
+deployment, and start configuring your backup jobs.  Before we do
+that, however, let's prepare our Amazon infrastructure to store
+backups in S3, one of SHIELD's built-in archive storage systems.
+
+### Setting up AWS S3 For Backup Archives
+
+To help keep things isolated, we're going to set up a brand new
+IAM user just for backup archive storage.  It's a good idea to
+name this user something like `backup` or `shield-backup` so that
+no one tries to re-purpose it later, and so that it doesn't get
+deleted.
+
+You're also going to want to provision a dedicated S3 bucket to
+store archives in, and name it something descriptive, like
+`codex-backups`.
+
+Since the generic S3 bucket policy is a little open (and we don't
+want random people reading through our backups), we're going to
+want to create our own policy:
+
+```
+{
+  "Statement": [
+    {
+      "Effect"   : "Allow",
+      "Action"   : "s3:ListAllMyBuckets",
+      "Resource" : "arn:aws:iam:xxxxxxxxxxxx:user/zzzzz",
+    },
+    {
+      "Effect"   : "Allow",
+      "Action"   : "s3:*",
+      "Resource" : [
+        "arn:aws:s3:::your-bucket-name",
+        "arn:aws:s3:::your-bucket-name/*",
+      ]
+    }
+  ]
+}
+```
+
+
 
 ## Deploying Concourse
 
