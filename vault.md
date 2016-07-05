@@ -41,7 +41,7 @@ The passive nodes will forward all requests to the active node. This means Vault
 server is still in the sealed state, then it cannot act as a standby as it would
  be unable to serve any requests should the active server fail.
 
-All Vaults nodes need to be running the same version since we do not if there
+All Vaults nodes need to be running the same version since we do not know if there
 are storage structure changes.  The [upgrade path][upgrade] could be tricky
 since Vault does not support zero downtime deployments.
 
