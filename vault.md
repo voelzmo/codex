@@ -79,24 +79,25 @@ Here's what we have to begin with:
 ```
 $ safe targets
 
- proda  http://10.30.1.16:8200
- prodb  http://10.30.2.16:8200
- prodc  http://10.30.3.16:8200
+ proda  https://10.30.1.16:8200
+ prodb  https://10.30.2.16:8200
+ prodc  https://10.30.3.16:8200
  proto  http://127.0.0.1:8200
 ```
 
 Let's target the first server:
 
 ```
+$ export VAULT_SKIP_VERIFY=1
 $ safe target proda
-Now targeting proda at http://10.30.1.16:8200
+Now targeting proda at https://10.30.1.16:8200
 
 $ safe vault status
 Error checking seal status: Error making API request.
 
 Key 1: 04f3bf668a9e9741d14afe03666cef4ad778382a44b21200b0e721bd2c78c18a01
 
-URL: GET http://10.30.1.16:8200/v1/sys/seal-status
+URL: GET https://10.30.1.16:8200/v1/sys/seal-status
 Code: 400. Errors:
 
 * server is not yet initialized
@@ -164,7 +165,7 @@ Unseal Progress: 0
 
 High-Availability Enabled: true
     Mode: active
-    Leader: http://10.30.1.16:8200
+    Leader: https://10.30.1.16:8200
 ```
 
 We can see that our `proda` is the leader, it's active and it's got HA enabled.
@@ -172,7 +173,7 @@ We can see that our `proda` is the leader, it's active and it's got HA enabled.
 
 ```
 $ safe target prodb
-Now targeting prodb at http://10.30.2.16:8200
+Now targeting prodb at https://10.30.2.16:8200
 
 $ safe vault status
 Sealed: true
@@ -217,7 +218,7 @@ Unseal Progress: 0
 
 High-Availability Enabled: true
     Mode: standby
-    Leader: http://10.30.1.16:8200
+    Leader: https://10.30.1.16:8200
 ```
 
 And now `prodb` is part of the HA cluster **and** it's in standby.  We'll move
@@ -225,7 +226,7 @@ on to `prodc`, next.
 
 ```
 $ safe target prodc
-Now targeting prodc at http://10.30.3.16:8200
+Now targeting prodc at https://10.30.3.16:8200
 
 $ safe vault status
 Sealed: true
@@ -270,7 +271,7 @@ Unseal Progress: 0
 
 High-Availability Enabled: true
     Mode: standby
-    Leader: http://10.30.3.16:8200
+    Leader: https://10.30.3.16:8200
 ```
 
 All nodes are either active or standby and unsealed.
@@ -282,7 +283,7 @@ targeting the `proto` vault.
 
 ```
 $ safe target proto
-Now targeting proto at http://127.0.0.1:8200
+Now targeting proto at https://127.0.0.1:8200
 ```
 
 And then export the secrets to a file:
@@ -295,7 +296,15 @@ Target the destination Vault, like `proda`.
 
 ```
 $ safe target proda
-Now targeting proda at http://10.30.1.16:8200
+Now targeting proda at https://10.30.1.16:8200
+```
+Now Authenticate using the Token from the `init` above
+
+```
+$ safe auth token
+Authenticating against proda at https://10.30.1.16:8200
+Token:
+$
 ```
 
 Import the secrets into the Vault.
