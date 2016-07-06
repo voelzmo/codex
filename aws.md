@@ -736,13 +736,6 @@ total 8
 
 > TODO: i also had to copy the aws key up to the bastion host.
 
-Before we can deploy we need to upload the stemcell:
-
-```
-$ bosh upload stemcell https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3232.8
-```
-
-With the `stemcell` in place, let's give the deploy a whirl:
 
 ```
 $ make deploy
@@ -961,7 +954,13 @@ Now, let's try a `make manifest` again (no output is a good sign):
 $ make manifest
 ```
 
-And then we can deploy via the proto-BOSH director:
+Before we can deploy we need to upload the stemcell:
+
+```
+$ bosh upload stemcell https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3232.8
+```
+
+With the `stemcell` in place, let's give the deploy a whirl:
 
 ```
 $ make deploy
