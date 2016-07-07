@@ -1580,8 +1580,9 @@ want to create our own policy:
 If we're not already targeting the ops vault, do so now to save frustration later.
 
 ```
-$ safe target "http://10.4.1.16:8200" ops
-Now targeting ops at http://10.4.1.16:8200
+$ safe target "http://10.4.1.16:8200" proda
+Now targeting proda at http://10.4.1.16:8200
+$ export VAULT_SKIP_VERIFY=1
 ```
 
 From the `~/ops` folder let's generate a new `concourse` deployment, using the `--template` flag.
@@ -1596,7 +1597,7 @@ Inside the `global` deployment level goes the site level definition.  For this c
 ```
 $ genesis new site --template aws aws
 Created site aws (from template aws):
-/home/tbird/ops/concourse-deployments/aws
+/home/user/ops/concourse-deployments/aws
 ├── README
 └── site
     ├── disk-pools.yml
@@ -1616,9 +1617,36 @@ Created site aws (from template aws):
 Finally now, because our vault is setup and targeted correctly we can generate our `environment` level configurations.  And begin the process of setting up the specific parameters for our environment.
 
 ```
-$ genesis new environment aws ops
-$ cd aws/ops
-$ make manifest
+~/ops/concourse-deployments$ genesis new environment aws proto
+Running env setup hook: /home/user/ops/concourse-deployments/.env_hooks/00_confirm_vault
+
+(*) proda	https://10.42.1.16:8200
+    prodb	https://10.42.2.16:8200
+    prodc	https://10.42.3.16:8200
+    proto	http://127.0.0.1:8200
+
+Use this Vault for storing deployment credentials?  [yes or no] yes
+Running env setup hook: /home/user/ops/concourse-deployments/.env_hooks/gen_creds
+Generating credentials for Concource CI
+Created environment aws/proto:
+/home/user/ops/concourse-deployments/aws/proto
+├── cloudfoundry.yml
+├── credentials.yml
+├── director.yml
+├── Makefile
+├── monitoring.yml
+├── name.yml
+├── networking.yml
+├── properties.yml
+├── README
+└── scaling.yml
+
+0 directories, 10 files
+```
+Lets make the manifest
+```
+~/ops/concourse-deployments$ cd aws/proto/
+~/ops/concourse-deployments/aws/proto$ make manifest
 11 error(s) detected:
  - $.compilation.cloud_properties.availability_zone: What availability zone should your concourse VMs be in?
  - $.jobs.haproxy.templates.haproxy.properties.ha_proxy.ssl_pem: Want ssl? define a pem
@@ -1636,7 +1664,63 @@ $ make manifest
 Failed to merge templates; bailing...
 Makefile:22: recipe for target 'manifest' failed
 make: *** [manifest] Error 5
+~/ops/concourse-deployments/aws/proto$
 ```
+
+Again starting with Meta lines:
+
+```
+~/ops/concourse-deployments/aws/proto$ cat properties.yml
+---
+meta:
+  availability_zone: "us-west-2a"   # Set this to match your first zone "aws_az1"
+  external_url: "https://ci.52.6.143.218.sslip.io"  # for testing you can use the IP of the jumpbox and an SSH tunnel
+  ssl_pem: ~
+#  ssl_pem: (( vault meta.vault_prefix "/web_ui:pem" ))
+```
+
+The `~` means we won't use SSL certs for now.  If you have proper certs or want to use self signed you can add them to vault under the `web_ui:pem` key
+
+After it is deployed, you can do a quick test by hitting the HAProxy machine
+
+```
+~/ops/concourse-deployments/aws/proto$ bosh vms aws-proto-concourse
+Acting as user 'admin' on deployment 'aws-proto-concourse' on 'aws-proto-bosh'
+
+Director task 43
+
+Task 43 done
+
++--------------------------------------------------+---------+-----+---------+------------+
+| VM                                               | State   | AZ  | VM Type | IPs        |
++--------------------------------------------------+---------+-----+---------+------------+
+| db/0 (fdb7a556-e285-4cf0-8f35-e103b96eff46)      | running | n/a | db      | 10.4.1.61  |
+| haproxy/0 (5318df47-b138-44d7-b3a9-8a2a12833919) | running | n/a | haproxy | 10.4.1.51  |
+| web/0 (ecb71ebc-421d-4caa-86af-81985958578b)     | running | n/a | web     | 10.4.1.48  |
+| worker/0 (c2c081e0-c1ef-4c28-8c7d-ff589d05a1aa)  | running | n/a | workers | 10.4.1.62  |
+| worker/1 (12a4ae1f-02fc-4c3b-846b-ae232215c77c)  | running | n/a | workers | 10.4.1.57  |
+| worker/2 (b323f3ba-ebe4-4576-ab89-1bce3bc97e65)  | running | n/a | workers | 10.4.1.58  |
++--------------------------------------------------+---------+-----+---------+------------+
+
+VMs total: 6
+~/ops/concourse-deployments/aws/proto$ curl -i 10.4.1.51
+HTTP/1.1 200 OK
+Date: Thu, 07 Jul 2016 04:50:05 GMT
+Content-Type: text/html; charset=utf-8
+Transfer-Encoding: chunked
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Concourse</title>
+```
+
+You can then run on a your local machine
+
+```
+$ ssh -L 8080:10.4.1.51:80 user@ci.52.6.143.218.sslip.io
+```
+and hit http://localhost:8080 to get the Concourse UI
 
 # Building out Sites and Environments
 
