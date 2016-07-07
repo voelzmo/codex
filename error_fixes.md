@@ -17,7 +17,9 @@ Here we will display all common errors, the common paths that you ended up in th
     * aws_subnet.dev-infra-3: Error creating subnet: InvalidParameterValue: Value (us-east-1a) for parameter availabilityZone is invalid. Subnets can currently only be created in the following availability zones: us-east-1c, us-east-1b, us-east-1d, us-east-1e. status code: 400, request id: 66fafa81-7718-46eb-a606-e4b98e3267b9
     ```
 
-you should run `make destroy` to clean up, then add a line like `aws_az1 = "d"` to replace the restricted zone.
+    you should run `make destroy` to clean up, then add a line like `aws_az1 = "d"` to replace the restricted zone.
+    
+* No Vault or Genesis - Chances are you did not run the jumpbox script, refer to [the Bastion/Jumpbox section][1] and make sure that you remain logged in as your Jumpbox user during the rest of the deployment process. Nothing is done from the default Bastion user.
 
 ### ProtoBosh & Proto-Vault
 
@@ -29,3 +31,5 @@ you should run `make destroy` to clean up, then add a line like `aws_az1 = "d"` 
 
 ### Prod Bosh Deployments
 * CF Deployment
+
+[1]: https://github.com/starkandwayne/codex/blob/master/aws.md#setting-up-the-bastion-host
