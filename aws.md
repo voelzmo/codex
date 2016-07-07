@@ -1638,6 +1638,127 @@ Makefile:22: recipe for target 'manifest' failed
 make: *** [manifest] Error 5
 ```
 
+# Building out Sites and Environments
+
+Now that the underlying infrastructure has been deployed, we can start deplying our alpha/beta/other sites, with Cloud Foundry, and any required services. When using Concourse to update BOSH deployments,
+there are the concepts of `alpha` and `beta` sites. The alpha site is the initial place where all deployment changes are checked for sanity + deployability. Typically this is done with a `bosh-lite` VM. The `beta` sites are where site-level changes are vetted. Usually these are referred to as the sandbox environments, and there will be one per site, by necessity. Once changes have passed both the alpha, and beta site, we know it is safe for them to be rolled out to other sites, like production.
+
+## Alpha
+
+### BOSH-Lite
+
+### Cloud Foundry
+
+**TODO:** we need bosh-lite genesis templates, a decision on what bosh to build the bosh-lites on, and docs on how to deploy.
+
+## First Beta Environment
+
+Now that our `alpha` environment has been deployed, we can deploy our first beta environment to AWS. To do this, we will first deploy a BOSH director for the environment using the `bosh-deployments` repo we generated back when we built our [Proto BOSH](#proto-bosh), and then deploy Cloud Foundry on top of it.
+
+### BOSH
+```
+$ cd ~/ops/bosh-deployments
+$ ls
+```
+
+We already have the `aws` site created, so now we will just need to create our new environment, and deploy it:
+
+```
+$ safe target ops
+$ genesis new env aws sandbox
+Running env setup hook: ~/ops/bosh-deployments/.env_hooks/setup
+
+ ops  http://10.4.1.16:8200
+
+Use this Vault for storing deployment credentials?  [yes or no]
+yes
+Setting up credentials in vault, under secret/aws/sandbox/bosh
+.
+└── secret/aws/sandbox/bosh
+    ├── blobstore/
+    │   ├── agent
+    │   └── director
+    ├── db
+    ├── nats
+    ├── users/
+    │   ├── admin
+    │   └── hm
+    └── vcap
+
+
+Created environment aws/sandbox:
+~/ops/bosh-deployments/aws/sandbox
+├── cloudfoundry.yml
+├── credentials.yml
+├── director.yml
+├── Makefile
+├── monitoring.yml
+├── name.yml
+├── networking.yml
+├── properties.yml
+├── README
+└── scaling.yml
+
+0 directories, 10 files
+```
+
+Notice, unlike the Proto BOSH setup, we do not specify `--type bosh-init`. This means we will use BOSH itself (in this case the Proto-BOSH) to deploy our sandbox BOSH. Again, the environment hook created all of our credentials for us, but this time we targeted the long-term Vault, so there will be no need for migrating credentials around.
+
+Let's try to deploy now, and see what information still needs to be resolved:
+
+```
+$ cd aws/sandbox
+$ make deploy
+FIXME OUTPUT
+```
+
+Looks like we need to provide the same type of data as we did for Proto BOSH. Lets fill in the basics:
+
+```
+FIXME DATA
+```
+
+This was a bit easier than it was for Proto BOSH, since our SHIELD public key exists now, and our
+AWS keys are already in Vault.
+
+Verifying our changes worked, we see that we only need to provide networking configuration at this point:
+
+```
+make deploy
+FIXME OUTPUT
+```
+
+FIXME CONSULT network document, fill in data
+
+Now that that's handled, let's deploy for real:
+
+```
+make deploy
+
+FIXME OUTPUT
+```
+
+This will take a little less time than Proto BOSH did (some packages were already compiled), and the next time you deploy, it go by much quicker, as all the packages should have been compiled by now (unless upgrading BOSH or the stemcell). 
+
+Once the deployment finishes, target the new BOSH director to verify it works:
+
+```
+$ bosh target https://<FIXME IP>:25555 aws-sandbox
+```
+
+Again, since our creds are in the long-term vault, no credential migration is necessary, and we can go straight to committing our new deployment to the repo, and pushing it upstream.
+
+Now we can move on to deploying our `beta` (sandbox) Cloud Foundry!
+
+### Cloud Foundry
+
+**TODO:** this
+
+
+## Production Environment
+
+Deploying the production environment will be much like deploying the `beta` environment above. You will need to deploy a BOSH director, Cloud Foundry, and any services also deployed in the `beta` site. Hostnames, credentials, network information, and possibly scaling parameters will all be different, but the procedure for deploying them is the same.
+
 ## Consul and Cloud Foundry
 
 [Cloud Foundry uses Consul][cfconsul] by HashiCorp help make DNS resolution smooth and keeping track of what's going on with the components running in the Cloud Foundry system.
