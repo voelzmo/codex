@@ -1725,7 +1725,7 @@ and hit http://localhost:8080 to get the Concourse UI
 # Building out Sites and Environments
 
 Now that the underlying infrastructure has been deployed, we can start deplying our alpha/beta/other sites, with Cloud Foundry, and any required services. When using Concourse to update BOSH deployments,
-there are the concepts of `alpha` and `beta` sites. The alpha site is the initial place where all deployment changes are checked for sanity + deployability. Typically this is done with a `bosh-lite` VM. The `beta` sites are where site-level changes are vetted. Usually these are referred to as the sandbox environments, and there will be one per site, by necessity. Once changes have passed both the alpha, and beta site, we know it is safe for them to be rolled out to other sites, like production.
+there are the concepts of `alpha` and `beta` sites. The alpha site is the initial place where all deployment changes are checked for sanity + deployability. Typically this is done with a `bosh-lite` VM. The `beta` sites are where site-level changes are vetted. Usually these are referred to as the sandbox or staging environments, and there will be one per site, by necessity. Once changes have passed both the alpha, and beta site, we know it is safe for them to be rolled out to other sites, like production.
 
 ## Alpha
 
@@ -1743,22 +1743,24 @@ Now that our `alpha` environment has been deployed, we can deploy our first beta
 ```
 $ cd ~/ops/bosh-deployments
 $ ls
+aws  bin  global  LICENSE  README.md
 ```
 
 We already have the `aws` site created, so now we will just need to create our new environment, and deploy it:
 
 ```
 $ safe target ops
-$ genesis new env aws sandbox
-Running env setup hook: ~/ops/bosh-deployments/.env_hooks/setup
+Now targeting ops at http://10.10.10.6:8200
+$ genesis new env aws staging
+RSA 1024 bit CA certificates are loaded due to old openssl compatibility
+Running env setup hook: /home/centos/ops/bosh-deployments/.env_hooks/setup
 
- ops  http://10.4.1.16:8200
+ ops	http://10.10.10.6:8200
 
-Use this Vault for storing deployment credentials?  [yes or no]
-yes
-Setting up credentials in vault, under secret/aws/sandbox/bosh
+Use this Vault for storing deployment credentials?  [yes or no] yes
+Setting up credentials in vault, under secret/aws/staging/bosh
 .
-└── secret/aws/sandbox/bosh
+└── secret/aws/staging/bosh
     ├── blobstore/
     │   ├── agent
     │   └── director
@@ -1770,8 +1772,8 @@ Setting up credentials in vault, under secret/aws/sandbox/bosh
     └── vcap
 
 
-Created environment aws/sandbox:
-~/ops/bosh-deployments/aws/sandbox
+Created environment aws/staging:
+/home/centos/ops/bosh-deployments/aws/staging
 ├── cloudfoundry.yml
 ├── credentials.yml
 ├── director.yml
@@ -1784,6 +1786,7 @@ Created environment aws/sandbox:
 └── scaling.yml
 
 0 directories, 10 files
+
 ```
 
 Notice, unlike the Proto BOSH setup, we do not specify `--type bosh-init`. This means we will use BOSH itself (in this case the Proto-BOSH) to deploy our sandbox BOSH. Again, the environment hook created all of our credentials for us, but this time we targeted the long-term Vault, so there will be no need for migrating credentials around.
@@ -1793,13 +1796,39 @@ Let's try to deploy now, and see what information still needs to be resolved:
 ```
 $ cd aws/sandbox
 $ make deploy
-FIXME OUTPUT
+9 error(s) detected:
+ - $.meta.aws.access_key: Please supply an AWS Access Key
+ - $.meta.aws.azs.z1: What Availability Zone will BOSH be in?
+ - $.meta.aws.default_sgs: What security groups should VMs be placed in, if none are specified in the deployment manifest?
+ - $.meta.aws.private_key: What private key will be used for establishing the ssh_tunnel (bosh-init only)?
+ - $.meta.aws.region: What AWS region are you going to use?
+ - $.meta.aws.secret_key: Please supply an AWS Secret Key
+ - $.meta.aws.ssh_key_name: What AWS keypair should be used for the vcap user?
+ - $.networks.default.subnets: Specify subnets for your BOSH vm's network
+ - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
+
+
+Failed to merge templates; bailing...
+make: *** [deploy] Error 3
 ```
 
-Looks like we need to provide the same type of data as we did for Proto BOSH. Lets fill in the basics:
+Looks like we need to provide the same type of data as we did for Proto BOSH. Lets fill in the basic properties:
 
 ```
-FIXME DATA
+$ cat > properties.yml <<EOF
+---
+meta:
+  aws:
+    access_key: (( vault "secret/aws:access_key" ))
+    secret_key: (( vault "secret/aws:secret_key" ))
+    private_key: ~ # not needed, since not using bosh-lite
+    region: us-west-2
+    azs:
+      z1: (( concat meta.aws.region "a")
+    ssh_key_name: your-ec2-keypair-name
+    default_sgs: [wide-open]
+  shield_public_key: (( vault "secret/aws/proto/shield/keys/core:public" ))
+EOF
 ```
 
 This was a bit easier than it was for Proto BOSH, since our SHIELD public key exists now, and our
@@ -1809,17 +1838,93 @@ Verifying our changes worked, we see that we only need to provide networking con
 
 ```
 make deploy
-FIXME OUTPUT
+$ make deploy
+2 error(s) detected:
+ - $.meta.aws.default_sgs: What security groups should VMs be placed in, if none are specified in the deployment manifest?
+ - $.networks.default.subnets: Specify subnets for your BOSH vm's network
+
+
+Failed to merge templates; bailing...
+make: *** [deploy] Error 3
+
 ```
 
-FIXME CONSULT network document, fill in data
+All that remains is filling in our networking details, so lets go consult our [Network Plan](https://github.com/starkandwayne/codex/blob/master/network.md). We will place the BOSH director in the staging site's infrastructure network, in the first AZ we have defined (subnet name `staging-infra-1`, CIDR `10.4.32.0/24`). To do that, we'll need to update `networking.yml`:
+
+```
+$ cat > networking.yml <<EOF
+---
+networks:
+  - name: default
+    subnets:
+      - range:    10.4.32.0/24
+        gateway:  10.4.32.1
+        dns:     [10.4.1.2]
+        cloud_properties:
+          subnet: subnet-xxxxxxxx # <-- the AWS Subnet ID for your staging-infra-1 network
+          security_groups: [wide-open]
+        reserved:
+          - 10.4.32.2 - 10.4.32.3    # Amazon reserves these
+            # BOSH is in 10.4.32.0/28
+          - 10.4.32.16 - 10.4.32.254 # Allocated to other deployments
+        static:
+          - 10.4.32.4
+EOF
+```
 
 Now that that's handled, let's deploy for real:
 
 ```
-make deploy
+$ make deploy
+$ make deploy
+RSA 1024 bit CA certificates are loaded due to old openssl compatibility
+Acting as user 'admin' on 'aws-proto-bosh-microboshen-aws'
+Checking whether release bosh/256.2 already exists...YES
+Acting as user 'admin' on 'aws-proto-bosh-microboshen-aws'
+Checking whether release bosh-aws-cpi/53 already exists...YES
+Acting as user 'admin' on 'aws-proto-bosh-microboshen-aws'
+Checking whether release shield/6.2.1 already exists...YES
+Acting as user 'admin' on 'aws-proto-bosh-microboshen-aws'
+Checking if stemcell already exists...
+Yes
+Acting as user 'admin' on deployment 'aws-staging-bosh' on 'aws-proto-bosh-microboshen-aws'
+Getting deployment properties from director...
 
-FIXME OUTPUT
+Detecting deployment changes
+----------------------------
+resource_pools:
+- cloud_properties:
+    availability_zone: us-east-1b
+    ephemeral_disk:
+      size: 25000
+      type: gp2
+    instance_type: m3.xlarge
+  env:
+    bosh:
+      password: "<redacted>"
+  name: bosh
+  network: default
+  stemcell:
+    name: bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+    sha1: 971e869bd825eb0a7bee36a02fe2f61e930aaf29
+    url: https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3232.6
+...
+Deploying
+---------
+Are you sure you want to deploy? (type 'yes' to continue): yes
+
+Director task 144
+  Started preparing deployment > Preparing deployment. Done (00:00:00)
+
+  Started preparing package compilation > Finding packages to compile. Done (00:00:00)
+...
+Task 144 done
+
+Started		2016-07-08 17:23:47 UTC
+Finished	2016-07-08 17:34:46 UTC
+Duration	00:10:59
+
+Deployed 'aws-staging-bosh' to 'aws-proto-bosh'
 ```
 
 This will take a little less time than Proto BOSH did (some packages were already compiled), and the next time you deploy, it go by much quicker, as all the packages should have been compiled by now (unless upgrading BOSH or the stemcell). 
@@ -1827,12 +1932,17 @@ This will take a little less time than Proto BOSH did (some packages were alread
 Once the deployment finishes, target the new BOSH director to verify it works:
 
 ```
-$ bosh target https://<FIXME IP>:25555 aws-sandbox
+$ safe get secret/aws/sandbox/bosh/users/admin # grab the admin user's password for bosh
+$ bosh target https://10.4.32.4:25555 aws-sandbox
+Target set to 'aws-staging-bosh'
+Your username: admin
+Enter password:
+Logged in as 'admin'
 ```
 
-Again, since our creds are in the long-term vault, no credential migration is necessary, and we can go straight to committing our new deployment to the repo, and pushing it upstream.
+Again, since our creds are already in the long-term vault, we can skip the credential migratoin that was done in the proto-bosh deployment and go straight to committing our new deployment to the repo, and pushing it upstream.
 
-Now we can move on to deploying our `beta` (sandbox) Cloud Foundry!
+Now it's time to move on to deploying our `beta` (sandbox) Cloud Foundry!
 
 ### Cloud Foundry
 
