@@ -1944,148 +1944,423 @@ Again, since our creds are already in the long-term vault, we can skip the crede
 
 Now it's time to move on to deploying our `beta` (sandbox) Cloud Foundry!
 
+### Jumpboxen?
+
 ### Cloud Foundry
 
-**TODO:** this
+To deploy Cloud Foundry, we will go back into our ops directory, making use of `cf-deplyoments` repo
+created when we built our alpha site:
 
+```
+$ cd ~/ops/cf-deployments
+```
+
+Also, make sure that you're targeting the right Vault, for good measure:
+
+```
+$ safe target ops
+```
+
+We will now create an `aws` site for CF: 
+
+```
+$ genesis new site --template aws aws
+Created site aws (from template aws):
+/home/centos/ops/cf-deployments/aws
+├── README
+└── site
+    ├── disk-pools.yml
+    ├── jobs.yml
+    ├── networks.yml
+    ├── properties.yml
+    ├── releases
+    ├── resource-pools.yml
+    ├── stemcell
+    │   ├── name
+    │   └── version
+    └── update.yml
+
+2 directories, 10 files
+
+```
+
+And the `staging` environment inside it:
+
+```
+$ genesis new env aws staging
+RSA 1024 bit CA certificates are loaded due to old openssl compatibility
+Running env setup hook: /home/centos/ops/cf-deployments/.env_hooks/00_confirm_vault
+
+ ops	http://10.10.10.6:8200
+
+Use this Vault for storing deployment credentials?  [yes or no] yes
+Running env setup hook: /home/centos/ops/cf-deployments/.env_hooks/setup_certs
+Generating Cloud Foundry internal certs
+Uploading Cloud Foundry internal certs to Vault
+Running env setup hook: /home/centos/ops/cf-deployments/.env_hooks/setup_cf_secrets
+Creating JWT Signing Key
+Creating app_ssh host key fingerprint
+Generating secrets
+Created environment aws/staging:
+/home/centos/ops/cf-deployments/aws/staging
+├── cloudfoundry.yml
+├── credentials.yml
+├── director.yml
+├── Makefile
+├── monitoring.yml
+├── name.yml
+├── networking.yml
+├── properties.yml
+├── README
+└── scaling.yml
+
+0 directories, 10 files
+
+```
+
+As you might have guessed, the next step will be to see what parameters we need to fill in:
+
+```
+$ make deploy
+$ make deploy
+57 error(s) detected:
+ - $.meta.azs.z1: What availability zone should the *_z1 vms be placed in?
+ - $.meta.azs.z2: What availability zone should the *_z2 vms be placed in?
+ - $.meta.azs.z3: What availability zone should the *_z3 vms be placed in?
+ - $.meta.cf.base_domain: Enter the Cloud Foundry base domain
+ - $.meta.cf.blobstore_config.fog_connection.aws_access_key_id: What is the access key id for the blobstore S3 buckets?
+ - $.meta.cf.blobstore_config.fog_connection.aws_secret_access_key: What is the secret key for the blobstore S3 buckets?
+ - $.meta.cf.blobstore_config.fog_connection.region: Which region are the blobstore S3 buckets in?
+ - $.meta.cf.ccdb.host: What hostname/IP is the ccdb available at?
+ - $.meta.cf.ccdb.pass: Specify the password of the ccdb user
+ - $.meta.cf.ccdb.user: Specify the user to connect to the ccdb
+ - $.meta.cf.uaadb.host: What hostname/IP is the uaadb available at?
+ - $.meta.cf.uaadb.pass: Specify the password of the uaadb user
+ - $.meta.cf.uaadb.user: Specify the user to connect to the uaadb
+ - $.meta.dns: Enter the DNS server for your VPC
+ - $.meta.elbs: What elbs will be in front of the gorouters?
+ - $.meta.router_security_groups: Enter the security groups which should be applied to the gorouter VMs
+ - $.meta.security_groups: Enter the security groups which should be applied to CF VMs
+ - $.networks.cf1.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.cf1.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.cf1.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.cf1.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.cf1.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.networks.cf2.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.cf2.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.cf2.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.cf2.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.cf2.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.networks.cf3.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.cf3.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.cf3.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.cf3.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.cf3.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.networks.router1.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.router1.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.router1.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.router1.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.router1.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.networks.router2.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.router2.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.router2.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.router2.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.router2.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.properties.cc.buildpacks.fog_connection.aws_access_key_id: What is the access key id for the blobstore S3 buckets?
+ - $.properties.cc.buildpacks.fog_connection.aws_secret_access_key: What is the secret key for the blobstore S3 buckets?
+ - $.properties.cc.buildpacks.fog_connection.region: Which region are the blobstore S3 buckets in?
+ - $.properties.cc.droplets.fog_connection.aws_access_key_id: What is the access key id for the blobstore S3 buckets?
+ - $.properties.cc.droplets.fog_connection.aws_secret_access_key: What is the secret key for the blobstore S3 buckets?
+ - $.properties.cc.droplets.fog_connection.region: Which region are the blobstore S3 buckets in?
+ - $.properties.cc.packages.fog_connection.aws_access_key_id: What is the access key id for the blobstore S3 buckets?
+ - $.properties.cc.packages.fog_connection.aws_secret_access_key: What is the secret key for the blobstore S3 buckets?
+ - $.properties.cc.packages.fog_connection.region: Which region are the blobstore S3 buckets in?
+ - $.properties.cc.resource_pool.fog_connection.aws_access_key_id: What is the access key id for the blobstore S3 buckets?
+ - $.properties.cc.resource_pool.fog_connection.aws_secret_access_key: What is the secret key for the blobstore S3 buckets?
+ - $.properties.cc.resource_pool.fog_connection.region: Which region are the blobstore S3 buckets in?
+ - $.properties.cc.security_group_definitions.load_balancer.rules: Specify the rules for allowing access for CF apps to talk to the CF Load Balancer External IPs
+ - $.properties.cc.security_group_definitions.services.rules: Specify the rules for allowing access to CF services subnets
+ - $.properties.cc.security_group_definitions.user_bosh_deployments.rules: Specify the rules for additional BOSH user services that apps will need to talk to
+
+
+Failed to merge templates; bailing...
+make: *** [deploy] Error 3
+```
+
+Oh boy. That's a lot. Cloud Foundry must be compilicated. Looks like a lot of the fog_connection properties are all duplicates though, so lets fill out `properties.yml` with those:
+
+```
+$ cat properties.yml
+---
+meta:
+  aws:
+    fog_connection:
+      aws_access_key_id: (( vault "secret/aws:access_key" ))
+      aws_secret_access_key: (( vault "secret/aws:secret_key"))
+      region: us-east-1
+```
+
+Next, lets tackle the database situation. We will need to create RDS instances for the `uaadb` and `ccdb`. 
+
+**TODO:** make a terraform repo/script for creating RDS instances for your and store their creds + address + dbname  in vault
+
+Now that we have RDS instances, lets refer to them in our `properties.yml` file:
+
+```
+cat properties.yml
+---
+meta:
+  cf:
+    fog_connection:
+      aws_access_key_id:     (( vault "secret/aws:access_key" ))
+      aws_secret_access_key: (( vault "secret/aws:secret_key"))
+      region: us-east-1
+    ccdb:
+      host: (( vault meta.vault_prefix "/ccdb:host" ))
+      user: (( vault meta.vault_prefix "/ccdb:user" ))
+      pass: (( vault meta.vault_prefix "/ccdb:password" ))
+    uaadb:
+      host: (( vault meta.vault_prefix "/uaadb:host" ))
+      user: (( vault meta.vault_prefix "/uaadb:user" ))
+      pass: (( vault meta.vault_prefix "/uaadb:password" ))
+```
+
+Lastly, let's make sure to add our Cloud Foundry domain to properties.yml:
+
+```
+---
+meta:
+  cf:
+    domain: your.staging.cf.example.com 
+    fog_connection:
+      aws_access_key_id:     (( vault "secret/aws:access_key" ))
+      aws_secret_access_key: (( vault "secret/aws:secret_key"))
+      region: us-east-1
+    ccdb:
+      host: (( vault meta.vault_prefix "/ccdb:host" ))
+      user: (( vault meta.vault_prefix "/ccdb:user" ))
+      pass: (( vault meta.vault_prefix "/ccdb:password" ))
+    uaadb:
+      host: (( vault meta.vault_prefix "/uaadb:host" ))
+      user: (( vault meta.vault_prefix "/uaadb:user" ))
+      pass: (( vault meta.vault_prefix "/uaadb:password" ))
+```
+
+And let's see what's left to fill out now:
+
+```
+$ make deploy
+ - $.meta.azs.z1: What availability zone should the *_z1 vms be placed in?
+ - $.meta.azs.z2: What availability zone should the *_z2 vms be placed in?
+ - $.meta.azs.z3: What availability zone should the *_z3 vms be placed in?
+ - $.meta.dns: Enter the DNS server for your VPC
+ - $.meta.elbs: What elbs will be in front of the gorouters?
+ - $.meta.router_security_groups: Enter the security groups which should be applied to the gorouter VMs
+ - $.meta.security_groups: Enter the security groups which should be applied to CF VMs
+ - $.networks.cf1.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.cf1.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.cf1.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.cf1.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.cf1.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.networks.cf2.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.cf2.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.cf2.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.cf2.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.cf2.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.networks.cf3.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.cf3.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.cf3.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.cf3.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.cf3.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.networks.router1.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.router1.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.router1.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.router1.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.router1.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.networks.router2.subnets.0.cloud_properties.subnet: Enter the AWS subnet ID for this subnet
+ - $.networks.router2.subnets.0.gateway: Enter the Gateway for this subnet
+ - $.networks.router2.subnets.0.range: Enter the CIDR address for this subnet
+ - $.networks.router2.subnets.0.reserved: Enter the reserved IP ranges for this subnet
+ - $.networks.router2.subnets.0.static: Enter the static IP ranges for this subnet
+ - $.properties.cc.security_group_definitions.load_balancer.rules: Specify the rules for allowing access for CF apps to talk to the CF Load Balancer External IPs
+ - $.properties.cc.security_group_definitions.services.rules: Specify the rules for allowing access to CF services subnets
+ - $.properties.cc.security_group_definitions.user_bosh_deployments.rules: Specify the rules for additional BOSH user services that apps will need to talk to
+```
+
+All of those parameters look like they're networking related. Time to start building out the `networking.yml` file. Since our VPC is `10.4.0.0/16`, Amazon will have provided a DNS server for us at `10.4.0.2`. We can grab the AZs and ELB names from our terraform output, and define our router + cf security groups, without consulting the Network Plan:
+
+```
+$ cat networking.yml
+---
+meta:
+  azs:
+    z1: us-west-2a
+    z2: us-west-2b
+    z3: us-west-2c
+  dns: 10.4.0.2
+  elbs: [staging-cf-elb]
+  router_security_groups: [wide-open]
+  security_groups: [wide-open]
+```
+
+Now, we can consult our [Network Plan][netplan] for the subnet information,  cross referencing with terraform output or the AWS console to get the subnet ID:
+
+```
+$ cat networking.yml
+---
+---
+meta:
+  azs:
+    z1: us-west-2a
+    z2: us-west-2b
+    z3: us-west-2c
+  dns: 10.4.0.2
+  elbs: [staging-cf-elb]
+  router_security_groups: [wide-open]
+  security_groups: [wide-open]
+  
+networks:
+- name: cf1
+  subnets:
+  - range: 10.4.36.0/24
+    static: [10.4.36.4 - 10.4.36.100]
+    reserved: [10.4.36.2 - 10.4.36.3\ # amazon reserves these
+    gateway: 10.4.36.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: cf2
+  - range: 10.4.37.0/24
+    static: [10.4.37.4 - 10.4.37.100]
+    reserved: [10.4.37.2 - 10.4.37.3] # amazon reserves these
+    gateway: 10.4.37.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: cf3
+  - range: 10.4.38.0/24
+    static: [10.4.38.4 - 10.4.38.100]
+    reserved: [10.4.38.2 - 10.4.38.3] # amazon reserves these
+    gateway: 10.4.38.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: router1
+  - range: 10.4.34.0/24
+    static: [10.4.34.4 - 10.4.34.100]
+    reserved: [10.4.34.2 - 10.4.34.3] # amazon reserves these
+    gateway: 10.4.34.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: router2
+  - range: 10.4.35.0/24
+    static: [10.4.35.4 - 10.4.35.100]
+    reserved: [10.4.35.2 - 10.4.47.3] # amazon reserves these
+    gateway: 10.4.35.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+```
+
+Let's see what's left now:
+
+```
+$ make deploy
+FIXME OUTPUT
+```
+
+The only bits left are the Cloud Foundry security group definitions (applied to each running app, not the SGs applied to the CF VMs). We add three sets of rules for apps to have access to by default - `load_balancer`, `services`, and `user_bosh_deployments`. The `load_balancer` group should have a rule allowing access to the public IP(s) of the Cloud Foundry installation, so that apps are able to talk to other apps. The `services` group should have rules allowing access to the internal IPs of the services networks (according to our [Network Plan][netplan], `10.4.42.0/24`, `10.4.43.0/24`, `10.4.44.0/24`). The `user_bosh_deployments` is used for any non-CF-services that the apps may need to talk to. In our case, there aren't any, so this can be an empty list.
+
+```
+$ cat networking.yml
+---
+meta:
+  azs:
+    z1: us-west-2a
+    z2: us-west-2b
+    z3: us-west-2c
+  dns: 10.4.0.2
+  elbs: [staging-cf-elb]
+  router_security_group: [wide-open]
+  security_groups: [wide-open]
+
+networks:
+- name: cf1
+  subnets:
+  - range: 10.4.36.0/24
+    static: [10.4.36.4 - 10.4.36.100]
+    reserved: [10.4.36.2 - 10.4.36.3\ # amazon reserves these
+    gateway: 10.4.36.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: cf2
+  - range: 10.4.37.0/24
+    static: [10.4.37.4 - 10.4.37.100]
+    reserved: [10.4.37.2 - 10.4.37.3] # amazon reserves these
+    gateway: 10.4.37.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: cf3
+  - range: 10.4.38.0/24
+    static: [10.4.38.4 - 10.4.38.100]
+    reserved: [10.4.38.2 - 10.4.38.3] # amazon reserves these
+    gateway: 10.4.38.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: router1
+  - range: 10.4.34.0/24
+    static: [10.4.34.4 - 10.4.34.100]
+    reserved: [10.4.34.2 - 10.4.34.3] # amazon reserves these
+    gateway: 10.4.34.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: router2
+  - range: 10.4.35.0/24
+    static: [10.4.35.4 - 10.4.35.100]
+    reserved: [10.4.35.2 - 10.4.47.3] # amazon reserves these
+    gateway: 10.4.35.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+
+properties:
+  cc:
+    security_group_definitions:
+    - name: load_balancer:
+      rules:
+      - destination: YOUR LOAD BALANCER IP1
+        protocol: all
+      - destination: YOUR LOAD BALANCER IP2
+        protocol: all
+    - name: services
+      rules:
+      - destination: 10.4.42.0-10.4.44.255
+        protocol: all
+    - name: user_bosh_deployments
+      rules: []
+```
+
+That should be it, finally. Let's deploy!
+
+```
+$ make deploy
+```
+
+Your CF is now up, and accessible! Target it using `cf login -a https://api.system.<your CF domain>`.
+The admin user's password can be retrieved from Vault. If you run into any trouble, make sure that
+your DNS is pointing properly to the correct ELB for this environment, and that the ELB has the correct
+SSL certificate for your site.
 
 ## Production Environment
 
 Deploying the production environment will be much like deploying the `beta` environment above. You will need to deploy a BOSH director, Cloud Foundry, and any services also deployed in the `beta` site. Hostnames, credentials, network information, and possibly scaling parameters will all be different, but the procedure for deploying them is the same.
 
-## Consul and Cloud Foundry
 
-[Cloud Foundry uses Consul][cfconsul] by HashiCorp help make DNS resolution smooth and keeping track of what's going on with the components running in the Cloud Foundry system.
+## Next Steps
 
-While many High Availability software packages allows you to run with a single node cluster as a degraded mode, Consul does not.  Consul defines an available cluster by having a quorum of nodes defined by the following formula:
+Lather, rinse, repeat for all additional environments (dev, prod, loadtest, whatever's applicable to the client).
 
-```
-(nodes/2) + 1 >= 2
-```
 
-Instead, Consul's degraded mode is a two node cluster, when a cluster does not have a quorum the cluster is marked unavailable.  This means you'd need to have at least three nodes to have High Availability.
-
-Even in a two node configuration, you do not have High Availability since one node going down means you do not have a quorum and thus no cluster.
-
-What does mean for running Cloud Foundry on Amazon Web Services?  **Three availability zones is recommended.**
-
-## Deploying Cloud Foundry
-
-Before you begin, please ensure that the jumpbox user has been installed and `certstrap` has been installed.
-
-TODO: @norm is working on a PR for this in the `jumpbox` repo.
-
-Let's generate the Cloud Foundry deployment with a `genesis` template.
-
-```
-$ cd ~/ops
-$ genesis new deployment --template cf-deployment
-```
-
-Now we need to create our AWS site inside our Cloud Foundry deployment.
-
-```
-$ cd cf-deployment/
-$ genesis new site --template aws aws
-```
-
-From the site level now we can create each of the staging and production environments we want (or more based on requirements) for a client.
-
-From `~/ops/cf-deployment/` we can run this because we're specifying the site as part of the parameters.
-
-```
-$ genesis new environment aws staging
-$ genesis new environment aws prod
-```
-
-All the templates are generated now.  It's time to go into one of the environments and begin the process of providing the environment speicifc parameters that apply to the site/environment we're deploying to.
-
-Let's begin with staging.
-
-```
-$ cd aws/staging
-$ make manifest
-TODO output goes here...
-```
-
-If we look at:
-
-```
-$.meta.cf.base_domain: Enter the Cloud Foundry base domain
-```
-
-You can edit the env `properties.yml` file, inheriting object “path” based on the output. Given this at the left, you might do…
-
-```
----
-meta:
-  cf:
-    base_domain: cf-aws-prod
-```
-
-If unsure what base_domain should be, refer to `name.yml` in the specific ENV in question.
-
-Using the configuration information from AWS subnets  we got the subnets gateway and dns information.   The subnet ids are also available.   The gateway is subnet.1 and the gateway VPC.1
-
-We are removing the cf2 networking configuration in a later step to save time.
-
-```
----
-networks:
-- name: cf1
-  subnets:
-    - range: 10.10.3.0/24
-      reserved:
-        - 10.10.3.2 - 10.10.3.9
-      static:
-        - 10.10.3.10 - 10.10.3.128
-      gateway: 10.10.3.1
-      dns:
-        - 10.10.0.2
-      cloud_properties:
-        security_groups:
-          - cf
-        subnet: subnet-7d0ec70b
-- name: cf2
-  subnets:
-    - range: 10.10.9.0/24
-      reserved:
-        - 10.10.9.2 - 10.10.9.9
-      static:
-        - 10.10.9.10 - 10.10.9.128
-      gateway: 10.10.9.1
-      dns:
-        - 10.10.0.2
-      cloud_properties:
-        security_groups:
-          - cf
-        subnet: subnet-d89902bc
-```
-
-Added S3 blobstore to the vault and then referenced vault spruce command to pull in the credentials.   This command will prompt you for the access keys.
-
-```
-$ safe write secret/aws/s3/blobstore aws_access_key_id
-$ safe write secret/aws/s3/blobstore aws_secret_access_key
-```
-
-Added the following lines to the aws/prod/credentials.yml file.
-
-```
-meta:
-  cf:
-    blobstore_config:
-      fog_connection:
-        aws_access_key_id: (( vault secret/aws/s3/blobstore:aws_access_key_id ))
-        aws_secret_access_key: (( vault secret/aws/s3/blobstore:aws_secret_access_key ))
-        region: us-west-2
-```
-
-The cf3 network is required for the consul to have cluster quorum.   Need to three because consul attempts to avoid a split brain scenario.
 
 [aws-subnets]: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html
 [bolo]:        https://github.com/cloudfoundry-community/bolo-boshrelease
 [cfconsul]:    https://docs.cloudfoundry.org/concepts/architecture/#bbs-consul
+[cfetcd]:      https://docs.cloudfoundry.org/concepts/architecture/#etcd
 [DRY]:         https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 [jumpbox]:     https://github.com/jhunt/jumpbox
 [netplan]:     network.md
