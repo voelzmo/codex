@@ -2262,7 +2262,10 @@ Let's see what's left now:
 
 ```
 $ make deploy
-FIXME OUTPUT
+3 error(s) detected:
+ - $.properties.cc.security_group_definitions.load_balancer.rules: Specify the rules for allowing access for CF apps to talk to the CF Load Balancer External IPs
+ - $.properties.cc.security_group_definitions.services.rules: Specify the rules for allowing access to CF services subnets
+ - $.properties.cc.security_group_definitions.user_bosh_deployments.rules: Specify the rules for additional BOSH user services that apps will need to talk to
 ```
 
 The only bits left are the Cloud Foundry security group definitions (applied to each running app, not the SGs applied to the CF VMs). We add three sets of rules for apps to have access to by default - `load_balancer`, `services`, and `user_bosh_deployments`. The `load_balancer` group should have a rule allowing access to the public IP(s) of the Cloud Foundry installation, so that apps are able to talk to other apps. The `services` group should have rules allowing access to the internal IPs of the services networks (according to our [Network Plan][netplan], `10.4.42.0/24`, `10.4.43.0/24`, `10.4.44.0/24`). The `user_bosh_deployments` is used for any non-CF-services that the apps may need to talk to. In our case, there aren't any, so this can be an empty list.
@@ -2339,12 +2342,32 @@ That should be it, finally. Let's deploy!
 
 ```
 $ make deploy
+RSA 1024 bit CA certificates are loaded due to old openssl compatibility
+Acting as user 'admin' on 'aws-staging-bosh'
+Checking whether release cf/237 already exists...NO
+Using remote release 'https://bosh.io/d/github.com/cloudfoundry/cf-release?v=237'
+
+Director task 6
+  Started downloading remote release > Downloading remote release
+...
+Deploying
+---------
+Are you sure you want to deploy? (type 'yes' to continue): yes
+...
+
+Started		2016-07-08 17:23:47 UTC
+Finished	2016-07-08 17:34:46 UTC
+Duration	00:10:59
+
+Deployed 'aws-staging-cf' to 'aws-staging-bosh'
+
 ```
 
-Your CF is now up, and accessible! Target it using `cf login -a https://api.system.<your CF domain>`.
-The admin user's password can be retrieved from Vault. If you run into any trouble, make sure that
-your DNS is pointing properly to the correct ELB for this environment, and that the ELB has the correct
-SSL certificate for your site.
+After a long while of compiling and deploying VMs, your CF should now be up, and accessible! You can
+check the sanity of the deployment via `genesis bosh run errand smoke_tests`. Target it using 
+`cf login -a https://api.system.<your CF domain>`. The admin user's password can be retrieved 
+from Vault. If you run into any trouble, make sure that your DNS is pointing properly to the 
+correct ELB for this environment, and that the ELB has the correct SSL certificate for your site.
 
 ## Production Environment
 
