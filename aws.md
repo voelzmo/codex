@@ -688,7 +688,7 @@ networks:
     subnets:
       - range:    10.4.1.0/24
         gateway:  10.4.1.1
-        dns:     [10.4.1.2]
+        dns:     [10.4.0.2]
         cloud_properties:
           subnet: subnet-xxxxxxxx # <-- your AWS Subnet ID
           security_groups: [wide-open]
@@ -704,7 +704,7 @@ Our range is that of the actual subnet we are in, `10.4.1.0/24`
 (in reality, the `/28` allocation is merely a tool of bookkeeping
 that simplifies ACLs and firewall configuration).  As such, our
 Amazon-provided default gateway is 10.4.1.1 (the first available
-IP) and our DNS server is 10.4.1.2.
+IP) and our DNS server is 10.4.0.2.
 
 We identify our AWS-specific configuration under
 `cloud_properties`, by calling out what AWS Subnet we want the EC2
@@ -890,7 +890,7 @@ networks:
     subnets:
       - range:    10.4.1.0/24
         gateway:  10.4.1.1
-        dns:     [10.4.1.2]
+        dns:     [10.4.0.2]
         cloud_properties:
           subnet: subnet-xxxxxxxx  # <--- your AWS Subnet ID
           security_groups: [wide-open]
@@ -1482,7 +1482,7 @@ networks:
     subnets:
       - range:    10.4.1.0/24
         gateway:  10.4.1.1
-        dns:     [10.4.1.2]
+        dns:     [10.4.0.2]
         cloud_properties:
           subnet: subnet-xxxxxxxx  # <--- your AWS Subnet ID
           security_groups: [wide-open]
@@ -1859,7 +1859,7 @@ networks:
     subnets:
       - range:    10.4.32.0/24
         gateway:  10.4.32.1
-        dns:     [10.4.1.2]
+        dns:     [10.4.0.2]
         cloud_properties:
           subnet: subnet-xxxxxxxx # <-- the AWS Subnet ID for your staging-infra-1 network
           security_groups: [wide-open]
