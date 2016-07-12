@@ -727,7 +727,7 @@ and we should have a full manifest at `manifests/manifest.yml`:
 $ make manifest
 $ ls -l manifests/
 total 8
--rw-r--r-- 1 jhunt staff 4572 Jun 28 14:24 manifest.yml
+-rw-r--r-- 1 ops staff 4572 Jun 28 14:24 manifest.yml
 ```
 
 > TODO: I had to `echo bosh-init > .type` to engage the bosh-init
@@ -1236,7 +1236,7 @@ deployment runways later.
 $ cd mgmt/
 $ genesis new environment prod
 Created environment mgmt/prod:
-/Users/jhunt/ops/docs/bolo-deployments/mgmt/prod
+~/ops/bolo-deployments/mgmt/prod
 ├── Makefile
 ├── README
 ├── cloudfoundry.yml

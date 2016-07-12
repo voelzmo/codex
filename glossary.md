@@ -30,7 +30,7 @@ Accessible from the internet, this server allows operators to gain access to ser
 
 A BOSH Director that sits before other site level BOSH Directors (staging/production) in order to help enable more rapid updates to the child-level Directors.
 
-### [safe](https://github.com/jhunt/safe)
+### [safe](https://github.com/starkandwayne/safe)
 
 A CLI interface for Vault.
 

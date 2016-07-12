@@ -40,6 +40,6 @@ to choose your IaaS provider.  We have guides for the following:
 
 [spruce]:    https://github.com/geofffranks/spruce
 [genesis]:   https://github.com/starkandwayne/genesis
-[safe]:      https://github.com/jhunt/safe
+[safe]:      https://github.com/starkandwayne/safe
 [terraform]: https://www.terraform.io
 [tf-inst]:   https://www.terraform.io/intro/getting-started/install.html
