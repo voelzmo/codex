@@ -40,6 +40,10 @@ same IAM user for all of them.
 the Secret Key ID if you misplace it -- your only recourse at that
 point is to generate a new set of keys and start over.
 
+Now Assign the **PowerUserAccess** role to your user. This user will be able
+to do any operation  except IAM opertions.  You can do this by clicking on
+the _Permissions_ tab and then clicking on the _attach policy_ button.
+
 ### Name Your VPC
 
 This step is really simple -- just make one up.  The VPC name will
