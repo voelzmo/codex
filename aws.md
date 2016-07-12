@@ -182,7 +182,7 @@ which you can get off of Github, like so:
 
 ```
 $ sudo curl -o /usr/local/bin/jumpbox \
-    https://raw.githubusercontent.com/jhunt/jumpbox/master/bin/jumpbox
+    https://raw.githubusercontent.com/starkandwayne/jumpbox/master/bin/jumpbox
 $ sudo chmod 0755 /usr/local/bin/jumpbox
 ```
 
@@ -2385,7 +2385,7 @@ Lather, rinse, repeat for all additional environments (dev, prod, loadtest, what
 [cfconsul]:    https://docs.cloudfoundry.org/concepts/architecture/#bbs-consul
 [cfetcd]:      https://docs.cloudfoundry.org/concepts/architecture/#etcd
 [DRY]:         https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
-[jumpbox]:     https://github.com/jhunt/jumpbox
+[jumpbox]:     https://github.com/starkandwayne/jumpbox
 [netplan]:     network.md
 [spruce-129]:  https://github.com/geofffranks/spruce/issues/129
 [slither]:     http://slither.io

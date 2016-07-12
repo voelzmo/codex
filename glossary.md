@@ -22,7 +22,7 @@ A naming convention for each subsequent stage of a concourse release pipeline is
 
 A tool to make managing multi-site BOSH deployments consistent and configurable.
 
-### [jumpbox](https://github.com/jhunt/jumpbox)
+### [jumpbox](https://github.com/starkandwayne/jumpbox)
 
 Accessible from the internet, this server allows operators to gain access to servers behind network firewalls and DMZs.  Most specifically to help gain access to the BOSH Director in each environment to perform actions.
 
