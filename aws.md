@@ -477,7 +477,7 @@ $ make manifest
  - $.meta.aws.default_sgs: What Security Groups?
  - $.meta.aws.private_key: What is the local path to the Amazon Private Key for this deployment?
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
- - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
+ - $.meta.shield_public_key: Specify the SSH public key from this environment's SHIELD daemon
 Availability Zone will BOSH be in?
 
 
@@ -550,7 +550,7 @@ $ make manifest`
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
  - $.properties.aws.default_key_name: What is your full key name?
  - $.properties.aws.default_security_groups: What Security Groups?
- - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
+ - $.meta.shield_public_key: Specify the SSH public key from this environment's SHIELD daemon
 
 
 Failed to merge templates; bailing...
@@ -590,7 +590,7 @@ Once more, with feeling:
 $ make manifest
 2 error(s) detected:
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
- - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
+ - $.meta.shield_public_key: Specify the SSH public key from this environment's SHIELD daemon
 
 
 Failed to merge templates; bailing...
@@ -638,10 +638,8 @@ Now we can put references to our Vaultified keypair in
 ```
 $ cat credentials.yml
 ---
-properties:
-  shield:
-    agent:
-      daemon_public_key: (( vault "secret/aws/proto/shield/keys/core:public" ))
+meta:
+  shield_public_key: (( vault "secret/aws/proto/shield/keys/core:public" ))
 ```
 
 You may want to take this opportunity to migrate
@@ -1793,8 +1791,8 @@ $ make deploy
  - $.meta.aws.region: What AWS region are you going to use?
  - $.meta.aws.secret_key: Please supply an AWS Secret Key
  - $.meta.aws.ssh_key_name: What AWS keypair should be used for the vcap user?
+ - $.meta.shield_public_key: Specify the SSH public key from this environment's SHIELD daemon
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
- - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
 
 
 Failed to merge templates; bailing...
