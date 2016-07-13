@@ -1667,10 +1667,31 @@ meta:
   availability_zone: "us-west-2a"   # Set this to match your first zone "aws_az1"
   external_url: "https://ci.52.6.143.218.sslip.io"  # for testing you can use the IP of the jumpbox and an SSH tunnel
   ssl_pem: ~
-#  ssl_pem: (( vault meta.vault_prefix "/web_ui:pem" ))
+  #  ssl_pem: (( vault meta.vault_prefix "/web_ui:pem" ))
 ```
 
 The `~` means we won't use SSL certs for now.  If you have proper certs or want to use self signed you can add them to vault under the `web_ui:pem` key
+
+For networking, we put this inside Global Infrastructure or Site Infrastructure
+```
+~/ops/concourse-deployments/aws/proto$ cat networking.yml
+---
+networks:
+  - name: concourse
+    subnets:
+      - range: 10.4.1.0/24
+        gateway: 10.4.1.1
+        dns:     [10.4.1.2]
+        static:
+          - 10.4.1.48 - 10.4.1.56  # We use 48-64, reserving the first eight for static
+        reserved:
+          - 10.4.1.2 - 10.4.1.3    # Amazon reserves these
+		  - 10.4.1.4 - 10.4.1.47   # Allocated to other deployments
+          - 10.4.1.65 - 10.4.1.254 # Allocated to other deployments
+        cloud_properties:
+          subnet: subnet-nnnnnnnn # <-- your AWS Subnet ID
+          security_groups: [wide-open]
+```
 
 After it is deployed, you can do a quick test by hitting the HAProxy machine
 
