@@ -1261,7 +1261,7 @@ $ cat properties.yml
 ---
 meta:
   az:
-    us-west-2a
+    us-west-2c
 ```
 
 Then, open up `networking.yml` and fill out your networking
