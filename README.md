@@ -30,7 +30,7 @@ Terraform comes with its own [installation instructions][tf-inst].
 To get started with a best practices Codex deployment, you'll want
 to choose your IaaS provider.  We have guides for the following:
 
-- [AWS](aws.md)
+- [AWS](part1/aws.md)
 
 [spruce]:    https://github.com/geofffranks/spruce
 [genesis]:   https://github.com/starkandwayne/genesis
