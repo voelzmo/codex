@@ -850,7 +850,7 @@ networks:
   - **10.4.2.16/28** in zone 2 (b)
   - **10.4.3.16/28** in zone 3 (c)
 
-First, lets do our AWS-specific region/zone configuration:
+First, lets do our AWS-specific region/zone configuration, along with our Vault HA fully-qualified domain name:
 
 ```
 $ cat properties.yml
@@ -862,6 +862,10 @@ meta:
       z1: (( concat meta.aws.region "a" ))
       z2: (( concat meta.aws.region "b" ))
       z3: (( concat meta.aws.region "c" ))
+properties:
+  vault:
+    ha:
+      domain: 10.4.1.16
 ```
 
 Our `/28` ranges are actually in their corresponding `/24` ranges
