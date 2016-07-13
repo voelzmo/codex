@@ -468,26 +468,16 @@ provide some critical information:
 ```
 $ cd aws/proto
 $ make manifest
-19 error(s) detected:
- - $.cloud_provider.properties.aws.access_key_id: Please supply an AWS Access Key
- - $.cloud_provider.properties.aws.default_key_name: What is your full key name?
- - $.cloud_provider.properties.aws.default_security_groups: What Security Groups?
- - $.cloud_provider.properties.aws.region: What AWS region are you going to use?
- - $.cloud_provider.properties.aws.secret_access_key: Please supply an AWS Secret Key
- - $.cloud_provider.ssh_tunnel.private_key: What is the local path to the Amazon Private Key for this deployment?
- - $.compilation.cloud_properties.availability_zone: What Availability Zone will BOSH be in?
+9 error(s) detected:
  - $.meta.aws.access_key: Please supply an AWS Access Key
  - $.meta.aws.azs.z1: What Availability Zone will BOSH be in?
  - $.meta.aws.region: What AWS region are you going to use?
  - $.meta.aws.secret_key: Please supply an AWS Secret Key
+ - $.meta.aws.ssh_key_name: What is your full key name?
+ - $.meta.aws.default_sgs: What Security Groups?
+ - $.meta.aws.private_key: What is the local path to the Amazon Private Key for this deployment?
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
- - $.properties.aws.access_key_id: Please supply an AWS Access Key
- - $.properties.aws.default_key_name: What is your full key name?
- - $.properties.aws.default_security_groups: What Security Groups?
- - $.properties.aws.region: What AWS region are you going to use?
- - $.properties.aws.secret_access_key: Please supply an AWS Secret Key
  - $.properties.shield.agent.daemon_public_key: Specify the SSH public key from this environment's SHIELD daemon
- - $.resource_pools.bosh.cloud_properties.availability_zone: What
 Availability Zone will BOSH be in?
 
 
@@ -554,9 +544,9 @@ Let's try that `make manifest` again.
 ```
 $ make manifest`
 7 error(s) detected:
- - $.cloud_provider.properties.aws.default_key_name: What is your full key name?
- - $.cloud_provider.properties.aws.default_security_groups: What Security Groups?
- - $.cloud_provider.ssh_tunnel.private_key: What is the local path to the Amazon Private Key for this deployment?
+ - $.meta.aws.ssh_key_name: What is your full key name?
+ - $.meta.aws.default_sgs: What Security Groups?
+ - $.meta.aws.private_key: What is the local path to the Amazon Private Key for this deployment?
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
  - $.properties.aws.default_key_name: What is your full key name?
  - $.properties.aws.default_security_groups: What Security Groups?
@@ -588,15 +578,10 @@ meta:
       z1: (( concat meta.aws.region "a" ))
     access_key: (( vault "secret/aws:access_key" ))
     secret_key: (( vault "secret/aws:secret_key" ))
-
-cloud_provider:
-  ssh_tunnel:
     private_key: /path/to/the/ec2/key.pem
-  properties:
-    aws:
-      default_key_name: your-ec2-keypair-name
-      default_security_groups:
-        - restricted
+    ssh_key_name: your-ec2-keypair-name
+    default_sgs:
+      - restricted
 ```
 
 Once more, with feeling:
