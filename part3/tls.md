@@ -1,6 +1,6 @@
 # Certificate & Key Management in a BOSH World
 
-SSL/TLS Certificates play a prominent role in the configuration
+SSL\/TLS Certificates play a prominent role in the configuration
 and use of various deployments, and managing them has been a
 problematic and error-prone endeavor, in practice.
 
@@ -14,12 +14,12 @@ client has set aside `example.com` for use in this deployment.
 
 ## Services With Certificates
 
-| Service   | Sensitive Traffic                                    | Verified?       |
-| --------- | ---------------------------------------------------- | --------------- |
-| BOSH      | Security credentials present in deployment manifests | NO              |
-| Vault     | Stores / distributes all security credentials        | Yes (skippable) |
-| SHIELD    | Credentials for target/storage systems               | Yes (skippable) |
-| Concourse | Credentials used in pipelines; build job output      | Yes (skippable) |
+| Service | Sensitive Traffic | Verified? |
+| :--- | :--- | :--- |
+| BOSH | Security credentials present in deployment manifests | NO |
+| Vault | Stores \/ distributes all security credentials | Yes \(skippable\) |
+| SHIELD | Credentials for target\/storage systems | Yes \(skippable\) |
+| Concourse | Credentials used in pipelines; build job output | Yes \(skippable\) |
 
 Ultimately, we want to be able to utilize valid, signed
 certificates for all of these systems, to avoid man-in-the-middle
@@ -28,13 +28,13 @@ attacks and shut down spoofing attempts.
 ## Option 1 - Real Certificates
 
 This is the easiest, most secure option available: talk to a
-certificate authority (like Thawte or Verisign) and provision a
+certificate authority \(like Thawte or Verisign\) and provision a
 new certificate for each service:
 
- - proto-bosh.example.com
- - vault.example.com (perhaps with subjectAltNames)
- - shield.example.com
- - runway.example.com
+* proto-bosh.example.com
+* vault.example.com \(perhaps with subjectAltNames\)
+* shield.example.com
+* runway.example.com
 
 The certificates and their corresponding private keys can be
 stored inside of the Vault and made available to each deployment
@@ -54,7 +54,7 @@ certificate may be more economical.  In this case, a certificate
 authority would provide a single certificate good for
 `*.example.com`.
 
-This certificate (and its private key) can then be stored in the
+This certificate \(and its private key\) can then be stored in the
 Vault and made available to deployments via Spruce.  One drawback
 of using wildcard certificates is that everyone shares the private
 key.  While this may not pose a problem in highly-controlled
@@ -68,13 +68,13 @@ will trust the certificate without much fuss.
 ## Option 3 - Certificate Authority
 
 An alternative to paying a certificate authority for certificates
-(wildcard or otherwise) is to _become_ a certificate authority and
+\(wildcard or otherwise\) is to _become_ a certificate authority and
 just issue certificates to yourself free of charge.
 
 The certificate authority could itself be kept in the Vault
-(although offline, air-gapped storage may be more secure), and new
-certificates issues via the CA as needed (either wildcard or
-dedicated).
+\(although offline, air-gapped storage may be more secure\), and new
+certificates issues via the CA as needed \(either wildcard or
+dedicated\).
 
 Unfortunately, our certificate authority is brand new, and no one
 trusts it out of the box.
@@ -91,11 +91,11 @@ certificate into the client processes.
 
 The CA certificate needs to be trusted by the following clients:
 
-- The bastion host
-- The jump boxes
-- All BOSH deployment VMs
-- End User Web Browsers
-- Concourse worker containers
+* The bastion host
+* The jump boxes
+* All BOSH deployment VMs
+* End User Web Browsers
+* Concourse worker containers
 
 The bastion host can be manually configured.
 
@@ -113,3 +113,4 @@ unverified certificates, or install the certificate authority.
 Concourse worker containers can follow a similar path, using the
 `genesis` script to download the CA certificate on every run,
 before doing any deployments.
+
