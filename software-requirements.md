@@ -1,4 +1,4 @@
-## Software You'll Need
+## Software Requirements
 
 You will need the following software on your local machine torun these deployments:
 - **[Spruce][spruce]**
