@@ -10,5 +10,9 @@
     * [Certificate & Key Management in a BOSH World](part3/tls.md)
     * [The Network Plan](part3/network.md)
     * [Secure your Secrets with Vault](part3/vault.md)
+        * [Best Practices](#best-practices)
+        * [High Availability](#high-availability)
+            * [Storage Backends](#storage-backends)
+        * [Unsealing a High Availability Vault](#unsealing-a-high-availability-vault)
+        * [Migrating Keys](#migrating-keys)    
 * [Software Requirements](software-requirements.md)
-
