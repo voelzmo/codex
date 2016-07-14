@@ -1,11 +1,9 @@
 # Deploying on AWS
 
 So you want to deploy Cloud Foundry to good old Amazon Web
-Services eh?  Good on you!
+Services eh?  Good on you!  Well a little prep goes a long way.
 
-## Setting up an AWS VPC
-
-## A Little Prep Goes A Long Way
+## Setup an AWS VPC
 
 To get started, you're going to need an AWS account, and four
 pieces of information to get started:
@@ -1939,7 +1937,7 @@ Duration	00:10:59
 Deployed 'aws-staging-bosh' to 'aws-proto-bosh'
 ```
 
-This will take a little less time than Proto BOSH did (some packages were already compiled), and the next time you deploy, it go by much quicker, as all the packages should have been compiled by now (unless upgrading BOSH or the stemcell). 
+This will take a little less time than Proto BOSH did (some packages were already compiled), and the next time you deploy, it go by much quicker, as all the packages should have been compiled by now (unless upgrading BOSH or the stemcell).
 
 Once the deployment finishes, target the new BOSH director to verify it works:
 
@@ -1973,7 +1971,7 @@ Also, make sure that you're targeting the right Vault, for good measure:
 $ safe target ops
 ```
 
-We will now create an `aws` site for CF: 
+We will now create an `aws` site for CF:
 
 ```
 $ genesis new site --template aws aws
@@ -2112,7 +2110,7 @@ meta:
       region: us-east-1
 ```
 
-Next, lets tackle the database situation. We will need to create RDS instances for the `uaadb` and `ccdb`. 
+Next, lets tackle the database situation. We will need to create RDS instances for the `uaadb` and `ccdb`.
 
 **TODO:** make a terraform repo/script for creating RDS instances for your and store their creds + address + dbname  in vault
 
@@ -2143,7 +2141,7 @@ Lastly, let's make sure to add our Cloud Foundry domain to properties.yml:
 ---
 meta:
   cf:
-    domain: your.staging.cf.example.com 
+    domain: your.staging.cf.example.com
     fog_connection:
       aws_access_key_id:     (( vault "secret/aws:access_key" ))
       aws_secret_access_key: (( vault "secret/aws:secret_key"))
@@ -2230,7 +2228,7 @@ meta:
   elbs: [staging-cf-elb]
   router_security_groups: [wide-open]
   security_groups: [wide-open]
-  
+
 networks:
 - name: cf1
   subnets:
@@ -2376,9 +2374,9 @@ Deployed 'aws-staging-cf' to 'aws-staging-bosh'
 ```
 
 After a long while of compiling and deploying VMs, your CF should now be up, and accessible! You can
-check the sanity of the deployment via `genesis bosh run errand smoke_tests`. Target it using 
-`cf login -a https://api.system.<your CF domain>`. The admin user's password can be retrieved 
-from Vault. If you run into any trouble, make sure that your DNS is pointing properly to the 
+check the sanity of the deployment via `genesis bosh run errand smoke_tests`. Target it using
+`cf login -a https://api.system.<your CF domain>`. The admin user's password can be retrieved
+from Vault. If you run into any trouble, make sure that your DNS is pointing properly to the
 correct ELB for this environment, and that the ELB has the correct SSL certificate for your site.
 
 ## Production Environment
