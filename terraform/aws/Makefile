@@ -15,6 +15,7 @@ deploy:
 	terraform output | ./yamler meta tf > ${OUT_FILE}
 
 destroy:
+	./scripts/delete
 	terraform plan -destroy -var-file ${VARS_FILE} -out ${PLAN_FILE}
 	terraform apply ${PLAN_FILE}
 
