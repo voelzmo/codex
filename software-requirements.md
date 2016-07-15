@@ -6,11 +6,11 @@ You will need the following software on your local machine torun these deploymen
 - **[Safe][safe]**
 - **[Terraform][terraform]**
 
-On a Mac, you can install spruce, genesis and safe via Homebrew:
+On a Mac, you can install spruce, genesis, safe and terraform via Homebrew:
 
 ```
 $ brew tap starkandwayne/cf
-$ brew install spruce genesis safe
+$ brew install spruce genesis safe terraform
 ```
 
 Terraform comes with its own [installation instructions][tf-inst].
