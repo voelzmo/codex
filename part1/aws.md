@@ -816,6 +816,11 @@ the `proto` environment inside of that site.
 ```
 $ genesis new site --template aws aws
 $ genesis new environment aws proto
+```
+
+Answer yes twice and then enter a name for your Vault instance when prompted for a FQDN. 
+
+```
 $ cd aws/proto
 $ make manifest
 10 error(s) detected:
@@ -1569,8 +1574,8 @@ want to create our own policy:
 If we're not already targeting the ops vault, do so now to save frustration later.
 
 ```
-$ safe target "http://10.4.1.16:8200" proda
-Now targeting proda at http://10.4.1.16:8200
+$ safe target "https://10.4.1.16:8200" proda
+Now targeting proda at https://10.4.1.16:8200
 $ export VAULT_SKIP_VERIFY=1
 ```
 
