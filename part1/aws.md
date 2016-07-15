@@ -1286,7 +1286,7 @@ Network range           - 10.4.0.128 - 10.4.0.191
 Usable range            - 10.4.0.129 - 10.4.0.190
 ```
 
-So that's 64 available hosts, strting at 10.4.0.128 and continuing
+So that's 64 available hosts, starting at 10.4.0.128 and continuing
 to 10.4.0.191.  Let's reserve the first 16 IPs for static
 allocation, and let the compilation VMs / dynamically-allocated
 VMs use the rest:
