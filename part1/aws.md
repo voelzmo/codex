@@ -1,82 +1,47 @@
 # Deploying on AWS
 
-So you want to deploy Cloud Foundry to good old Amazon Web
-Services eh?  Good on you!  Well a little prep goes a long way.
+So you want to deploy Cloud Foundry to good old Amazon Web Services eh?  Good on you!  Well a little prep goes a long way.
 
-## Setup an AWS VPC
+## AWS Checklist
 
-To get started, you're going to need an AWS account, and four
-pieces of information to get started:
+To run the `terraform` commands in this repo or do work on AWS, other than an AWS account (obviously), you'll need the following:
 
 1. Your AWS Access Key ID
 2. Your AWS Secret Key ID
-3. A Name for your VPC (you'll just make this up)
+3. A Name for your VPC
 4. An EC2 Key Pair
 
-### Generate an AWS Access Key / Secret Key
+### Generate Access Key
 
-The first thing you're going to need is a combination Access Key
-ID / Secret Key ID.  These are generated (for IAM users) via the
-IAM dashboard.  If you aren't using IAM for this, you really
-should.
+The first thing you're going to need is a combination **Access Key ID** / **Secret Key ID**.  These are generated (for IAM users) via the IAM dashboard.  If you aren't using IAM for this, you really should.
 
-On the AWS web console, access the IAM service, and click on
-`Users` in the sidebar.  Then, find the user you want to do your
-deployment / configuration under, and click on the username.
+On the AWS web console, access the IAM service, and click on `Users` in the sidebar.  Then, find the user you want to do your deployment / configuration under, and click on the username.
 
-This should bring up a summary of the user with things like the
-_User ARN_, _Groups_, etc.  In the bottom half of the Summary
-pane, you should see some tabs, and one of those tabs should be
-_Security Credentials_.  Click on that one.
+This should bring up a summary of the user with things like the _User ARN_, _Groups_, etc.  In the bottom half of the Summary pane, you should see some tabs, and one of those tabs should be _Security Credentials_.  Click on that one.
 
-You are strongly encouraged to generate a new Access Key, using
-the big blue button, for each VPC you deploy, even if you use the
-same IAM user for all of them.
+You are strongly encouraged to generate a new Access Key, using the big blue button, for each VPC you deploy, even if you use the same IAM user for all of them.
 
-**Make sure you save the secret key somewhere safe**, like
-1password or a Vault instance.  Amazon will be unable to give you
-the Secret Key ID if you misplace it -- your only recourse at that
-point is to generate a new set of keys and start over.
+**Make sure you save the secret key somewhere safe**, like 1Password or a Vault instance.  Amazon will be unable to give you the **Secret Key ID** if you misplace it -- your only recourse at that point is to generate a new set of keys and start over.
 
-Now Assign the **PowerUserAccess** role to your user. This user will be able
-to do any operation  except IAM opertions.  You can do this by clicking on
-the _Permissions_ tab and then clicking on the _attach policy_ button.
+Now assign the **PowerUserAccess** role to your user. This user will be able to do any operation except IAM operations.  You can do this by clicking on the _Permissions_ tab and then clicking on the _attach policy_ button.
 
 ### Name Your VPC
 
-This step is really simple -- just make one up.  The VPC name will
-be used to prefix all of the Network ACLs, Subnets and Security
-Groups, so that you can have multiple VPCs under one account
-without going cross-eyed trying to keep them separate.
+This step is really simple -- just make one up.  The VPC name will be used to prefix all of the Network ACLs, Subnets and Security Groups, so that you can have multiple VPCs under one account without going cross-eyed trying to keep them separate.
 
-### Generate an EC2 Key Pair
+### Generate EC2 Key Pair
 
-The Access Key / Secret Key is used to get access to the Amazon
-Web Services themselves.  In order to properly deploy the NAT and
-Bastion Host instances to EC2, you're going to need an EC2
-Key Pair.  This is the key pair you're going to need to use to SSH
-into the instances.
+The Access Key / Secret Key is used to get access to the Amazon Web Services themselves.  In order to properly deploy the NAT and Bastion Host instances to EC2, you're going to need an EC2 Key Pair.  This is the key pair you're going to need to use to SSH into the instances.
 
-Starting from the main Amazon Web Console, go to Service > EC2,
-and then click the _Key Pairs_ link under _Network & Security_.
-The big blue `Create Key Pair` button.  Make a note of the name
-you chose for the key pair, because we're going to need that for
-our Terraform configuration.
+Starting from the main Amazon Web Console, go to Service > EC2, and then click the _Key Pairs_ link under _Network & Security_. The big blue `Create Key Pair` button.  Make a note of the name you chose for the key pair, because we're going to need that for our Terraform configuration.
 
-**N.B.**: Make sure you are in the correct region (top-right
-corner of the black menu bar) when you create your EC2 Key Pair.
-Otherwise, it just plain won't work.
+**N.B.**: Make sure you are in the correct region (top-right corner of the black menu bar) when you create your EC2 Key Pair. Otherwise, it just plain won't work.
 
-## Terraform
+## Create AWS Resources with Terraform
 
-Now we can put it all together and build out your shiny new VPC in
-Amazon.  For this step, you're going to want to be in the
-`terraform/aws` sub-directory of this repository.  This Terraform
-configuration directly matches the [Network Plan][netplan]
-for the demo environment.  For deploying in production, you may
-need to tweak or rewrite.
+Once the requirements for AWS are met, we can put it all together and build out your shiny new Virtual Private Cloud (VPC) in Amazon.  For this step, you're going to want to be in the `terraform/aws` sub-directory of this repository.  This Terraform configuration directly matches the [Network Plan][netplan] for the demo environment.  For deploying in production, you may need to tweak or rewrite.
 
-Start with the following `aws.tfvars` file:
+Start with the following `aws.tfvars` file (substituting your actual values, of course):
 
 ```
 aws_access_key = "..."
@@ -85,21 +50,16 @@ aws_vpc_name = "my-new-vpc"
 aws_key_name = "bosh-ec2-key"
 ```
 
-(substituting your actual values, of course)
-
-If you need to change the region or subnet, you can override the defaults by adding
+If you need to change the region or subnet, you can override the defaults by adding:
 
 ```
 aws_region = "us-east-1"
 network = "10.42"
 ```
 
-NOTE: We recommend [a region with three availability zones][az] for production level
-environments.
+NOTE: We recommend [a region with three availability zones][az] for production level environments.
 
-As a quick pre-flight check, run `make manifest` to compile your
-Terraform plan and suss out any issues with naming, missing
-variables, configuration, etc.:
+As a quick pre-flight check, run `make manifest` to compile your Terraform plan and suss out any issues with naming, missing variables, configuration, etc.:
 
 ```
 $ make manifest
@@ -112,10 +72,7 @@ Refreshing Terraform state prior to plan...
 Plan: 33 to add, 0 to change, 0 to destroy.
 ```
 
-If everything worked out you should se a summary of the plan.  If
-this is the first time you've done this, all of your changes
-should be additions.  The numbers may differ from the above
-output, and that's okay.
+If everything worked out you should se a summary of the plan.  If this is the first time you've done this, all of your changes should be additions.  The numbers may differ from the above output, and that's okay.
 
 Now, to pull the trigger, run `make deploy`:
 
@@ -123,11 +80,7 @@ Now, to pull the trigger, run `make deploy`:
 $ make deploy
 ```
 
-Terraform will connect to AWS, using your Access Key and Secret
-Key, and spin up all the things it needs.  When it finishes, you
-should be left with a bunch of subnets, configured network ACLs,
-security groups, routing tables, a NAT instance (for public
-internet connectivity) and a Bastion host.
+Terraform will connect to AWS, using your **Access Key ID** and **Secret Key ID**, and spin up all the things it needs.  When it finishes, you should be left with a bunch of subnets, configured network ACLs, security groups, routing tables, a NAT instance (for public internet connectivity) and a Bastion host.
 
 If the `deploy` step fails with errors like:
 
@@ -142,20 +95,14 @@ If the `deploy` step fails with errors like:
 
 you should run `make destroy` to clean up, then add a line like `aws_az1 = "d"` to replace the restricted zone.
 
-## Setting up the Bastion Host
+## Prepare Bastion Host
 
-The bastion host is an access point virtual machine that your IaaS
-instrumentation layer (probably Terraform) should have provisioned
-for you.  As such, you probably will need to consult with your
-IaaS provider to figure out what IP address the bastion host can
-be accessed at.  For example, on AWS, find the `bastion` EC2
-instance and note its Elastic IP address.
+The bastion host is an access point virtual machine that your IaaS instrumentation layer (probably Terraform) should have provisioned for you.  As such, you probably will need to consult with your IaaS provider to figure out what IP address the bastion host can be accessed at.  For example, on AWS, find the `bastion` EC2 instance and note its Elastic IP address.
 
-You're going to need to SSH into the bastion host (as the `ubuntu`
-user), and unfortunately, that is also provider-specific.  In AWS,
-you'll just SSH to the Elastic IP, using the private half of the
-EC2 keypair you generated.  Other IaaS's may have other
+You're going to need to SSH into the bastion host (as the `ubuntu` user), and unfortunately, that is also provider-specific.  In AWS, you'll just SSH to the Elastic IP, using the private half of the EC2 keypair you generated.  Other IaaS's may have other
 requirements.
+
+### Verify Keypair
 
 You can check your SSH keypair by comparing the Amazon fingerprints.  
 
@@ -179,13 +126,14 @@ $
 
 (on OS X you need to `brew install openssl` to get OpenSSL 1.0.x and use that version)
 
-Once on the bastion host, you'll want to use the `jumpbox` script,
-which you can get off of Github, like so:
+### Setup Jumpbox
+
+Once on the bastion host, you'll want to use the `jumpbox` script, which you can get off of Github, like so:
 
 ```
-$ sudo curl -o /usr/local/bin/jumpbox \
-    https://raw.githubusercontent.com/starkandwayne/jumpbox/master/bin/jumpbox
-$ sudo chmod 0755 /usr/local/bin/jumpbox
+sudo curl -o /usr/local/bin/jumpbox \
+https://raw.githubusercontent.com/starkandwayne/jumpbox/master/bin/jumpbox
+sudo chmod 0755 /usr/local/bin/jumpbox
 ```
 
 Script in hand, you can go ahead and prepare the system with
@@ -195,13 +143,9 @@ globally available utilities:
 $ sudo jumpbox system
 ```
 
-That should install some useful utilities like `jq`, `spruce`,
-`safe`, and `genesis` all of which will be important when we start
-using the bastion host to do deployments.
+That should install some useful utilities like `jq`, `spruce`, `safe`, and `genesis` all of which will be important when we start using the bastion host to do deployments.
 
-Next up, you're going to want to provision some normal user
-accounts on the bastion host, so that operations staff can login
-via named accounts:
+Next up, you're going to want to provision some normal user accounts on the bastion host, so that operations staff can login via named accounts:
 
 ```
 $ jumpbox useradd
@@ -221,13 +165,9 @@ $ chmod 600 ~/.ssh/authorized_keys
 $ logout
 ```
 
-Using named accounts provides auditing (via the `sudo` logs),
-isolation (people won't step on each others toes on the
-filesystem) and customization (everyone gets to set their own
-prompt / shell / $EDITOR / etc.)
+Using named accounts provides auditing (via the `sudo` logs), isolation (people won't step on each others toes on the filesystem) and customization (everyone gets to set their own prompt / shell / $EDITOR / etc.)
 
-Once you're done setting up your users, you should log in (via
-SSH) as your personal account and make sure everything is working.
+Once you're done setting up your users, you should log in (via SSH) as your personal account and make sure everything is working.
 
 You can verify what's currently installed on the bastion via:
 
@@ -237,11 +177,7 @@ $ jumpbox
 
 For more information, check out [the jumpbox repo][jumpbox] on Github.
 
-Note: try not to confuse the `jumpbox` script with the jumpbox
-_BOSH release_.  The latter provisions the jumpbox machine as part
-of the deployment, provides requisite packages, and creates user
-accounts.  The former is really only useful for setting up /
-updating the bastion host.
+Note: try not to confuse the `jumpbox` script with the jumpbox _BOSH release_.  The latter provisions the jumpbox machine as part of the deployment, provides requisite packages, and creates user accounts.  The former is really only useful for setting up / updating the bastion host.
 
 ## Deploying Proto-BOSH and a Vault
 
@@ -818,7 +754,7 @@ $ genesis new site --template aws aws
 $ genesis new environment aws proto
 ```
 
-Answer yes twice and then enter a name for your Vault instance when prompted for a FQDN. 
+Answer yes twice and then enter a name for your Vault instance when prompted for a FQDN.
 
 ```
 $ cd aws/proto
@@ -1673,7 +1609,7 @@ meta:
   #  ssl_pem: (( vault meta.vault_prefix "/web_ui:pem" ))
 ```
 
-Be sure to replace the x.x.x.x in the external_url above with the IP address of the Bastion host. 
+Be sure to replace the x.x.x.x in the external_url above with the IP address of the Bastion host.
 
 The `~` means we won't use SSL certs for now.  If you have proper certs or want to use self signed you can add them to vault under the `web_ui:pem` key
 
@@ -1739,7 +1675,7 @@ $ ssh -L 8080:10.4.1.51:80 user@ci.x.x.x.x.sslip.io
 ```
 
 and hit http://localhost:8080 to get the Concourse UI. Be sure to replace `user` with the jumpbox username on the Bastion host
-and x.x.x.x with the IP address of the Bastion host. 
+and x.x.x.x with the IP address of the Bastion host.
 
 # Building out Sites and Environments
 
@@ -2408,5 +2344,5 @@ Lather, rinse, repeat for all additional environments (dev, prod, loadtest, what
 [netplan]:     network.md
 [spruce-129]:  https://github.com/geofffranks/spruce/issues/129
 [slither]:     http://slither.io
-[amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#KeyPairs:sort=keyName
+[amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
 [az]:          http://aws.amazon.com/about-aws/global-infrastructure/

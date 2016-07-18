@@ -1,9 +1,17 @@
 # Summary
 
 * [Introduction](README.md)
+* [Software Requirements](software-requirements.md)
 * [Part I - AWS](part1/README.md)
     * [Deploying on AWS](part1/aws.md)
-        * [Setup an AWS VPC](part1/aws.md#setup-an-aws-vpc)
+        * [AWS Checklist](part1/aws.md#aws-checklist)
+            * [Generate Access Key](part1/aws.md#generate-access-key)
+            * [Name Your VPC](part1/aws.md#name-your-vpc)
+            * [Generate EC2 Key Pair](part1/aws.md#generate-ec2-key-pair)
+        * [Create AWS Resources with Terraform](part1/aws.md#create-aws-resources-with-terraform)
+        * [Prepare Bastion Host](part1/aws.md#prepare-bastion-host)
+            * [Verify Keypair](part1/aws.md#verify-keypair)
+            * [Setup Jumpbox](part1/aws.md#setup-jumpbox)
 * [Part II - OpenStack](part2/README.md)
     * [Deploying on OpenStack](part2/openstack.md)
 * [Part III - Appendixes](part3/README.md)
@@ -19,4 +27,3 @@
             * [Storage Backends](part3/vault.md#storage-backends)
         * [Unsealing a High Availability Vault](part3/vault.md#unsealing-a-high-availability-vault)
         * [Migrating Keys](part3/vault.md#migrating-keys)
-* [Software Requirements](software-requirements.md)
