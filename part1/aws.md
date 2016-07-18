@@ -1813,7 +1813,7 @@ Notice, unlike the Proto BOSH setup, we do not specify `--type bosh-init`. This 
 Let's try to deploy now, and see what information still needs to be resolved:
 
 ```
-$ cd aws/sandbox
+$ cd aws/staging
 $ make deploy
 9 error(s) detected:
  - $.meta.aws.access_key: Please supply an AWS Access Key
