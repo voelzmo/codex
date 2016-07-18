@@ -1668,10 +1668,12 @@ Again starting with Meta lines:
 ---
 meta:
   availability_zone: "us-west-2a"   # Set this to match your first zone "aws_az1"
-  external_url: "https://ci.52.6.143.218.sslip.io"  # for testing you can use the IP of the jumpbox and an SSH tunnel
+  external_url: "https://ci.x.x.x.x.sslip.io"  # Set as IP address of the Bastion host to allow testing via SSH tunnel
   ssl_pem: ~
   #  ssl_pem: (( vault meta.vault_prefix "/web_ui:pem" ))
 ```
+
+Be sure to replace the x.x.x.x in the external_url above with the IP address of the Bastion host. 
 
 The `~` means we won't use SSL certs for now.  If you have proper certs or want to use self signed you can add them to vault under the `web_ui:pem` key
 
@@ -1733,9 +1735,11 @@ Transfer-Encoding: chunked
 You can then run on a your local machine
 
 ```
-$ ssh -L 8080:10.4.1.51:80 user@ci.52.6.143.218.sslip.io
+$ ssh -L 8080:10.4.1.51:80 user@ci.x.x.x.x.sslip.io
 ```
-and hit http://localhost:8080 to get the Concourse UI
+
+and hit http://localhost:8080 to get the Concourse UI. Be sure to replace `user` with the jumpbox username on the Bastion host
+and x.x.x.x with the IP address of the Bastion host. 
 
 # Building out Sites and Environments
 
