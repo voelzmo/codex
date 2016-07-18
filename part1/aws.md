@@ -179,38 +179,20 @@ For more information, check out [the jumpbox repo][jumpbox] on Github.
 
 Note: try not to confuse the `jumpbox` script with the jumpbox _BOSH release_.  The latter provisions the jumpbox machine as part of the deployment, provides requisite packages, and creates user accounts.  The former is really only useful for setting up / updating the bastion host.
 
-## Deploying Proto-BOSH and a Vault
+## A Land Before Time
 
-So you've tamed the IaaS and outfitted your bastion host with the
-necessary tools to deploy stuff.  First up, we have to deploy a
-BOSH director, which we will call proto-BOSH.
+So you've tamed the IaaS and outfitted your bastion host with the necessary tools to deploy stuff.  First up, we have to deploy a BOSH director, which we will call proto-BOSH.
 
-Proto-BOSH is a little different from all of the other BOSH
-directors we're going to deploy.  For starters, it gets deployed
-via `bosh-init`, whereas our environment-specific BOSH directors
-are going to be deployed via the proto-BOSH (and the `bosh` CLI).
-It is also the only deployment that gets deployed without the
-benefit of a pre-existing Vault in which to store secret
-credentials (but, as you'll see, we're going to cheat a bit on
-that front).
+Proto-BOSH is a little different from all of the other BOSH directors we're going to deploy.  For starters, it gets deployed via `bosh-init`, whereas our environment-specific BOSH directors are going to be deployed via the proto-BOSH (and the `bosh` CLI).  It is also the only deployment that gets deployed without the benefit of a pre-existing Vault in which to store secret credentials (but, as you'll see, we're going to cheat a bit on that front).
 
 ### Proto-Vault
 
-BOSH has secrets.  Lots of them.  Components like NATS and the
-database rely on secure passwords for inter-component
-interaction.  Ideally, we'd have a spinning Vault for storing our
-credentials, so that we don't have them on-disk or in a git
+BOSH has secrets.  Lots of them.  Components like NATS and the database rely on secure passwords for inter-component interaction.  Ideally, we'd have a spinning Vault for storing our credentials, so that we don't have them on-disk or in a git
 repository somewhere.
 
-However, we are starting from almost nothing, so we don't have the
-luxury of using a BOSH-deployed Vault.  What we can do, however,
-is spin a single-threaded Vault server instance _on the bastion
-host_, and then migrate the credentials to the real Vault later.
+However, we are starting from almost nothing, so we don't have the luxury of using a BOSH-deployed Vault.  What we can do, however, is spin a single-threaded Vault server instance _on the bastion host_, and then migrate the credentials to the real Vault later.
 
-The `jumpbox` script that we ran as part of setting up the bastion
-host installs the `vault` command-line utility, which includes not
-only the client for interacting with Vault, but also the Vault
-server daemon itself.
+The `jumpbox` script that we ran as part of setting up the bastion host installs the `vault` command-line utility, which includes not only the client for interacting with Vault, but also the Vault server daemon itself.
 
 ```
 $ vault server -dev
