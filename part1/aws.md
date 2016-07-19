@@ -2323,7 +2323,7 @@ Lather, rinse, repeat for all additional environments (dev, prod, loadtest, what
 [cfetcd]:      https://docs.cloudfoundry.org/concepts/architecture/#etcd
 [DRY]:         https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 [jumpbox]:     https://github.com/starkandwayne/jumpbox
-[netplan]:     network.md
+[netplan]:     https://github.com/starkandwayne/codex/blob/master/part3/network.md
 [spruce-129]:  https://github.com/geofffranks/spruce/issues/129
 [slither]:     http://slither.io
 [amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
