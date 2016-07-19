@@ -1743,9 +1743,411 @@ there are the concepts of `alpha` and `beta` sites. The alpha site is the initia
 
 ### BOSH-Lite
 
+Since our `alpha` site will be a bosh lite running on AWS, we will need to deploy that to our [global infrastructure network][netplan].
+
+First, lets make sure we're in the right place, targetting the right Vault:
+
+```
+$ cd ~/ops
+$ safe target ops
+Now targeting ops at https://10.4.1.16:8200
+```
+
+Now we can create our repo for deploying the bosh-lite:
+
+```
+$ genesis new deployment --template bosh-lite
+cloning from template https://github.com/starkandwayne/bosh-lite-deployment
+Cloning into '/home/gfranks/ops/bosh-lite-deployments'...
+remote: Counting objects: 55, done.
+remote: Compressing objects: 100% (33/33), done.
+remote: Total 55 (delta 7), reused 55 (delta 7), pack-reused 0
+Unpacking objects: 100% (55/55), done.
+Checking connectivity... done.
+Embedding genesis script into repository
+genesis v1.5.2 (ec9c868f8e62)
+[master 5421665] Initial clone of templated bosh-lite deployment
+ 3 files changed, 3672 insertions(+), 67 deletions(-)
+  rewrite README.md (96%)
+   create mode 100755 bin/genesis
+```
+
+Next lets create our site and environment:
+
+```
+$ cd bosh-lite-deployments
+$ genesis new site --template aws aws
+Created site aws (from template aws):
+/home/gfranks/ops/bosh-lite-deployments/aws
+├── README
+└── site
+    ├── disk-pools.yml
+    ├── jobs.yml
+    ├── networks.yml
+    ├── properties.yml
+    ├── README
+    ├── releases
+    ├── resource-pools.yml
+    ├── stemcell
+    │   ├── name
+    │   └── version
+    └── update.yml
+
+2 directories, 11 files
+
+$ genesis new env bosh-lite alpha
+Running env setup hook: /home/gfranks/ops/bosh-lite-deployments/.env_hooks/setup
+
+(*) ops	https://10.4.1.16:8200
+
+Use this Vault for storing deployment credentials?  [yes or no]yes
+Setting up credentials in vault, under secret/aws/alpha/bosh-lite
+.
+└── secret/aws/alpha/bosh-lite
+    ├── blobstore/
+
+
+    │   ├── agent
+    │   └── director
+    ├── db
+    ├── nats
+    ├── users/
+    │   ├── admin
+    │   └── hm
+    └── vcap
+
+
+
+
+Created environment aws/alpha:
+/home/gfranks/ops/bosh-lite-deployments/aws/alpha
+├── cloudfoundry.yml
+├── credentials.yml
+├── director.yml
+├── Makefile
+
+
+├── monitoring.yml
+├── name.yml
+├── networking.yml
+├── properties.yml
+├── README
+└── scaling.yml
+
+0 directories, 10 files
+
+```
+
+Now lets try to deploy:
+
+```
+$ make deploy
+  checking https://genesis.starkandwayne.com for details on latest stemcell bosh-aws-xen-hvm-ubuntu-trusty-go_agent
+  checking https://genesis.starkandwayne.com for details on release bosh/256.2
+  checking https://genesis.starkandwayne.com for details on release bosh-warden-cpi/29
+  checking https://genesis.starkandwayne.com for details on release garden-linux/0.339.0
+  checking https://genesis.starkandwayne.com for details on release port-forwarding/2
+8 error(s) detected:
+ - $.meta.aws.azs.z1: What Availability Zone will BOSH be in?
+ - $.meta.net.dns: What is the IP of the DNS server for this BOSH-Lite?
+ - $.meta.net.gateway: What is the gateway of the network the BOSH-Lite will be on?
+ - $.meta.net.range: What is the network address of the subnet BOSH-Lite will be on?
+ - $.meta.net.reserved: Provide a list of reserved IP ranges for the subnet that BOSH-Lite will be on
+ - $.meta.net.security_groups: What security groups should be applied to the BOSH-Lite?
+ - $.meta.net.static: Provide a list of static IPs/ranges in the subnet that BOSH-Lite will choose from
+ - $.meta.port_forwarding_rules: Define any port forwarding rules you wish to enable on the bosh-lite, or an empty array
+
+
+Failed to merge templates; bailing...
+
+
+Makefile:25: recipe for target 'deploy' failed
+make: *** [deploy] Error 3
+```
+
+Looks like we only have a handful of parameters to update, all related to networking, so lets fill out our `networking.yml`,
+after consulting the [Network Plan][netplan] to find our global infrastructure network and the AWS console to find our subnet
+ID:
+
+```
+$ cat networking.yml
+---
+meta:
+  net:
+    subnet: subnet-xxxxx # <--- your subnet ID here
+    security_groups: [wide-open]
+    range: 10.4.1.0/24
+    gateway: 10.4.1.1
+    dns: [10.4.0.2]
+  aws:
+    azs:
+      z1: us-west-2a
+```
+
+Since there are a bunch of other deployments on the infrastructure network, we should take care
+to reserve the correct static + reserved IPs, so that we don't conflict with other deployments. Fortunately
+that data can be referenced in the [Global Infrastructure IP Allocation section][infra-ips] of the Network Plan:
+
+```
+$ cat networking.yml
+---
+meta:
+  net:
+    subnet: subnet-8a186dee
+    security_groups: [wide-open]
+    range: 10.4.1.0/24
+    gateway: 10.4.1.1
+    static: [10.4.1.80]
+    reserved: [10.4.1.2 - 10.4.1.79, 10.4.1.96 - 10.4.1.255]
+    dns: [10.4.0.2]
+  aws:
+    azs:
+      z1: us-west-2a
+```
+
+Lastly, we will need to add port-forwarding rules, so that things outside the bosh-lite can talk to its services.
+Since we know we will be deploying Cloud Foundry, let's add rules for it:
+
+```
+$ cat properties.yml
+---
+meta:
+  port_forwarding_rules:
+  - internal_ip: 10.244.0.34
+    internal_port: 80
+    external_port: 80
+  - internal_ip: 10.244.0.34
+    internal_port: 443
+    external_port: 443
+```
+
+And finally, we can deploy again:
+
+```
+$ make deploy
+  checking https://genesis.starkandwayne.com for details on stemcell bosh-aws-xen-hvm-ubuntu-trusty-go_agent/3262.2
+    checking https://genesis.starkandwayne.com for details on release bosh/256.2
+  checking https://genesis.starkandwayne.com for details on release bosh-warden-cpi/29
+    checking https://genesis.starkandwayne.com for details on release garden-linux/0.339.0
+  checking https://genesis.starkandwayne.com for details on release port-forwarding/2
+    checking https://genesis.starkandwayne.com for details on stemcell bosh-aws-xen-hvm-ubuntu-trusty-go_agent/3262.2
+  checking https://genesis.starkandwayne.com for details on release bosh/256.2
+    checking https://genesis.starkandwayne.com for details on release bosh-warden-cpi/29
+  checking https://genesis.starkandwayne.com for details on release garden-linux/0.339.0
+    checking https://genesis.starkandwayne.com for details on release port-forwarding/2
+Acting as user 'admin' on 'aws-proto-bosh'
+Checking whether release bosh/256.2 already exists...YES
+Acting as user 'admin' on 'aws-proto-bosh'
+Checking whether release bosh-warden-cpi/29 already exists...YES
+Acting as user 'admin' on 'aws-proto-bosh'
+Checking whether release garden-linux/0.339.0 already exists...YES
+Acting as user 'admin' on 'aws-proto-bosh'
+Checking whether release port-forwarding/2 already exists...YES
+Acting as user 'admin' on 'aws-proto-bosh'
+Checking if stemcell already exists...
+Yes
+Acting as user 'admin' on deployment 'aws-alpha-bosh-lite' on 'aws-proto-bosh'
+Getting deployment properties from director...
+Unable to get properties list from director, trying without it...
+
+Detecting deployment changes
+...
+Deploying
+---------
+Are you sure you want to deploy? (type 'yes' to continue): yes
+
+Director task 58
+  Started preparing deployment > Preparing deployment. Done (00:00:00)
+...
+Task 58 done
+
+Started		2016-07-14 19:14:31 UTC
+Finished	2016-07-14 19:17:42 UTC
+Duration	00:03:11
+
+Deployed `aws-alpha-bosh-lite' to `aws-proto-bosh'
+```
+
+Now we can verify the deployment and set up our `bosh` CLI target:
+
+```
+# grab the admin password for the bosh-lite
+$ safe get secret/aws/alpha/bosh-lite/users/admin
+--- # secret/aws/alpha/bosh-lite/users/admin
+password: YOUR-PASSWORD-WILL-BE-HERE
+
+
+$ bosh target https://10.4.1.80:25555 alpha
+Target set to `aws-alpha-bosh-lite'
+Your username: admin
+Enter password:
+Logged in as `admin'
+$ bosh status
+Config
+             /home/gfranks/.bosh_config
+
+ Director
+   Name       aws-alpha-bosh-lite
+     URL        https://10.4.1.80:25555
+   Version    1.3232.2.0 (00000000)
+     User       admin
+   UUID       d0a12392-f1df-4394-99d1-2c6ce376f821
+     CPI        vsphere_cpi
+   dns        disabled
+     compiled_package_cache disabled
+   snapshots  disabled
+
+   Deployment
+     not set
+```
+
+Tadaaa! Time to commit all the changes to deployment repo, and push to where we're storing
+them long-term.
+
 ### Cloud Foundry
 
-**TODO:** we need bosh-lite genesis templates, a decision on what bosh to build the bosh-lites on, and docs on how to deploy.
+To deploy CF to our alpha environment, we will need to first ensure we're targeting the right
+Vault/BOSH:
+
+```
+$ cd ~/ops
+$ safe target ops
+
+(*) ops	https://10.4.1.16:8200
+
+$ bosh target alpha
+Target set to `aws-alpha-bosh-lite'
+```
+
+Now we'll create our deployment repo for cloudfoundry:
+
+```
+$ genesis new deployment --template cf`
+cloning from template https://github.com/starkandwayne/cf-deployment
+Cloning into '/home/gfranks/ops/cf-deployments'...
+remote: Counting objects: 268, done.
+remote: Compressing objects: 100% (3/3), done.
+remote: Total 268 (delta 0), reused 0 (delta 0), pack-reused 265
+Receiving objects: 100% (268/268), 51.57 KiB | 0 bytes/s, done.
+Resolving deltas: 100% (112/112), done.
+Checking connectivity... done.
+Embedding genesis script into repository
+genesis v1.5.2 (ec9c868f8e62)
+[master 1f0c534] Initial clone of templated cf deployment
+ 2 files changed, 3666 insertions(+), 150 deletions(-)
+ rewrite README.md (99%)
+ create mode 100755 bin/genesis
+```
+
+And generate our bosh-lite based alpha environment:
+
+```
+$ cf cf-deployments
+$ genesis new site --template bosh-lite bosh-lite
+Created site bosh-lite (from template bosh-lite):
+/home/gfranks/ops/cf-deployments/bosh-lite
+├── README
+└── site
+    ├── disk-pools.yml
+    ├── jobs.yml
+    ├── networks.yml
+    ├── properties.yml
+    ├── releases
+    ├── resource-pools.yml
+    ├── stemcell
+    │   ├── name
+    │   └── version
+    └── update.yml
+
+2 directories, 10 files
+
+$ genesis new env bosh-lite alpha
+Running env setup hook: /home/gfranks/ops/cf-deployments/.env_hooks/00_confirm_vault
+
+(*) ops	https://10.4.1.16:8200
+
+Use this Vault for storing deployment credentials?  [yes or no] yes
+Running env setup hook: /home/gfranks/ops/cf-deployments/.env_hooks/setup_certs
+Generating Cloud Foundry internal certs
+Uploading Cloud Foundry internal certs to Vault
+Running env setup hook: /home/gfranks/ops/cf-deployments/.env_hooks/setup_cf_secrets
+Creating JWT Signing Key
+Creating app_ssh host key fingerprint
+Generating secrets
+Created environment bosh-lite/alpha:
+/home/gfranks/ops/cf-deployments/bosh-lite/alpha
+├── cloudfoundry.yml
+├── credentials.yml
+├── director.yml
+├── Makefile
+├── monitoring.yml
+├── name.yml
+├── networking.yml
+├── properties.yml
+├── README
+└── scaling.yml
+
+0 directories, 10 files
+
+
+```
+
+Unlike all the other deployments so far, we won't use `make deploy` to vet the
+manifest for CF. This is because the bosh-lite CF comes out of the box ready to
+deploy to a Vagrant-based bosh-lite with no tweaks.  Since we are using it as
+the Cloud Foundry for our alpha environment, we will need to customize the Cloud
+Foundry base domain, with a domain resolving to the IP of our `alpha` bosh-lite VM:
+
+```
+cd bosh-lite/alpha
+$ cat properties.yml
+---
+meta:
+  cf:
+    base_domain: 10.4.1.80.xip.io
+```
+
+Now we can deploy:
+
+```
+$ make deploy
+  checking https://genesis.starkandwayne.com for details on release cf/237
+  checking https://genesis.starkandwayne.com for details on release toolbelt/3.2.10
+  checking https://genesis.starkandwayne.com for details on release postgres/1.0.3
+  checking https://genesis.starkandwayne.com for details on release cf/237
+  checking https://genesis.starkandwayne.com for details on release toolbelt/3.2.10
+  checking https://genesis.starkandwayne.com for details on release postgres/1.0.3
+Acting as user 'admin' on 'aws-try-anything-bosh-lite'
+Checking whether release cf/237 already exists...NO
+Using remote release `https://bosh.io/d/github.com/cloudfoundry/cf-release?v=237'
+
+Director task 1
+  Started downloading remote release > Downloading remote release
+...
+Deploying
+---------
+Are you sure you want to deploy? (type 'yes' to continue): yes
+
+Director task 12
+  Started preparing deployment > Preparing deployment. Done (00:00:01)
+...
+Task 12 done
+
+Started		2016-07-15 14:47:45 UTC
+Finished	2016-07-15 14:51:28 UTC
+Duration	00:03:43
+
+Deployed `bosh-lite-alpha-cf' to `aws-try-anything-bosh-lite'
+```
+
+And once complete, run the smoke tests for good measure:
+
+```
+$ genesis bosh run errand smoke_tests
+FIXME output
+```
+
+We now have our alpha-environment's Cloud Foundry stood up!
 
 ## First Beta Environment
 
@@ -1754,6 +2156,7 @@ Now that our `alpha` environment has been deployed, we can deploy our first beta
 ### BOSH
 ```
 $ cd ~/ops/bosh-deployments
+$ bosh target proto
 $ ls
 aws  bin  global  LICENSE  README.md
 ```
@@ -2399,6 +2802,7 @@ Lather, rinse, repeat for all additional environments (dev, prod, loadtest, what
 [DRY]:         https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 [jumpbox]:     https://github.com/starkandwayne/jumpbox
 [netplan]:     network.md
+[infra-ips]:   network.md#global-infrastructure-ip-allocation
 [spruce-129]:  https://github.com/geofffranks/spruce/issues/129
 [slither]:     http://slither.io
 [amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?region=us-west-2#KeyPairs:sort=keyName
