@@ -1,12 +1,12 @@
 # Vault
 
-1. [Best Practices](#toc1)
-1. [High Availability](#toc2)
-  1. [Storage Backends](#toc3)
-1. [Unsealing a High Availability Vault](#toc4)
-1. [Migrating Keys](#toc5)
+1. [Best Practices](#best-practices)
+1. [High Availability](#high-availability)
+  1. [Storage Backends](#storage-backends)
+1. [Unsealing a High Availability Vault](#unsealing-a-high-availability-vault)
+1. [Migrating Keys](#migrating-keys)
 
-## <a name="toc1"></a> Best Practices
+## Best Practices
 
 * One Vault or One Vault Per Environment
 
@@ -28,7 +28,7 @@ $ safe get secret/aws/proto/bosh/users/admin
 $ safe set secret/aws access_key secret_key
 ```
 
-## <a name="toc2"></a> High Availability
+## High Availability
 
 Vault provides an active/passive [high availability(HA)][ha] service using
 shared storage across the nodes. Vault recommends using Consul to provide its
@@ -50,7 +50,7 @@ with proper upgrade procedure the downtime should be very short (a few hundred
 milliseconds to a second depending on how the speed of access to the storage
 backend).
 
-### <a name="toc3"></a> Storage Backends
+### Storage Backends
 
 HA Storage Backends | Supported By
 ------------------- | -------------
@@ -69,7 +69,7 @@ The following storage backends exist for Vault, but do not have a HA option:
   * Inmem
   * file
 
-## <a name="toc4"></a> Unsealing a High Availability Vault
+## Unsealing a High Availability Vault
 
 This example will show a three node cluster being unsealed incrementally and
 the resulting status output at each stage.
@@ -276,7 +276,7 @@ High-Availability Enabled: true
 
 All nodes are either active or standby and unsealed.
 
-## <a name="toc5"></a> Migrating Keys
+## Migrating Keys
 
 If you were going to migrate from `proto` to `proda` Vault, you'd begin by
 targeting the `proto` vault.

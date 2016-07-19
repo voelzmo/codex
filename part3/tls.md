@@ -14,12 +14,12 @@ client has set aside `example.com` for use in this deployment.
 
 ## Services With Certificates
 
-| Service   | Sensitive Traffic                                    | Verified?       |
-| --------- | ---------------------------------------------------- | --------------- |
-| BOSH      | Security credentials present in deployment manifests | NO              |
-| Vault     | Stores / distributes all security credentials        | Yes (skippable) |
-| SHIELD    | Credentials for target/storage systems               | Yes (skippable) |
-| Concourse | Credentials used in pipelines; build job output      | Yes (skippable) |
+| Service | Sensitive Traffic | Verified? |
+| :--- | :--- | :--- |
+| BOSH | Security credentials present in deployment manifests | NO |
+| Vault | Stores / distributes all security credentials | Yes (skippable) |
+| SHIELD | Credentials for target/storage systems | Yes (skippable) |
+| Concourse | Credentials used in pipelines; build job output | Yes (skippable) |
 
 Ultimately, we want to be able to utilize valid, signed
 certificates for all of these systems, to avoid man-in-the-middle
@@ -31,10 +31,10 @@ This is the easiest, most secure option available: talk to a
 certificate authority (like Thawte or Verisign) and provision a
 new certificate for each service:
 
- - proto-bosh.example.com
- - vault.example.com (perhaps with subjectAltNames)
- - shield.example.com
- - runway.example.com
+* proto-bosh.example.com
+* vault.example.com (perhaps with subjectAltNames)
+* shield.example.com
+* runway.example.com
 
 The certificates and their corresponding private keys can be
 stored inside of the Vault and made available to each deployment
@@ -91,11 +91,11 @@ certificate into the client processes.
 
 The CA certificate needs to be trusted by the following clients:
 
-- The bastion host
-- The jump boxes
-- All BOSH deployment VMs
-- End User Web Browsers
-- Concourse worker containers
+* The bastion host
+* The jump boxes
+* All BOSH deployment VMs
+* End User Web Browsers
+* Concourse worker containers
 
 The bastion host can be manually configured.
 
