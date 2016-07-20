@@ -5,17 +5,32 @@ practices of setting up environments for open source Cloud Foundry using
 specific techniques that give users additional value outside the day-to-day
 value that simply using BOSH and Cloud Foundry might bring.
 
-First we use a Proto-BOSH system that allows for the availability for each of
-your sites to be backed up.
+Each environment gets the benefit of:
 
-Other benefits go here.
+* Agility and Resiliency for BOSH using a Proto-BOSH pattern
+* Backups and Restores with [SHEILD][shield]
+* Advanced Monitoring with the [Bolo][bolo] Platform
+* Secure template driven manifests using [Genesis][genesis], [Spruce][spruce] and [Vault][vault]
+
+### Infrastructure Guides
 
 There are guides for each major Infrastructure (AWS, Azure, OpenStack, vSphere),
 etc. that are usable for people who are either Stark & Wayne employees, clients
 of Stark & Wayne, or interested parties.
 
+### Updates
+
 Please use the [gitbook discussions][discussions] or [github issues][issues] to give
 feedback or questions.
 
-[discussions]: https://www.gitbook.com/book/starkandwayne/codex/discussions
-[issues]:      https://github.com/starkandwayne/codex/issues
+For the most up-to-date version of this document, please visit:
+
+https://www.gitbook.com/book/starkandwayne/codex/details
+
+[bolo]:         http://bolo.niftylogic.com/
+[discussions]:  https://www.gitbook.com/book/starkandwayne/codex/discussions
+[issues]:       https://github.com/starkandwayne/codex/issues
+[genesis]:      https://github.com/starkandwayne/genesis
+[shield]:       https://github.com/starkandwayne/shield
+[spruce]:       https://github.com/geofffranks/spruce
+[vault]:        https://www.vaultproject.io/

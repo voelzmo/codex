@@ -1,5 +1,3 @@
-## Table of Contents
-
 * [Introduction](INTRO.md)
 * [Part I - Deploying on AWS](aws.md)
     * [AWS Checklist](aws.md#aws-checklist)

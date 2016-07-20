@@ -1,11 +1,5 @@
 # Secure Your Secrets with Vault
 
-1. [Best Practices](#best-practices)
-1. [High Availability](#high-availability)
-  1. [Storage Backends](#storage-backends)
-1. [Unsealing a High Availability Vault](#unsealing-a-high-availability-vault)
-1. [Migrating Keys](#migrating-keys)
-
 ## Best Practices
 
 * One Vault or One Vault Per Environment
@@ -27,6 +21,8 @@ $ safe get secret/aws/proto/bosh/users/admin
 ```
 $ safe set secret/aws access_key secret_key
 ```
+
+[top](vault.md#secure-your-secrets-with-vault)
 
 ## High Availability
 
@@ -68,6 +64,8 @@ The following storage backends exist for Vault, but do not have a HA option:
   * Postgresql
   * Inmem
   * file
+
+[top](vault.md#secure-your-secrets-with-vault)
 
 ## Unsealing a High Availability Vault
 
@@ -276,6 +274,8 @@ High-Availability Enabled: true
 
 All nodes are either active or standby and unsealed.
 
+[top](vault.md#secure-your-secrets-with-vault)
+
 ## Migrating Keys
 
 If you were going to migrate from `proto` to `proda` Vault, you'd begin by
@@ -346,6 +346,8 @@ $ safe tree
     │               └── core
     └── handshake
 ```
+
+[top](vault.md#secure-your-secrets-with-vault)
 
 [ha]:      https://www.vaultproject.io/docs/internals/high-availability.html
 [upgrade]: https://www.vaultproject.io/docs/install/upgrade.html
