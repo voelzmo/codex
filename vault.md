@@ -1,4 +1,4 @@
-# Vault
+# Secure Your Secrets with Vault
 
 1. [Best Practices](#best-practices)
 1. [High Availability](#high-availability)

@@ -1,0 +1,11 @@
+{
+	"gitbook": "3.2.0",
+	"title": "Codex",
+	"description": "Everyone deserves nice things",
+	"author": "Stark & Wayne, LLC",
+	"structure": {
+		"summary": "TOC.md",
+		"readme": "INTRO.md",
+		"glossary": "GLOSSARY.md"
+	}
+}
