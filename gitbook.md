@@ -32,8 +32,8 @@ to https://www.gitbook.com/ and click on SIGN IN.
 
 Type in the username: `starkandwayne` and put in the password from 1Password.
 
-Sign out of github.  Sign into GitHub with the username: `snw-gitbook` and the
-password form 1Pass.
+Sign out of GitHub.  Sign into GitHub with the username: `snw-gitbook` and the
+password form 1Password.
 
 To set the “source repo” in Gitbook it was necessary to first make the
 `snw-gitbook` user a collaborator.
