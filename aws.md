@@ -35,13 +35,13 @@ The Access Key / Secret Key is used to get access to the Amazon Web Services the
 
 Starting from the main Amazon Web Console, go to Service > EC2, and then click the _Key Pairs_ link under _Network & Security_. The big blue `Create Key Pair` button.  Make a note of the name you chose for the key pair, because we're going to need that for our Terraform configuration.
 
-**N.B.**: Make sure you are in the correct region (top-right corner of the black menu bar) when you create your EC2 Key Pair. Otherwise, it just plain won't work.
+**N.B.**: Make sure you are in the correct region (top-right corner of the black menu bar) when you create your EC2 Key Pair. Otherwise, it just plain won't work. The region name setting can be found in `aws.tf` and the mapping to the region in the menu bar can be found on [Amazon Region Doc] [amazon region doc].
 
 ## Create AWS Resources with Terraform
 
 Once the requirements for AWS are met, we can put it all together and build out your shiny new Virtual Private Cloud (VPC) in Amazon.  For this step, you're going to want to be in the `terraform/aws` sub-directory of this repository.  This Terraform configuration directly matches the [Network Plan][netplan] for the demo environment.  For deploying in production, you may need to tweak or rewrite.
 
-Start with the following `aws.tfvars` file (substituting your actual values, of course):
+Create a `aws.tfvars` file with the following configurations (substituting your actual values, of course), all the other configurations have default setting in the `terraform/aws/aws.tf` file.
 
 ```
 aws_access_key = "..."
@@ -2719,7 +2719,6 @@ Deploying the production environment will be much like deploying the `beta` envi
 Lather, rinse, repeat for all additional environments (dev, prod, loadtest, whatever's applicable to the client).
 
 
-
 [aws-subnets]: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html
 [bolo]:        https://github.com/cloudfoundry-community/bolo-boshrelease
 [cfconsul]:    https://docs.cloudfoundry.org/concepts/architecture/#bbs-consul
@@ -2732,3 +2731,4 @@ Lather, rinse, repeat for all additional environments (dev, prod, loadtest, what
 [slither]:     http://slither.io
 [amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
 [az]:          http://aws.amazon.com/about-aws/global-infrastructure/
+[amazon-region-doc]: http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html
