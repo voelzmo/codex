@@ -35,7 +35,7 @@ The Access Key / Secret Key is used to get access to the Amazon Web Services the
 
 Starting from the main Amazon Web Console, go to Service > EC2, and then click the _Key Pairs_ link under _Network & Security_. The big blue `Create Key Pair` button.  Make a note of the name you chose for the key pair, because we're going to need that for our Terraform configuration.
 
-**N.B.**: Make sure you are in the correct region (top-right corner of the black menu bar) when you create your EC2 Key Pair. Otherwise, it just plain won't work. The region name setting can be found in `aws.tf` and the mapping to the region in the menu bar can be found on [Amazon Region Doc] [amazon region doc].
+**N.B.**: Make sure you are in the correct region (top-right corner of the black menu bar) when you create your EC2 Key Pair. Otherwise, it just plain won't work. The region name setting can be found in `aws.tf` and the mapping to the region in the menu bar can be found on [Amazon Region Doc] [amazon-region-doc].
 
 ## Create AWS Resources with Terraform
 
