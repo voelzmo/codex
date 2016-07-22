@@ -1187,7 +1187,7 @@ resource "aws_instance" "nat" {
   ami             = "${lookup(var.aws_nat_ami, var.aws_region)}"
   instance_type   = "t2.small"
   key_name        = "${var.aws_key_name}"
-  security_groups = ["${aws_security_group.dmz.id}"]
+  vpc_security_group_ids = ["${aws_security_group.dmz.id}"]
   subnet_id       = "${aws_subnet.dmz.id}"
 
   associate_public_ip_address = true
@@ -1217,7 +1217,7 @@ resource "aws_instance" "bastion" {
   ami             = "${lookup(var.aws_ubuntu_ami, var.aws_region)}"
   instance_type   = "t2.small"
   key_name        = "${var.aws_key_name}"
-  security_groups = ["${aws_security_group.dmz.id}"]
+  vpc_security_group_ids = ["${aws_security_group.dmz.id}"]
   subnet_id       = "${aws_subnet.dmz.id}"
 
   tags { Name = "bastion" }
