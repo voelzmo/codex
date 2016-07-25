@@ -5,40 +5,37 @@ So we wrote a doc to explain how we doc, so you can doc, while you doc.
 
 Anyway...
 
-In this repo we keep all the techniques about BOSH and Cloud Foundry that make
-things run smoothly for each of our clients.  
-
-Codex is a guideline for all S&W engineers to learn from when they start,
-follow when on a project, and contribute to when on the bench.
+We will show you how to use Gitbook for documentation.
 
 ### What is Gitbook?
 
-Gitbook on the other hand, is a publishing platform that, once a repository is
-configured and conforms to the configuration, the files in the repository can be
-rendered through a build pipeline that outputs to a number of destinations.
+GitBook is an online platform for writing and hosting documentation. On the other hand, gitbook is a publishing platform that, once a repository is configured and conforms to the configuration, the files in the repository can be rendered through a build pipeline that outputs to a number of destinations.
 
 Destinations like:
 
 - A static website that is searchable and displays a TOC.
 - Downloadable PDF, ePub and MOBI formats for eBOOK and computer reading anywhere.
 
-### Rubber Meet Road
+In codex project, we use github to host the repository, use Gitbook to publish different formats of codex book. You can go to [codex Gitbook][codex-gitbook] to read codex book, click **READ** in the blue box on the right, or download different formats of codex book.
 
-We created two accounts.  A GitHub account and a Gitbook account.  Both are in
-the Stark & Wayne 1Password vault in Dropbox.
+### How to update Gitbook for codex?
 
-If you’re already signed into Gitbook with another account, sign out.   Then go
-to https://www.gitbook.com/ and click on SIGN IN.
+It is pretty easy to update Gitbook for codex. You can just make your changes, commit and push to the master branch of codex repository, the changes will be automaticlly built by Gitbook pipeline. Once the building completed, you can see the changes in all the formats of codex Gitbook.
 
-Type in the username: `starkandwayne` and put in the password from 1Password.
+Note: When we make changes to the headings in markdown doc, the table of content is not updated until you make correspoding changes in `TOC.md`. 
 
-Sign out of GitHub.  Sign into GitHub with the username: `snw-gitbook` and the
-password form 1Password.
+### Accounts Setting and Login
 
-To set the “source repo” in Gitbook it was necessary to first make the
-`snw-gitbook` user a collaborator.
+We created two accounts.  A GitHub account `snw-gitbook` and a Gitbook account `starkandwayne`.  Both are in the Stark & Wayne 1Password vault in Dropbox.
+
+If you’re already signed into Gitbook with another account, sign out. Then go
+to https://www.gitbook.com/ and click on SIGN IN. Type in the username: `starkandwayne` and put in the password from 1Password. 
+
+To set a source repository for codex Gitbook, we need to configure a Github account. Here we  use our `snw-gitbook` Github account for the purpose.
 
 ### Collaborators
 
 When signed in to Gitbook, and you know the username or email address to add
 someone, use the collaborator link to add users.
+
+[codex-gitbook]:   https://www.gitbook.com/book/starkandwayne/codex/details
