@@ -77,12 +77,42 @@ curl -s http://localhost:8200/v1/codex-root-ca/ca/pem | openssl x509 -text
 vault write codex-root-ca/config/urls issuing_certificates="http://10.30.0.211:8200/v1/codex-root-ca"
 ```
 
-curl -s http://localhost/
+### Build the Operations Intermediate Certificate Authority 
 
+We are going to create the operations intermidiate certificate authority with a maximum of time live of approximately 5 years.  The difference will create a key and a certificate signing request (CSR).  Then we will sign CSR using or Root certificate service.  The signed certificate will then be stored in the our operations certificate authority vault
 
+```bash
+vault mount -path=codex-ops-ca -description="Codex Operations Intermediate CA" -max-lease-ttl=43800h pki
+vault mounts
+vault write codex-ops-ca/intermediate/generate/internal \
+common_name="Codex Operations Intermediate CA" \
+ttl=43800h \
+key_bits=4096 \
+exclude_cn_from_sans=true
+```
+Now save the csr request and now get it signed by the root CA service.
+Cut and paste the screen copy and remove any noise characters.
+vi vault/codex-ops.csr
 
+```bash
+vault write codex-root-ca/root/sign-intermediate \
+csr=@vault/codex-ops.csr \
+common_name="Codex Ops Intermediate CA" \
+ttl=43800h
+```
 
+Now save the signed certifcate.
+Cut and paste the screen copy of the first certificate and remove any noise characters.
 
+```bash
+vi vault/codex-ops.crt
 
+vault write codex-ops-ca/intermediate/set-signed \
+certificate=@vault/codex-ops.crt
 
+curl -s http://localhost:8200/v1/codex-ops-ca/ca/pem | openssl x509 -text | head -20
 
+vault write codex-ops-ca/config/urls \
+issuing_certificates="http://10.30.0.211:8200/v1/codex-ops-ca/ca" \
+crl_distribution_points="http://10.30.0.211:8200/v1/codex-ops-ca/crl"
+```
