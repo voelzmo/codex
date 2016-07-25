@@ -1659,14 +1659,14 @@ $ ssh -L 8080:10.4.1.51:80 user@ci.x.x.x.x.sslip.io
 and hit http://localhost:8080 to get the Concourse UI. Be sure to replace `user` with the jumpbox username on the Bastion host
 and x.x.x.x with the IP address of the Bastion host.
 
-# Building out Sites and Environments
+## Building out Sites and Environments
 
 Now that the underlying infrastructure has been deployed, we can start deplying our alpha/beta/other sites, with Cloud Foundry, and any required services. When using Concourse to update BOSH deployments,
 there are the concepts of `alpha` and `beta` sites. The alpha site is the initial place where all deployment changes are checked for sanity + deployability. Typically this is done with a `bosh-lite` VM. The `beta` sites are where site-level changes are vetted. Usually these are referred to as the sandbox or staging environments, and there will be one per site, by necessity. Once changes have passed both the alpha, and beta site, we know it is safe for them to be rolled out to other sites, like production.
 
-## Alpha
+### Alpha
 
-### BOSH-Lite
+#### BOSH-Lite
 
 Since our `alpha` site will be a bosh lite running on AWS, we will need to deploy that to our [global infrastructure network][netplan].
 
@@ -1929,7 +1929,7 @@ Config
 Tadaaa! Time to commit all the changes to deployment repo, and push to where we're storing
 them long-term.
 
-### Cloud Foundry
+#### Cloud Foundry
 
 To deploy CF to our alpha environment, we will need to first ensure we're targeting the right
 Vault/BOSH:
@@ -2074,11 +2074,11 @@ FIXME output
 
 We now have our alpha-environment's Cloud Foundry stood up!
 
-## First Beta Environment
+### First Beta Environment
 
 Now that our `alpha` environment has been deployed, we can deploy our first beta environment to AWS. To do this, we will first deploy a BOSH director for the environment using the `bosh-deployments` repo we generated back when we built our [Proto BOSH](#proto-bosh), and then deploy Cloud Foundry on top of it.
 
-### BOSH
+#### BOSH
 ```
 $ cd ~/ops/bosh-deployments
 $ bosh target proto
@@ -2284,9 +2284,9 @@ Again, since our creds are already in the long-term vault, we can skip the crede
 
 Now it's time to move on to deploying our `beta` (sandbox) Cloud Foundry!
 
-### Jumpboxen?
+#### Jumpboxen?
 
-### Cloud Foundry
+#### Cloud Foundry
 
 To deploy Cloud Foundry, we will go back into our ops directory, making use of `cf-deplyoments` repo
 created when we built our alpha site:
@@ -2709,12 +2709,12 @@ check the sanity of the deployment via `genesis bosh run errand smoke_tests`. Ta
 from Vault. If you run into any trouble, make sure that your DNS is pointing properly to the
 correct ELB for this environment, and that the ELB has the correct SSL certificate for your site.
 
-## Production Environment
+### Production Environment
 
 Deploying the production environment will be much like deploying the `beta` environment above. You will need to deploy a BOSH director, Cloud Foundry, and any services also deployed in the `beta` site. Hostnames, credentials, network information, and possibly scaling parameters will all be different, but the procedure for deploying them is the same.
 
 
-## Next Steps
+### Next Steps
 
 Lather, rinse, repeat for all additional environments (dev, prod, loadtest, whatever's applicable to the client).
 
