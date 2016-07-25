@@ -1,4 +1,4 @@
-## Building with a Local Certificate Authority services
+## Building with Local Certificate Authority services
 
 We are going to build root and an intermediate certificate 
 authority services using vault running on the bastion host.
@@ -16,7 +16,7 @@ mkdir vault
 ```
 
 Now lets create our vault configuration file before we start up the server.
-The secrets we will stored in the secrets directory.
+The secrets we will stored in the ~/vault/secrets directory.
 
 ```bash
 cat >vault/vault.hcl <<EOF
