@@ -161,11 +161,9 @@ allow_any_name=true
 create a dummy certificate for a 6 month time to live
 
 ```bash
-vault write codex-ops-ca/issue/dummy-certificater \
-common_name="ssl_test.codex" \
+vault write codex-ops-ca/issue/one-year-policy \
+common_name="dummy-name" \
 ip_sans="10.30.1.5" \
 ttl=4392h
 format=pem
 ```
-
-vault write 
