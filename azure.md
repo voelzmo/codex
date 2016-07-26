@@ -1,7 +1,6 @@
 # Deploying on Azure
 
-So you want to deploy Cloud Foundry to good old Amazon Web
-Services eh?  Good on you!
+So you want to deploy Cloud Foundry to good old Microsoft Azure eh?  Good on you!
 
 ## Initial Setup
 
