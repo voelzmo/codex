@@ -55,6 +55,8 @@ networks (i.e. cf-edge-1, cf-edge-2, cf-1, cf-2, etc.).
 |         |              | 10.4.1.0/24    |  254 |     1 | global-infra-1       | Global Infrastructure  |
 |         |              | 10.4.2.0/24    |  254 |     2 | global-infra-2       | Global Infrastructure  |
 |         |              | 10.4.3.0/24    |  254 |     3 | global-infra-3       | Global Infrastructure  |
+|         |              | 10.4.4.0/25    |  16 |      1 | global-openvpn-1     | Global OpenVPN         |
+|         |              | 10.4.4.128/25  |  16 |      2 | global-openvpn-2     | Global OpenVPN         |
 | dev     | 10.4.16.0/20 |                | 4096 |       |                      |                        |
 |         |              | 10.4.16.0/24   |  254 |     1 | dev-infra-1          | Site Infrastructure    |
 |         |              | 10.4.17.0/24   |  254 |     2 | dev-infra-2          | Site Infrastructure    |
@@ -122,8 +124,6 @@ deployments.
 | concourse  | 10.4.2.48/28 |  16 |    2 | Concourse overflow (if scaling exeeds the limits of the above subnet) |
 | bolo       | 10.4.1.64/28 |  16 |    1 | Monitoring                      |
 | alpha site | 10.4.1.80/28 |  16 |    1 | alpha site bosh-lite            |
-| openvpn    | 10.4.1.96/28 |  16 |    1 | openvpn (to get inside VPC)     |
-| openvpn    | 10.4.2.96/28 |  16 |    2 | openvpn (to get inside VPC)     |
 
 
 Most infrastructural deployments are not highly available, nor even
