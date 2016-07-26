@@ -22,8 +22,6 @@ $ brew tap starkandwayne/cf
 $ brew install spruce genesis safe terraform
 ```
 
-Terraform comes with its own [installation instructions][tf-inst].
-
 ## Get Started
 
 To get started with a best practices Codex deployment, you'll want to choose
