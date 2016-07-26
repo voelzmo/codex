@@ -130,19 +130,42 @@ Here are the various properites as defined in Vault version 0.6.0.
 |ttl|optional| The Time To Live value provided as a string duration with time suffix. Hour is the largest suffix. If not set, uses the system default value or the value of max_ttl, whichever is shorter.|
 |max_ttl|optional| The maximum Time To Live provided as a string duration with time suffix. Hour is the largest suffix. If not set, defaults to the system maximum lease TTL.|
 |allow_localhost|optional| If set, clients can request certificates for localhost as one of the requested common names. This is useful for testing and to allow clients on a single host to talk securely. Defaults to true.|
-|allowed_domains|optional| Designates the domains of the role, provided as a comma-separated list. This is used with the allow_bare_domains and allow_subdomains options. There is no default.|
+|allowed_domains|optional<br/>See footnote 1| Designates the domains of the role, provided as a comma-separated list. This is used with the allow_bare_domains and allow_subdomains options. There is no default.|
 |allow_bare_domains|optional| If set, clients can request certificates matching the value of the actual domains themselves; e.g. if a configured domain set with allowed_domains is example.com, this allows clients to actually request a certificate containing the name example.com as one of the DNS values on the final certificate. In some scenarios, this can be considered a security risk. Defaults to false.|
-|allow_subdomains|optional| If set, clients can request certificates with CNs that are subdomains of the CNs allowed by the other role options. This includes wildcard subdomains. For example, an allowed_domains value of example.com with this option set to true will allow foo.example.com and bar.example.com as well as *.example.com. This is redundant when using the allow_any_name option. Defaults to false.|
-|allow_any_name|optional| If set, clients can request any CN. Useful in some circumstances, but make sure you understand whether it is appropriate for your installation before enabling it. Defaults to false.|
+|allow_subdomains|optional<br>See footnote 1| If set, clients can request certificates with CNs that are subdomains of the CNs allowed by the other role options. This includes wildcard subdomains. For example, an allowed_domains value of example.com with this option set to true will allow foo.example.com and bar.example.com as well as *.example.com. This is redundant when using the allow_any_name option. Defaults to false.|
+|allow_any_name|optional<br/>See footnote 1| If set, clients can request any CN. Useful in some circumstances, but make sure you understand whether it is appropriate for your installation before enabling it. Defaults to false.|
 |enforce_hostnames|optional| If set, only valid host names are allowed for CNs, DNS SANs, and the host part of email addresses. Defaults to true.|
 |allow_ip_sans|optional| If set, clients can request IP Subject Alternative Names. No authorization checking is performed except to verify that the given values are valid IP addresses. Defaults to true.|
-|server_flag|optional| If set, certificates are flagged for server use. Defaults to true.|
-|client_flag|optional| If set, certificates are flagged for client use. Defaults to true.|
-|code_signing_flag|optional| If set, certificates are flagged for code signing use. Defaults to false.|
+|server_flag|optional<br/>See footnote 2| If set, certificates are flagged for server use. Defaults to true.|
+|client_flag|optional<br/>See footnote 2| If set, certificates are flagged for client use. Defaults to true.|
+|code_signing_flag|optional<br/>See footnote 2| If set, certificates are flagged for code signing use. Defaults to false.|
 |email_protection_flag|optional| If set, certificates are flagged for email protection use. Defaults to false.|
 |key_type|optional| The type of key to generate for generated private keys. Currently, rsa and ec are supported. Defaults to rsa.|
 |key_bits|optional| The number of bits to use for the generated keys. Defaults to 2048; this will need to be changed for ec keys. See https://golang.org/pkg/crypto/elliptic/#Curve for an overview of allowed bit lengths for ec.|
 |use_csr_common_name|optional| If set, when used with the CSR signing endpoint, the common name in the CSR will be used instead of taken from the JSON data. This does not include any requested SANs in the CSR. Defaults to false.|
 
+1. The properties allowed_domains, allow_subdomains, and allow_any_name can combine together.
+2. The properties server_flag, client_flag, and code_signing_flag are also combined together as well.
+
+
+Create a dummy one year (including leap day) policy nameed one-year-policy.
+```bash
+vault write codex-ops-ca/roles/one-year-policy \
+key_bits=2048 \
+max_ttl=8784h \
+allow_any_name=true
+```
 
 ## Issuing Certificates
+
+create a dummy certificate for a 6 month time to live
+
+```bash
+vault write codex-ops-ca/issue/dummy-certificater \
+common_name="ssl_test.codex" \
+ip_sans="10.30.1.5" \
+ttl=4392h
+format=pem
+```
+
+vault write 
