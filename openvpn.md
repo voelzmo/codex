@@ -183,7 +183,6 @@ With the ELB now created, we can now fill in our network config:
 ```
 $ cat networking.yml
 ---
----
 meta:
   azs:
     z1: us-west-2a
