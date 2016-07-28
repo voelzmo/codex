@@ -471,7 +471,7 @@ make: *** [manifest] Error 5
 ```
 
 Better. Let's configure our `cloud_provider` for AWS, using our EC2
-keypair.
+keypair. We need copy our EC2 private key to bastion host and path to the key for `private_key` entry in the following `properties.yml`. 
 
 ```
 $ cat properties.yml
@@ -622,12 +622,7 @@ total 8
 -rw-r--r-- 1 ops staff 4572 Jun 28 14:24 manifest.yml
 ```
 
-> TODO: I had to `echo bosh-init > .type` to engage the bosh-init
-> style of deployment.  How do we want to handle that?  Does
-> Genesis need an update for a `--type` flag to `new env`?
-
-> TODO: i also had to copy the aws key up to the bastion host.
-
+Now we are ready to deploy proto-BOSH.
 
 ```
 $ make deploy
