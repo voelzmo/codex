@@ -60,3 +60,4 @@
     * [Proto Deployments](troubleshooting.md#proto-deployments)
     * [Prod Bosh Deployments](troubleshooting.md#prod-bosh-deployments)
 
+* [Accessing Private Infrastructure by Deploying a VPN](openvpn.md)

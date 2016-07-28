@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+
+set -e # Exit immediately if a simple command exits with exit code >0
+set -u # Report usage of any uninitialized variables.
+
+create_contents() {
+  markdown-toc ${1} | sed -e "s/#/${1}#/g"
+}
+
+generate_toc(){
+  guides=(
+    INTRO.md
+    aws.md
+    azure.md
+    openstack.md
+  )
+
+  for guide in "${guides[@]}"
+  do
+    create_contents ${guide}
+  done
+
+  echo "---"
+
+  topics=(
+    tls.md
+    vault.md
+    network.md
+    troubleshooting.md
+  )
+
+  for topic in "${topics[@]}"
+  do
+    create_contents ${topic}
+  done
+}
+
+output_to_file() {
+  generate_toc > TOC.md
+}
+
+output_to_file

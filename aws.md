@@ -1,6 +1,6 @@
-# Deploying on AWS
+# Part I - Deploying on AWS
 
-So you want to deploy Cloud Foundry to good old Amazon Web Services eh?  Good on you!  Well a little prep goes a long way.
+Welcome to the Stark & Wayne guide to deploying Cloud Foundry on Amazon Web Services.
 
 ## AWS Checklist
 
