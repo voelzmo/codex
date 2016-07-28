@@ -402,10 +402,8 @@ Makefile:22: recipe for target 'manifest' failed
 make: *** [manifest] Error 5
 ```
 
-Drat.  Luckily, a lot of these are duplicates, most likely from a
-`(( grab ... ))` operation.  Let's focus on the `$.meta` subtree,
-since that's where most parameters are defined in Genesis
-templates:
+Drat. Let's focus on the `$.meta` subtree, since that's where most parameters are defined in
+Genesis templates:
 
 ```
 - $.meta.aws.access_key: Please supply an AWS Access Key
@@ -459,14 +457,12 @@ Let's try that `make manifest` again.
 
 ```
 $ make manifest`
-7 error(s) detected:
- - $.meta.aws.ssh_key_name: What is your full key name?
- - $.meta.aws.default_sgs: What Security Groups?
- - $.meta.aws.private_key: What is the local path to the Amazon Private Key for this deployment?
- - $.networks.default.subnets: Specify subnets for your BOSH vm's network
- - $.properties.aws.default_key_name: What is your full key name?
- - $.properties.aws.default_security_groups: What Security Groups?
+5 error(s) detected:
+ - $.meta.aws.default_sgs: What security groups should VMs be placed in, if none are specified in the deployment manifest?
+ - $.meta.aws.private_key: What private key will be used for establishing the ssh_tunnel (bosh-init only)?
+ - $.meta.aws.ssh_key_name: What AWS keypair should be used for the vcap user?
  - $.meta.shield_public_key: Specify the SSH public key from this environment's SHIELD daemon
+ - $.networks.default.subnets: Specify subnets for your BOSH vm's network
 
 
 Failed to merge templates; bailing...
@@ -474,14 +470,7 @@ Makefile:22: recipe for target 'manifest' failed
 make: *** [manifest] Error 5
 ```
 
-Better.  Note that we still have some `(( grab ... ))` calls in
-there, leading to the duplication.
-
-> Once [issue #129][spruce-129] is fixed, the duplication of
-> `(( param ... ))` violations should go away, leading to cleaner
-> error messages and a smoother setup process.
-
-Let's configure our `cloud_provider` for AWS, using our EC2
+Better. Let's configure our `cloud_provider` for AWS, using our EC2
 keypair.
 
 ```
