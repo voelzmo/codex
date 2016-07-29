@@ -901,9 +901,14 @@ $ export VAULT_SKIP_VERIFY=1
 ```
 
 We have to set `$VAULT_SKIP_VERIFY` to a non-empty value becase we
-used self-signed certificates when we deployed our Vault.
+used self-signed certificates when we deployed our Vault. The error message is as following if we did not do `export VAULT_SKIP_VERIFY=1`.
+
+```
+!! Get https://10.4.1.16:8200/v1/secret?list=1: x509: cannot validate certificate for 10.4.1.16 because it doesn't contain any IP SANs
+```
+
 Ideally, you'll be working with real certificates, and won't have
-to perform this step.
+to perform this step. 
 
 Let's initialize the Vault:
 
