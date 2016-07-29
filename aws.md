@@ -955,7 +955,7 @@ Now, let's switch back to using `safe`:
 
 ```
 $ safe target https://10.4.1.16:8200 ops
-Now targeting prod at https://10.4.1.16:8200
+Now targeting ops at https://10.4.1.16:8200
 
 $ safe auth token
 Authenticating against ops at https://10.4.1.16:8200
@@ -990,7 +990,7 @@ Now targeting ops at https://10.4.1.16:8200
 
 ```
 
-`safe` sports a handy import/export feature that can be used to
+`safe` supports a handy import/export feature that can be used to
 move credentials securely between Vaults, without touching disk,
 which is exactly what we need to migrate from our proto-Vault to
 our real one:
