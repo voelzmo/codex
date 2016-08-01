@@ -59,6 +59,13 @@ network = "10.42"
 
 NOTE: We recommend [a region with three availability zones][az] for production level environments.
 
+As an option, if you have the codex repo as your base, you can call `make aws-watch` - and `make aws-stopwatch` to stop the script - to automate the startup and shutdown of your instances at certain times to reduce runtime cost. To do so, use a digit between 0-24 representing the hour like below which will turn on the instances at 9:00AM and turn them off at 5:00PM local time.
+
+```
+startup = "9"
+shutdown = "17"
+```
+
 As a quick pre-flight check, run `make manifest` to compile your Terraform plan and suss out any issues with naming, missing variables, configuration, etc.:
 
 ```
