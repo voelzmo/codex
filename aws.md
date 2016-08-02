@@ -1269,12 +1269,12 @@ To add the release:
 
 ```
 $ cd ~/ops/shield-deployments
-$ genesis add release shield latest
-$ cd mgmt/prod
-$ genesis use release shield
-```
+$ genesis add release bolo latest
+$ cd aws/proto
+$ genesis use release bolo
+```	
 
-If you do a `make manifest` at this point, you should see a new
+If you do a `make refresh manifest` at this point, you should see a new
 release being added to the top-level `releases` list.
 
 To configure dbolo, you're going to want to add a line like the
