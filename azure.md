@@ -1,4 +1,4 @@
-# Part II - Deploying on AWS
+# Part II - Deploying on Azure
 
 Welcome to the Stark & Wayne guide to deploying Cloud Foundry on Microsoft Azure.
 
