@@ -1209,7 +1209,8 @@ store archives in, and name it something descriptive, like
 
 Since the generic S3 bucket policy is a little open (and we don't
 want random people reading through our backups), we're going to
-want to create our own policy:
+want to create our own policy. Go to the IAM user you just created, click `permissions`, then click the blue button with `Create User Policy`, paste the following policy and modify accordingly, click `Validate Policy` and apply the policy afterwards.
+
 
 ```
 {
@@ -1217,14 +1218,14 @@ want to create our own policy:
     {
       "Effect"   : "Allow",
       "Action"   : "s3:ListAllMyBuckets",
-      "Resource" : "arn:aws:iam:xxxxxxxxxxxx:user/zzzzz",
+      "Resource" : "arn:aws:iam:xxxxxxxxxxxx:user/zzzzz"
     },
     {
       "Effect"   : "Allow",
       "Action"   : "s3:*",
       "Resource" : [
         "arn:aws:s3:::your-bucket-name",
-        "arn:aws:s3:::your-bucket-name/*",
+        "arn:aws:s3:::your-bucket-name/*"
       ]
     }
   ]
