@@ -1080,12 +1080,14 @@ we can kill the proto-Vault server process!
 $ sudo pkill vault
 ```
 
-## Deploying SHIELD Backups
+## SHIELD Backups and Restores
 
 SHIELD is our backup solution.  We use it to configure and
 schedule regular backups of data systems that are important to our
 running operation, like the BOSH database, Concourse, and Cloud
 Foundry.
+
+### Deploying SHIELD
 
 We'll start out with the Genesis template for SHIELD:
 
@@ -1232,11 +1234,18 @@ want to create our own policy. Go to the IAM user you just created, click `permi
 }
 ```
 
-## Deploying Bolo Monitoring
+### How to use SHIELD
+
+Note: will add how to use SHIELD to backup and restore by using an example.
+
+
+## Bolo Monitoring
 
 Bolo is a monitoring system that collects metrics and state data
 from your BOSH deployments, aggregates it, and provides data
 visualization and notification primitives.
+
+### Deploying Bolo Monitoring
 
 You may opt to deploy Bolo once for all of your environments, in
 which case it belongs in your management network, or you may
