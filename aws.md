@@ -1,6 +1,6 @@
-# Deploying on AWS
+# Part I - Deploying on AWS
 
-So you want to deploy Cloud Foundry to good old Amazon Web Services eh?  Good on you!  Well a little prep goes a long way.
+Welcome to the Stark & Wayne guide to deploying Cloud Foundry on Amazon Web Services.
 
 ## AWS Checklist
 
@@ -58,6 +58,13 @@ network = "10.42"
 ```
 
 NOTE: We recommend [a region with three availability zones][az] for production level environments.
+
+As an option, if you have the codex repo as your base, you can call `make aws-watch` - and `make aws-stopwatch` to stop the script - to automate the startup and shutdown of your instances at certain times to reduce runtime cost. To do so, use a digit between 0-24 representing the hour like below which will turn on the instances at 9:00AM and turn them off at 5:00PM local time.
+
+```
+startup = "9"
+shutdown = "17"
+```
 
 As a quick pre-flight check, run `make manifest` to compile your Terraform plan and suss out any issues with naming, missing variables, configuration, etc.:
 
@@ -402,10 +409,8 @@ Makefile:22: recipe for target 'manifest' failed
 make: *** [manifest] Error 5
 ```
 
-Drat.  Luckily, a lot of these are duplicates, most likely from a
-`(( grab ... ))` operation.  Let's focus on the `$.meta` subtree,
-since that's where most parameters are defined in Genesis
-templates:
+Drat. Let's focus on the `$.meta` subtree, since that's where most parameters are defined in
+Genesis templates:
 
 ```
 - $.meta.aws.access_key: Please supply an AWS Access Key
@@ -459,14 +464,12 @@ Let's try that `make manifest` again.
 
 ```
 $ make manifest`
-7 error(s) detected:
- - $.meta.aws.ssh_key_name: What is your full key name?
- - $.meta.aws.default_sgs: What Security Groups?
- - $.meta.aws.private_key: What is the local path to the Amazon Private Key for this deployment?
- - $.networks.default.subnets: Specify subnets for your BOSH vm's network
- - $.properties.aws.default_key_name: What is your full key name?
- - $.properties.aws.default_security_groups: What Security Groups?
+5 error(s) detected:
+ - $.meta.aws.default_sgs: What security groups should VMs be placed in, if none are specified in the deployment manifest?
+ - $.meta.aws.private_key: What private key will be used for establishing the ssh_tunnel (bosh-init only)?
+ - $.meta.aws.ssh_key_name: What AWS keypair should be used for the vcap user?
  - $.meta.shield_public_key: Specify the SSH public key from this environment's SHIELD daemon
+ - $.networks.default.subnets: Specify subnets for your BOSH vm's network
 
 
 Failed to merge templates; bailing...
@@ -474,15 +477,8 @@ Makefile:22: recipe for target 'manifest' failed
 make: *** [manifest] Error 5
 ```
 
-Better.  Note that we still have some `(( grab ... ))` calls in
-there, leading to the duplication.
-
-> Once [issue #129][spruce-129] is fixed, the duplication of
-> `(( param ... ))` violations should go away, leading to cleaner
-> error messages and a smoother setup process.
-
-Let's configure our `cloud_provider` for AWS, using our EC2
-keypair.
+Better. Let's configure our `cloud_provider` for AWS, using our EC2
+keypair. We need copy our EC2 private key to bastion host and path to the key for `private_key` entry in the following `properties.yml`. 
 
 ```
 $ cat properties.yml
@@ -633,12 +629,7 @@ total 8
 -rw-r--r-- 1 ops staff 4572 Jun 28 14:24 manifest.yml
 ```
 
-> TODO: I had to `echo bosh-init > .type` to engage the bosh-init
-> style of deployment.  How do we want to handle that?  Does
-> Genesis need an update for a `--type` flag to `new env`?
-
-> TODO: i also had to copy the aws key up to the bastion host.
-
+Now we are ready to deploy proto-BOSH.
 
 ```
 $ make deploy
@@ -917,9 +908,14 @@ $ export VAULT_SKIP_VERIFY=1
 ```
 
 We have to set `$VAULT_SKIP_VERIFY` to a non-empty value becase we
-used self-signed certificates when we deployed our Vault.
+used self-signed certificates when we deployed our Vault. The error message is as following if we did not do `export VAULT_SKIP_VERIFY=1`.
+
+```
+!! Get https://10.4.1.16:8200/v1/secret?list=1: x509: cannot validate certificate for 10.4.1.16 because it doesn't contain any IP SANs
+```
+
 Ideally, you'll be working with real certificates, and won't have
-to perform this step.
+to perform this step. 
 
 Let's initialize the Vault:
 
@@ -971,7 +967,7 @@ Now, let's switch back to using `safe`:
 
 ```
 $ safe target https://10.4.1.16:8200 ops
-Now targeting prod at https://10.4.1.16:8200
+Now targeting ops at https://10.4.1.16:8200
 
 $ safe auth token
 Authenticating against ops at https://10.4.1.16:8200
@@ -1006,7 +1002,7 @@ Now targeting ops at https://10.4.1.16:8200
 
 ```
 
-`safe` sports a handy import/export feature that can be used to
+`safe` supports a handy import/export feature that can be used to
 move credentials securely between Vaults, without touching disk,
 which is exactly what we need to migrate from our proto-Vault to
 our real one:
@@ -1084,262 +1080,14 @@ we can kill the proto-Vault server process!
 $ sudo pkill vault
 ```
 
-## Deploying Bolo Monitoring
-
-Bolo is a monitoring system that collects metrics and state data
-from your BOSH deployments, aggregates it, and provides data
-visualization and notification primitives.
-
-You may opt to deploy Bolo once for all of your environments, in
-which case it belongs in your management network, or you may
-decide to deploy per-environment Bolo installations.  What you
-choose mostly only affects your network topology / configuration.
-
-### Deploying Bolo
-
-To get started, you're going to need to create a Genesis
-deployments repo for your Bolo deployments:
-
-```
-$ cd ~/ops
-$ genesis new deployment --template bolo
-$ cd bolo-deployments
-```
-
-Next, we'll create a site for your datacenter or VPC.  The bolo
-template deployment offers some site templates to make getting
-things stood up quick and easy, including:
-
-- `aws` for Amazon Web Services VPC deployments
-- `vsphere` for VMWare ESXi virtualization clusters
-- `bosh-lite` for deploying and testing locally
-
-For purposes of illustration, let's choose `aws`:
-
-```
-$ genesis new site --template aws mgmt
-Created site mgmt (from template aws):
-~/ops/bolo-deployments/mgmt
-├── README
-└── site
-    ├── disk-pools.yml
-    ├── jobs.yml
-    ├── networks.yml
-    ├── properties.yml
-    ├── releases
-    ├── resource-pools.yml
-    ├── stemcell
-    │   ├── name
-    │   └── version
-    └── update.yml
-
-2 directories, 10 files
-```
-
-(Note: if you are deploying per-environment Bolo installations,
-you may want to choose something more environment-appropriate than
-`mgmt`...)
-
-Now, we can create our environment.  I like to call this `prod`,
-in case we decide to build staging / sandbox environments for
-deployment runways later.
-
-```
-$ cd mgmt/
-$ genesis new environment prod
-Created environment mgmt/prod:
-~/ops/bolo-deployments/mgmt/prod
-├── Makefile
-├── README
-├── cloudfoundry.yml
-├── credentials.yml
-├── director.yml
-├── monitoring.yml
-├── name.yml
-├── networking.yml
-├── properties.yml
-└── scaling.yml
-
-0 directories, 10 files
-```
-
-Bolo deployments have no secrets, so there isn't much in the way
-of environment hooks for setting up credentials.
-
-### Configuring Bolo For Amazon AWS
-
-We need to configure the following things for an AWS deployment of
-bolo:
-
-- Availability Zone (via `meta.az`)
-- Networking configuration
-
-First, let's do the availability zone:
-
-```
-$ cd prod/
-$ cat properties.yml
----
-meta:
-  az:
-    us-west-2c
-```
-
-Then, open up `networking.yml` and fill out your networking
-configuration.  For purposes of illustration, let's assume we're
-going to deploy our Bolo into the `10.4.0.128/26` subdivision of
-our `10.4.0.0/24` subnet.  For reference, here's the details on
-the `/26` network:
-
-```
--[ipv4 : 10.4.0.128/26] - 0
-
-[CIDR]
-Host address            - 10.4.0.128
-Host address (decimal)  - 168034432
-Host address (hex)      - A040080
-Network address         - 10.4.0.128
-Network mask            - 255.255.255.192
-Network mask (bits)     - 26
-Network mask (hex)      - FFFFFFC0
-Broadcast address       - 10.4.0.191
-Cisco wildcard          - 0.0.0.63
-Addresses in network    - 64
-Network range           - 10.4.0.128 - 10.4.0.191
-Usable range            - 10.4.0.129 - 10.4.0.190
-```
-
-So that's 64 available hosts, starting at 10.4.0.128 and continuing
-to 10.4.0.191.  Let's reserve the first 16 IPs for static
-allocation, and let the compilation VMs / dynamically-allocated
-VMs use the rest:
-
-```
-$ cat networking.yml
----
-networks:
-  - name: bolo
-    type: manual
-    subnets:
-    - range: 10.4.0.0/24
-      gateway: 10.4.0.1
-      cloud_properties:
-        subnet: subnet-XXXXXXXX # <--------- you'll want to change this
-        security_groups: [sg-XXXXXXXX] # <-- also, change this
-      dns: [10.4.0.2]
-      reserved:
-        - 10.4.0.2   - 10.4.0.127  # everything before our /26
-        - 10.4.0.192 - 10.4.0.254  # everything after our /26
-      static:
-        - 10.4.0.128 - 10.4.0.144  # first 16 IPs
-
-jobs:
-  - name: bolo
-    networks:
-      - name: bolo
-        static_ips: (( static_ips 0 ))
-```
-
-### Deploying
-
-You can validate your manifest by running `make manifest` and
-ensuring that you get no errors (no output is a good sign)
-
-Then, you can deploy to your BOSH director via `make deploy`
-
-Once you've deployed, you can validate the deployment by accessing
-the Gnossis web interface on your `bolo/0` VM.  You can find the
-IP via `bosh vms`, and just visit it in a browser, over HTTP
-(standard port).
-
-Out of the box, the Bolo installation will begin monitoring itself
-for general host health (the `linux` collector), so you should
-have graphs.
-
-### Configuring dbolo Agents
-
-Now that you have a Bolo installation, you're going to want to
-configure your other deployments to use it.  To do that, you'll
-need to add the `bolo` release to the deployment (if it isn't
-already there), add the `dbolo` template to all the VMs you want
-monitored, and configure `dbolo` to submit metrics to your
-`bolo/0` VM in the bolo deployment.
-
-(Note that this may require configuration of network ACLs,
-security groups, etc. -- if you experience issues with this step,
-you might want to start looking in those areas first)
-
-To add the release:
-
-```
-$ cd ~/ops/shield-deployments
-$ genesis add release shield latest
-$ cd mgmt/prod
-$ genesis use release shield
-```
-
-If you do a `make manifest` at this point, you should see a new
-release being added to the top-level `releases` list.
-
-To configure dbolo, you're going to want to add a line like the
-last one here to all of your job template definitions:
-
-```
-jobs:
-  - name: whatever
-    templates:
-      - { release: bolo, name: dbolo }
-```
-
-Then, to configure `dbolo` to submit to your Bolo installation,
-add the `dbolo.submission.address` property either globally or
-per-job (strong recommendation for global, by the way).  You can
-do this in `properties.yml`
-
-```
-properties:
-  dbolo:
-    submission:
-      address: 10.4.0.128
-```
-
-As before, you can get the IP address of the `bolo/0` VM by
-running `bosh vms` against your BOSH director.
-
-### Configuring Specific Monitoring
-
-If you have specific monitoring requirements, above and beyond
-the stock host-health checks that the `linux` collector provides,
-you can add per-job (or global) properties like this (in
-properties.yml, again):
-
-```
-jobs:
-  - name: shield
-    properties:
-      dbolo:
-        collectors:
-          - { every: 20s, run: 'linux' }
-          - { every: 20s, run: 'httpd' }
-          - { every: 20s, run: 'process -n nginx -m nginx' }
-```
-
-(Remember that you will need to supply the `linux` collector
-configuration, since Bolo skips the automatic `dbolo` settings you
-get for free when you specify your own configuration.)
-
-### Further Reading on Bolo
-
-More information can be found in the [Bolo BOSH Release README][bolo]
-which contains a wealth of information about available graphs,
-collectors, and deployment properties.
-
-## Deploying SHIELD Backups
+## SHIELD Backups and Restores
 
 SHIELD is our backup solution.  We use it to configure and
 schedule regular backups of data systems that are important to our
 running operation, like the BOSH database, Concourse, and Cloud
 Foundry.
+
+### Deploying SHIELD
 
 We'll start out with the Genesis template for SHIELD:
 
@@ -1463,7 +1211,8 @@ store archives in, and name it something descriptive, like
 
 Since the generic S3 bucket policy is a little open (and we don't
 want random people reading through our backups), we're going to
-want to create our own policy:
+want to create our own policy. Go to the IAM user you just created, click `permissions`, then click the blue button with `Create User Policy`, paste the following policy and modify accordingly, click `Validate Policy` and apply the policy afterwards.
+
 
 ```
 {
@@ -1471,21 +1220,256 @@ want to create our own policy:
     {
       "Effect"   : "Allow",
       "Action"   : "s3:ListAllMyBuckets",
-      "Resource" : "arn:aws:iam:xxxxxxxxxxxx:user/zzzzz",
+      "Resource" : "arn:aws:iam:xxxxxxxxxxxx:user/zzzzz"
     },
     {
       "Effect"   : "Allow",
       "Action"   : "s3:*",
       "Resource" : [
         "arn:aws:s3:::your-bucket-name",
-        "arn:aws:s3:::your-bucket-name/*",
+        "arn:aws:s3:::your-bucket-name/*"
       ]
     }
   ]
 }
 ```
 
+### How to use SHIELD
 
+Note: will add how to use SHIELD to backup and restore by using an example.
+
+
+## Bolo Monitoring
+
+Bolo is a monitoring system that collects metrics and state data
+from your BOSH deployments, aggregates it, and provides data
+visualization and notification primitives.
+
+### Deploying Bolo Monitoring
+
+You may opt to deploy Bolo once for all of your environments, in
+which case it belongs in your management network, or you may
+decide to deploy per-environment Bolo installations.  What you
+choose mostly only affects your network topology / configuration.
+
+To get started, you're going to need to create a Genesis
+deployments repo for your Bolo deployments:
+
+```
+$ cd ~/ops
+$ genesis new deployment --template bolo
+$ cd bolo-deployments
+```
+
+Next, we'll create a site for your datacenter or VPC.  The bolo
+template deployment offers some site templates to make getting
+things stood up quick and easy, including:
+
+- `aws` for Amazon Web Services VPC deployments
+- `vsphere` for VMWare ESXi virtualization clusters
+- `bosh-lite` for deploying and testing locally
+
+For purposes of illustration, let's choose `aws`:
+
+```
+$ genesis new site --template aws aws 
+Created site aws (from template aws):
+~/ops/bolo-deployments/aws
+├── README
+└── site
+    ├── disk-pools.yml
+    ├── jobs.yml
+    ├── networks.yml
+    ├── properties.yml
+    ├── releases
+    ├── resource-pools.yml
+    ├── stemcell
+    │   ├── name
+    │   └── version
+    └── update.yml
+
+2 directories, 10 files
+```
+
+(Note: The site name can be different from aws.)
+
+Now, we can create our environment. We call it proto since we use one bolo for one site for now.
+
+```
+$ cd aws/
+$ genesis new environment proto
+Created environment aws/proto:
+~/ops/bolo-deployments/aws/proto
+├── Makefile
+├── README
+├── cloudfoundry.yml
+├── credentials.yml
+├── director.yml
+├── monitoring.yml
+├── name.yml
+├── networking.yml
+├── properties.yml
+└── scaling.yml
+
+0 directories, 10 files
+```
+
+Bolo deployments have no secrets, so there isn't much in the way
+of environment hooks for setting up credentials.
+
+Now let's make manifest.
+
+```
+$ cd aws/proto
+$ make manifest
+
+2 error(s) detected:
+ - $.meta.az: What availability zone is Bolo deployed to?
+ - $.networks.bolo.subnets: Specify your bolo subnet
+
+Failed to merge templates; bailing...
+Makefile:22: recipe for target 'manifest' failed
+make: *** [manifest] Error 5
+```
+
+From the error message, we need to configure the following things for an AWS deployment of
+bolo:
+
+- Availability Zone (via `meta.az`)
+- Networking configuration
+
+According to the [Network Plan][netplan], the bolo deployment belongs in the
+**10.4.1.64/28** network, in zone 1 (a). Let's configure the availability zone in `properties.yml`:
+
+```
+$ cd proto/
+$ cat properties.yml
+---
+meta:
+  region: us-west-2
+  az: (( concat meta.region "a" ))
+```
+
+Since `10.4.1.64/28` is subdivision of the `10.4.1.0/24` subnet, we can configure networking as follows.
+
+```
+$ cat networking.yml
+---
+networks:
+ - name: bolo
+   type: manual
+   subnets:
+   - range: 10.4.1.0/24
+     gateway: 10.4.1.1
+     cloud_properties:
+       subnet: subnet-xxxxxxxx #<--- your AWS Subnet ID
+       security_groups: [wide-open]
+     dns: [10.4.0.2]
+     reserved:
+       - 10.4.1.2   - 10.4.1.3  # Amazon reserves these
+       - 10.4.1.4 - 10.4.1.63  # Allocated to other deployments
+        # Bolo is in 10.4.1.64/28
+       - 10.4.1.80 - 10.4.1.254 # Allocated to other deployments
+     static:
+       - 10.4.1.65 - 10.4.1.68
+```
+
+You can validate your manifest by running `make manifest` and
+ensuring that you get no errors (no output is a good sign).
+
+Then, you can deploy to your BOSH director via `make deploy`.
+
+Once you've deployed, you can validate the deployment visa `bosh deployments`. You should see the bolo deployment. You can find the IP of bolo vm by running `bosh vms` for bolo deployment. In order to visit the Gnossis web interface on your `bolo/0` VM from your browser on your laptop, you need to setup port forwarding to enable it.
+
+One way of doing it is using ngrok, go to [ngrok Downloads] [ngrok-download] page and download the right version to your `bolo/0` VM, unzip it and run `./ngrok http 80', it will output something like this:
+
+```
+ngrok by @inconshreveable                                                                                                                                                                   (Ctrl+C to quit)
+
+Tunnel Status                 online
+Version                       2.1.3
+Region                        United States (us)
+Web Interface                 http://127.0.0.1:4040
+Forwarding                    http://18ce4bd7.ngrok.io -> localhost:80
+Forwarding                    https://18ce4bd7.ngrok.io -> localhost:80
+
+Connections                   ttl     opn     rt1     rt5     p50     p90
+                              0       0       0.00    0.00    0.00    0.00
+```
+
+Copy the http or https link for forwarding and paste it into your browser, you will be able to visit the Gnossis web interface for bolo.
+
+Out of the box, the Bolo installation will begin monitoring itself
+for general host health (the `linux` collector), so you should
+have graphs for bolo itself.
+
+### Configuring Bolo Agents
+
+Now that you have a Bolo installation, you're going to want to
+configure your other deployments to use it.  To do that, you'll
+need to add the `bolo` release to the deployment (if it isn't
+already there), add the `dbolo` template to all the jobs you want
+monitored, and configure `dbolo` to submit metrics to your
+`bolo/0` VM in the bolo deployment.
+
+(Note that this may require configuration of network ACLs,
+security groups, etc. -- if you experience issues with this step,
+you might want to start looking in those areas first)
+
+We will use shield as an example to show you how to configure Bolo Agents.
+
+To add the release:
+
+```
+$ cd ~/ops/shield-deployments
+$ genesis add release bolo latest
+$ cd aws/proto
+$ genesis use release bolo
+```	
+
+If you do a `make refresh manifest` at this point, you should see a new
+release being added to the top-level `releases` list.
+
+To configure dbolo, you're going to want to add a line like the
+last one here to all of your job template definitions:
+
+```
+jobs:
+  - name: shield
+    templates:
+      - { release: bolo, name: dbolo }
+```
+
+Then, to configure `dbolo` to submit to your Bolo installation,
+add the `dbolo.submission.address` property either globally or
+per-job (strong recommendation for global, by the way). 
+
+If you have specific monitoring requirements, above and beyond
+the stock host-health checks that the `linux` collector provides,
+you can change per-job (or global) properties like the dbolo.collectors properties. 
+
+You can put those configuration in the `properties.yml` as follows:
+
+```
+properties:
+  dbolo:
+    submission:
+      address: x.x.x.x # your Bolo VM IP
+    collectors:
+      - { every: 20s, run: 'linux' }
+      - { every: 20s, run: 'httpd' }
+      - { every: 20s, run: 'process -n nginx -m nginx' }
+```
+
+Remember that you will need to supply the `linux` collector
+configuration, since Bolo skips the automatic `dbolo` settings you
+get for free when you specify your own configuration.
+
+### Further Reading on Bolo
+
+More information can be found in the [Bolo BOSH Release README][bolo]
+which contains a wealth of information about available graphs,
+collectors, and deployment properties.
 
 ## Deploying Concourse
 
@@ -2732,3 +2716,4 @@ Lather, rinse, repeat for all additional environments (dev, prod, loadtest, what
 [amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
 [az]:          http://aws.amazon.com/about-aws/global-infrastructure/
 [amazon-region-doc]: http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html
+[ngrok-download]: https://ngrok.com/download

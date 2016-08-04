@@ -1,6 +1,6 @@
-# Deploying on Azure
+# Part II - Deploying on Azure
 
-So you want to deploy Cloud Foundry to good old Microsoft Azure eh?  Good on you!
+Welcome to the Stark & Wayne guide to deploying Cloud Foundry on Microsoft Azure.
 
 ## Initial Setup
 
@@ -53,7 +53,7 @@ Most of the commands required need you to be in `Azure CLI Resource Management` 
 info:    Executing command config mode
 info:    New mode is arm
 info:    config mode command OK
-[ruby-2.2.3] Homer:Ford krutten$ 
+[ruby-2.2.3] Homer:Ford krutten$
 ````
 
 ## Setting up an Azure VPC/Terraforming
