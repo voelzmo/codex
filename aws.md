@@ -2542,15 +2542,32 @@ meta:
   security_groups: [wide-open]
 
 networks:
+- name: router1
+  subnets:
+  - range: 10.4.35.0/25
+    static: [10.4.35.4 - 10.4.35.100]
+    reserved: [10.4.35.2 - 10.4.35.3] # amazon reserves these
+    gateway: 10.4.35.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: router2
+  subnets:
+  - range: 10.4.35.128/25
+    static: [10.4.35.131 - 10.4.35.227]
+    reserved: [10.4.35.129 - 10.4.35.130] # amazon reserves these
+    gateway: 10.4.35.128
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf1
   subnets:
   - range: 10.4.36.0/24
     static: [10.4.36.4 - 10.4.36.100]
-    reserved: [10.4.36.2 - 10.4.36.3\ # amazon reserves these
+    reserved: [10.4.36.2 - 10.4.36.3] # amazon reserves these
     gateway: 10.4.36.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf2
+  subnets:
   - range: 10.4.37.0/24
     static: [10.4.37.4 - 10.4.37.100]
     reserved: [10.4.37.2 - 10.4.37.3] # amazon reserves these
@@ -2558,24 +2575,11 @@ networks:
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf3
+  subnets:
   - range: 10.4.38.0/24
     static: [10.4.38.4 - 10.4.38.100]
     reserved: [10.4.38.2 - 10.4.38.3] # amazon reserves these
     gateway: 10.4.38.1
-    cloud_properties:
-      subnet: subnet-XXXXXX # <--- your subnet ID here
-- name: router1
-  - range: 10.4.34.0/24
-    static: [10.4.34.4 - 10.4.34.100]
-    reserved: [10.4.34.2 - 10.4.34.3] # amazon reserves these
-    gateway: 10.4.34.1
-    cloud_properties:
-      subnet: subnet-XXXXXX # <--- your subnet ID here
-- name: router2
-  - range: 10.4.35.0/24
-    static: [10.4.35.4 - 10.4.35.100]
-    reserved: [10.4.35.2 - 10.4.47.3] # amazon reserves these
-    gateway: 10.4.35.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 ```
@@ -2606,15 +2610,32 @@ meta:
   security_groups: [wide-open]
 
 networks:
+- name: router1
+  subnets:
+  - range: 10.4.35.0/25
+    static: [10.4.35.4 - 10.4.35.100]
+    reserved: [10.4.35.2 - 10.4.35.3] # amazon reserves these
+    gateway: 10.4.35.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: router2
+  subnets:
+  - range: 10.4.35.128/25
+    static: [10.4.35.131 - 10.4.35.227]
+    reserved: [10.4.35.129 - 10.4.35.130] # amazon reserves these
+    gateway: 10.4.35.128
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf1
   subnets:
   - range: 10.4.36.0/24
     static: [10.4.36.4 - 10.4.36.100]
-    reserved: [10.4.36.2 - 10.4.36.3\ # amazon reserves these
+    reserved: [10.4.36.2 - 10.4.36.3] # amazon reserves these
     gateway: 10.4.36.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf2
+  subnets:
   - range: 10.4.37.0/24
     static: [10.4.37.4 - 10.4.37.100]
     reserved: [10.4.37.2 - 10.4.37.3] # amazon reserves these
@@ -2622,24 +2643,11 @@ networks:
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf3
+  subnets:
   - range: 10.4.38.0/24
     static: [10.4.38.4 - 10.4.38.100]
     reserved: [10.4.38.2 - 10.4.38.3] # amazon reserves these
     gateway: 10.4.38.1
-    cloud_properties:
-      subnet: subnet-XXXXXX # <--- your subnet ID here
-- name: router1
-  - range: 10.4.34.0/24
-    static: [10.4.34.4 - 10.4.34.100]
-    reserved: [10.4.34.2 - 10.4.34.3] # amazon reserves these
-    gateway: 10.4.34.1
-    cloud_properties:
-      subnet: subnet-XXXXXX # <--- your subnet ID here
-- name: router2
-  - range: 10.4.35.0/24
-    static: [10.4.35.4 - 10.4.35.100]
-    reserved: [10.4.35.2 - 10.4.47.3] # amazon reserves these
-    gateway: 10.4.35.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 
