@@ -1473,15 +1473,19 @@ More information can be found in the [Bolo BOSH Release README][bolo]
 which contains a wealth of information about available graphs,
 collectors, and deployment properties.
 
-## Deploying Concourse
+## Concourse
+
+### Deploying Concourse
 
 If we're not already targeting the ops vault, do so now to save frustration later.
 
 ```
-$ safe target "https://10.4.1.16:8200" proda
-Now targeting proda at https://10.4.1.16:8200
+$ safe target "https://10.4.1.16:8200" ops
+Now targeting ops at https://10.4.1.16:8200
 $ export VAULT_SKIP_VERIFY=1
+$export VAULT_ADDR=https://10.4.1.16:8200
 ```
+
 
 From the `~/ops` folder let's generate a new `concourse` deployment, using the `--template` flag.
 
@@ -1518,10 +1522,8 @@ Finally now, because our vault is setup and targeted correctly we can generate o
 ~/ops/concourse-deployments$ genesis new environment aws proto
 Running env setup hook: /home/user/ops/concourse-deployments/.env_hooks/00_confirm_vault
 
-(*) proda	https://10.42.1.16:8200
-    prodb	https://10.42.2.16:8200
-    prodc	https://10.42.3.16:8200
-    proto	http://127.0.0.1:8200
+(*) ops   https://10.4.1.16:8200
+    proto http://127.0.0.1:8200
 
 Use this Vault for storing deployment credentials?  [yes or no] yes
 Running env setup hook: /home/user/ops/concourse-deployments/.env_hooks/gen_creds
@@ -1539,8 +1541,8 @@ Created environment aws/proto:
 ├── README
 └── scaling.yml
 
-0 directories, 10 files
 ```
+
 Lets make the manifest
 ```
 ~/ops/concourse-deployments$ cd aws/proto/
@@ -1581,7 +1583,7 @@ Be sure to replace the x.x.x.x in the external_url above with the IP address of 
 
 The `~` means we won't use SSL certs for now.  If you have proper certs or want to use self signed you can add them to vault under the `web_ui:pem` key
 
-For networking, we put this inside Global Infrastructure or Site Infrastructure
+For networking, we put this inside proto environment level. 
 ```
 ~/ops/concourse-deployments/aws/proto$ cat networking.yml
 ---
@@ -1639,11 +1641,16 @@ Transfer-Encoding: chunked
 You can then run on a your local machine
 
 ```
-$ ssh -L 8080:10.4.1.51:80 user@ci.x.x.x.x.sslip.io
+$ ssh -L 8080:10.4.1.51:80 user@ci.x.x.x.x.sslip.io -i path_to_your_private_key
 ```
 
 and hit http://localhost:8080 to get the Concourse UI. Be sure to replace `user` with the jumpbox username on the Bastion host
 and x.x.x.x with the IP address of the Bastion host.
+
+### Setup Pipelines Using Concourse
+
+To do: Need an example to show how to setup pipeline for deployments using Concourse.
+
 
 ## Building out Sites and Environments
 
