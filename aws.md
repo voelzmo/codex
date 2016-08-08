@@ -1713,7 +1713,7 @@ Created site aws (from template aws):
 
 2 directories, 11 files
 
-$ genesis new env bosh-lite alpha
+$ genesis new env aws alpha
 Running env setup hook: /home/gfranks/ops/bosh-lite-deployments/.env_hooks/setup
 
 (*) ops	https://10.4.1.16:8200
