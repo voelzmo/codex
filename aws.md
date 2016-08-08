@@ -25,6 +25,28 @@ Then, find the user and click on the username. This should bring up a summary of
 
 Now assign the **PowerUserAccess** role to your user. This user will be able to do any operation except IAM operations.  You can do this by clicking on the _Permissions_ tab and then clicking on the _attach policy_ button.
 
+We will also need to create a custom user policy in order to create ELBs with SSL listeners. At the same _Permissions_ tab, expand the _Inline Policies_ and then create one using the _Custom Policy_ editor. Name it `ServerCertificates` and paste the following content:
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:DeleteServerCertificate",
+                "iam:UploadServerCertificate",
+                "iam:ListServerCertificates",
+                "iam:GetServerCertificate"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+Click on _Apply Policy_ and you will be all set.
+
 ### Name Your VPC
 
 This step is really simple -- just make one up.  The VPC name will be used to prefix all of the Network ACLs, Subnets and Security Groups, so that you can have multiple VPCs under one account without going cross-eyed trying to keep them separate.
@@ -168,6 +190,11 @@ You should run `jumpbox user` now, as juser:
 $ sudo -iu juser
 $ jumpbox user
 <snip>
+```
+
+We also want to use our own ssh key to login to the bastion host, so we will copy our desktop/laptop public ssh keypair into the user's authorized keys:
+
+```
 $ mkdir ~/.ssh
 $ vim ~/.ssh/authorized_keys
 $ chmod 600 ~/.ssh/authorized_keys
@@ -2543,15 +2570,32 @@ meta:
   security_groups: [wide-open]
 
 networks:
+- name: router1
+  subnets:
+  - range: 10.4.35.0/25
+    static: [10.4.35.4 - 10.4.35.100]
+    reserved: [10.4.35.2 - 10.4.35.3] # amazon reserves these
+    gateway: 10.4.35.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: router2
+  subnets:
+  - range: 10.4.35.128/25
+    static: [10.4.35.131 - 10.4.35.227]
+    reserved: [10.4.35.129 - 10.4.35.130] # amazon reserves these
+    gateway: 10.4.35.128
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf1
   subnets:
   - range: 10.4.36.0/24
     static: [10.4.36.4 - 10.4.36.100]
-    reserved: [10.4.36.2 - 10.4.36.3\ # amazon reserves these
+    reserved: [10.4.36.2 - 10.4.36.3] # amazon reserves these
     gateway: 10.4.36.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf2
+  subnets:
   - range: 10.4.37.0/24
     static: [10.4.37.4 - 10.4.37.100]
     reserved: [10.4.37.2 - 10.4.37.3] # amazon reserves these
@@ -2559,24 +2603,11 @@ networks:
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf3
+  subnets:
   - range: 10.4.38.0/24
     static: [10.4.38.4 - 10.4.38.100]
     reserved: [10.4.38.2 - 10.4.38.3] # amazon reserves these
     gateway: 10.4.38.1
-    cloud_properties:
-      subnet: subnet-XXXXXX # <--- your subnet ID here
-- name: router1
-  - range: 10.4.34.0/24
-    static: [10.4.34.4 - 10.4.34.100]
-    reserved: [10.4.34.2 - 10.4.34.3] # amazon reserves these
-    gateway: 10.4.34.1
-    cloud_properties:
-      subnet: subnet-XXXXXX # <--- your subnet ID here
-- name: router2
-  - range: 10.4.35.0/24
-    static: [10.4.35.4 - 10.4.35.100]
-    reserved: [10.4.35.2 - 10.4.47.3] # amazon reserves these
-    gateway: 10.4.35.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 ```
@@ -2607,15 +2638,32 @@ meta:
   security_groups: [wide-open]
 
 networks:
+- name: router1
+  subnets:
+  - range: 10.4.35.0/25
+    static: [10.4.35.4 - 10.4.35.100]
+    reserved: [10.4.35.2 - 10.4.35.3] # amazon reserves these
+    gateway: 10.4.35.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: router2
+  subnets:
+  - range: 10.4.35.128/25
+    static: [10.4.35.131 - 10.4.35.227]
+    reserved: [10.4.35.129 - 10.4.35.130] # amazon reserves these
+    gateway: 10.4.35.128
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf1
   subnets:
   - range: 10.4.36.0/24
     static: [10.4.36.4 - 10.4.36.100]
-    reserved: [10.4.36.2 - 10.4.36.3\ # amazon reserves these
+    reserved: [10.4.36.2 - 10.4.36.3] # amazon reserves these
     gateway: 10.4.36.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf2
+  subnets:
   - range: 10.4.37.0/24
     static: [10.4.37.4 - 10.4.37.100]
     reserved: [10.4.37.2 - 10.4.37.3] # amazon reserves these
@@ -2623,24 +2671,11 @@ networks:
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 - name: cf3
+  subnets:
   - range: 10.4.38.0/24
     static: [10.4.38.4 - 10.4.38.100]
     reserved: [10.4.38.2 - 10.4.38.3] # amazon reserves these
     gateway: 10.4.38.1
-    cloud_properties:
-      subnet: subnet-XXXXXX # <--- your subnet ID here
-- name: router1
-  - range: 10.4.34.0/24
-    static: [10.4.34.4 - 10.4.34.100]
-    reserved: [10.4.34.2 - 10.4.34.3] # amazon reserves these
-    gateway: 10.4.34.1
-    cloud_properties:
-      subnet: subnet-XXXXXX # <--- your subnet ID here
-- name: router2
-  - range: 10.4.35.0/24
-    static: [10.4.35.4 - 10.4.35.100]
-    reserved: [10.4.35.2 - 10.4.47.3] # amazon reserves these
-    gateway: 10.4.35.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 
