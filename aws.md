@@ -2067,7 +2067,8 @@ $ ls
 aws  bin  global  LICENSE  README.md
 ```
 
-We already have the `aws` site created, so now we will just need to create our new environment, and deploy it:
+We already have the `aws` site created, so now we will just need to create our new environment, and deploy it. Different names (sandbox or staging) for Beta have been used for different customers, here we call it staging.
+
 
 ```
 $ safe target ops
@@ -2253,7 +2254,7 @@ Once the deployment finishes, target the new BOSH director to verify it works:
 
 ```
 $ safe get secret/aws/staging/bosh/users/admin # grab the admin user's password for bosh
-$ bosh target https://10.4.32.4:25555 aws-sandbox
+$ bosh target https://10.4.32.4:25555 aws-staging
 Target set to 'aws-staging-bosh'
 Your username: admin
 Enter password:
@@ -2262,7 +2263,7 @@ Logged in as 'admin'
 
 Again, since our creds are already in the long-term vault, we can skip the credential migratoin that was done in the proto-bosh deployment and go straight to committing our new deployment to the repo, and pushing it upstream.
 
-Now it's time to move on to deploying our `beta` (sandbox) Cloud Foundry!
+Now it's time to move on to deploying our `beta` (staging) Cloud Foundry!
 
 #### Jumpboxen?
 
