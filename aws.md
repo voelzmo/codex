@@ -57,6 +57,8 @@ aws_region = "us-east-1"
 network = "10.42"
 ```
 
+You may change some default settings according to the real cases you are working on. For example, you can change `instance_type (default is t2.small) ` in `aws.tf` to large size if the bastion server has high workload.
+
 NOTE: We recommend [a region with three availability zones][az] for production level environments.
 
 As an option, if you have the codex repo as your base, you can call `make aws-watch` - and `make aws-stopwatch` to stop the script - to automate the startup and shutdown of your instances at certain times to reduce runtime cost. To do so, use a digit between 0-24 representing the hour like below which will turn on the instances at 9:00AM and turn them off at 5:00PM local time.
