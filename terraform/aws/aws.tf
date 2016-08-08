@@ -206,7 +206,7 @@ resource "aws_subnet" "dev-infra-1" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.16.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-dev-infra" }
+  tags { Name = "${var.aws_vpc_name}-dev-infra-1" }
 }
 resource "aws_route_table_association" "dev-infra-1" {
   subnet_id      = "${aws_subnet.dev-infra-1.id}"
@@ -219,7 +219,7 @@ resource "aws_subnet" "dev-infra-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.17.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-dev-infra" }
+  tags { Name = "${var.aws_vpc_name}-dev-infra-2" }
 }
 resource "aws_route_table_association" "dev-infra-2" {
   subnet_id      = "${aws_subnet.dev-infra-2.id}"
@@ -232,7 +232,7 @@ resource "aws_subnet" "dev-infra-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.18.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-dev-infra" }
+  tags { Name = "${var.aws_vpc_name}-dev-infra-3" }
 }
 resource "aws_route_table_association" "dev-infra-3" {
   subnet_id      = "${aws_subnet.dev-infra-3.id}"
@@ -430,7 +430,7 @@ resource "aws_subnet" "staging-infra-1" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.32.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-staging-infra" }
+  tags { Name = "${var.aws_vpc_name}-staging-infra-1" }
 }
 resource "aws_route_table_association" "staging-infra-1" {
   subnet_id      = "${aws_subnet.staging-infra-1.id}"
@@ -443,7 +443,7 @@ resource "aws_subnet" "staging-infra-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.33.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-staging-infra" }
+  tags { Name = "${var.aws_vpc_name}-staging-infra-2" }
 }
 resource "aws_route_table_association" "staging-infra-2" {
   subnet_id      = "${aws_subnet.staging-infra-2.id}"
@@ -456,7 +456,7 @@ resource "aws_subnet" "staging-infra-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.34.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-staging-infra" }
+  tags { Name = "${var.aws_vpc_name}-staging-infra-3" }
 }
 resource "aws_route_table_association" "staging-infra-3" {
   subnet_id      = "${aws_subnet.staging-infra-3.id}"
@@ -654,7 +654,7 @@ resource "aws_subnet" "prod-infra-1" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.48.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-prod-infra" }
+  tags { Name = "${var.aws_vpc_name}-prod-infra-1" }
 }
 resource "aws_route_table_association" "prod-infra-1" {
   subnet_id      = "${aws_subnet.prod-infra-1.id}"
@@ -667,7 +667,7 @@ resource "aws_subnet" "prod-infra-2" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.49.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-prod-infra" }
+  tags { Name = "${var.aws_vpc_name}-prod-infra-2" }
 }
 resource "aws_route_table_association" "prod-infra-2" {
   subnet_id      = "${aws_subnet.prod-infra-2.id}"
@@ -680,7 +680,7 @@ resource "aws_subnet" "prod-infra-3" {
   vpc_id            = "${aws_vpc.default.id}"
   cidr_block        = "${var.network}.50.0/24"
   availability_zone = "${var.aws_region}${var.aws_az1}"
-  tags { Name = "${var.aws_vpc_name}-prod-infra" }
+  tags { Name = "${var.aws_vpc_name}-prod-infra-3" }
 }
 resource "aws_route_table_association" "prod-infra-3" {
   subnet_id      = "${aws_subnet.prod-infra-3.id}"
