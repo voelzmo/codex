@@ -168,6 +168,11 @@ You should run `jumpbox user` now, as juser:
 $ sudo -iu juser
 $ jumpbox user
 <snip>
+```
+
+We also want to use our own ssh key to login to the bastion host, so we will copy our desktop/laptop public ssh keypair into the user's authorized keys:
+
+```
 $ mkdir ~/.ssh
 $ vim ~/.ssh/authorized_keys
 $ chmod 600 ~/.ssh/authorized_keys
