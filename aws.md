@@ -25,6 +25,28 @@ Then, find the user and click on the username. This should bring up a summary of
 
 Now assign the **PowerUserAccess** role to your user. This user will be able to do any operation except IAM operations.  You can do this by clicking on the _Permissions_ tab and then clicking on the _attach policy_ button.
 
+We will also need to create a custom user policy in order to create ELBs with SSL listeners. At the same _Permissions_ tab, expand the _Inline Policies_ and then create one using the _Custom Policy_ editor. Name it `ServerCertificates` and paste the following content:
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "iam:DeleteServerCertificate",
+                "iam:UploadServerCertificate",
+                "iam:ListServerCertificates",
+                "iam:GetServerCertificate"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+
+Click on _Apply Policy_ and you will be all set.
+
 ### Name Your VPC
 
 This step is really simple -- just make one up.  The VPC name will be used to prefix all of the Network ACLs, Subnets and Security Groups, so that you can have multiple VPCs under one account without going cross-eyed trying to keep them separate.
