@@ -15,13 +15,13 @@ To run the `terraform` commands in this repo or do work on AWS, other than an AW
 
 The first thing you're going to need is a combination **Access Key ID** / **Secret Key ID**.  These are generated (for IAM users) via the IAM dashboard.  If you aren't using IAM for this, you really should.
 
-On the AWS web console, access the IAM service, and click on `Users` in the sidebar.  Then, find the user you want to do your deployment / configuration under, and click on the username.
+To help keep things isolated, we're going to set up a brand new IAM user.  It's a good idea to name this user something like `cf` so that no one tries to re-purpose it later, and so that it doesn't get deleted.
 
-This should bring up a summary of the user with things like the _User ARN_, _Groups_, etc.  In the bottom half of the Summary pane, you should see some tabs, and one of those tabs should be _Security Credentials_.  Click on that one.
-
-You are strongly encouraged to generate a new Access Key, using the big blue button, for each VPC you deploy, even if you use the same IAM user for all of them.
+On the AWS web console, access the IAM service, and click on `Users` in the sidebar.  Then create a new user and select "Generate an access key for each user".
 
 **Make sure you save the secret key somewhere safe**, like 1Password or a Vault instance.  Amazon will be unable to give you the **Secret Key ID** if you misplace it -- your only recourse at that point is to generate a new set of keys and start over.
+
+Then, find the user and click on the username. This should bring up a summary of the user with things like the _User ARN_, _Groups_, etc.  In the bottom half of the Summary panel, you should see some tabs, and one of those tabs should be _Permissions_.  Click on that one.
 
 Now assign the **PowerUserAccess** role to your user. This user will be able to do any operation except IAM operations.  You can do this by clicking on the _Permissions_ tab and then clicking on the _attach policy_ button.
 
@@ -113,7 +113,7 @@ requirements.
 
 ### Verify Keypair
 
-You can check your SSH keypair by comparing the Amazon fingerprints.  
+You can check your SSH keypair by comparing the Amazon fingerprints.
 
 On the Web UI, you can check the uploaded key on the [key page][amazon-keys].
 
@@ -272,7 +272,7 @@ $ safe targets
 
 $ safe auth token
 Authenticating against proto at http://127.0.0.1:8200
-Token: <paste your token here>
+Token: <paste your Root Token here>
 
 $ safe set secret/handshake knock=knock
 knock: knock
@@ -480,7 +480,7 @@ make: *** [manifest] Error 5
 ```
 
 Better. Let's configure our `cloud_provider` for AWS, using our EC2
-keypair. We need copy our EC2 private key to bastion host and path to the key for `private_key` entry in the following `properties.yml`. 
+keypair. We need copy our EC2 private key to bastion host and path to the key for `private_key` entry in the following `properties.yml`.
 
 ```
 $ cat properties.yml
@@ -859,13 +859,7 @@ Now, let's try a `make manifest` again (no output is a good sign):
 $ make manifest
 ```
 
-Before we can deploy we need to upload the stemcell:
-
-```
-$ bosh upload stemcell https://bosh.io/d/stemcells/bosh-aws-xen-hvm-ubuntu-trusty-go_agent?v=3232.8
-```
-
-With the `stemcell` in place, let's give the deploy a whirl:
+And then let's give the deploy a whirl:
 
 ```
 $ make deploy
@@ -917,7 +911,7 @@ used self-signed certificates when we deployed our Vault. The error message is a
 ```
 
 Ideally, you'll be working with real certificates, and won't have
-to perform this step. 
+to perform this step.
 
 Let's initialize the Vault:
 
@@ -1274,7 +1268,7 @@ things stood up quick and easy, including:
 For purposes of illustration, let's choose `aws`:
 
 ```
-$ genesis new site --template aws aws 
+$ genesis new site --template aws aws
 Created site aws (from template aws):
 ~/ops/bolo-deployments/aws
 ├── README
@@ -1381,7 +1375,7 @@ ensuring that you get no errors (no output is a good sign).
 
 Then, you can deploy to your BOSH director via `make deploy`.
 
-Once you've deployed, you can validate the deployment visa `bosh deployments`. You should see the bolo deployment. You can find the IP of bolo vm by running `bosh vms` for bolo deployment. In order to visit the Gnossis web interface on your `bolo/0` VM from your browser on your laptop, you need to setup port forwarding to enable it.
+Once you've deployed, you can validate the deployment via `bosh deployments`. You should see the bolo deployment. You can find the IP of bolo vm by running `bosh vms` for bolo deployment. In order to visit the Gnossis web interface on your `bolo/0` VM from your browser on your laptop, you need to setup port forwarding to enable it.
 
 One way of doing it is using ngrok, go to [ngrok Downloads] [ngrok-download] page and download the right version to your `bolo/0` VM, unzip it and run `./ngrok http 80', it will output something like this:
 
@@ -1427,7 +1421,7 @@ $ cd ~/ops/shield-deployments
 $ genesis add release bolo latest
 $ cd aws/proto
 $ genesis use release bolo
-```	
+```
 
 If you do a `make refresh manifest` at this point, you should see a new
 release being added to the top-level `releases` list.
@@ -1444,11 +1438,11 @@ jobs:
 
 Then, to configure `dbolo` to submit to your Bolo installation,
 add the `dbolo.submission.address` property either globally or
-per-job (strong recommendation for global, by the way). 
+per-job (strong recommendation for global, by the way).
 
 If you have specific monitoring requirements, above and beyond
 the stock host-health checks that the `linux` collector provides,
-you can change per-job (or global) properties like the dbolo.collectors properties. 
+you can change per-job (or global) properties like the dbolo.collectors properties.
 
 You can put those configuration in the `properties.yml` as follows:
 
@@ -1480,10 +1474,8 @@ collectors, and deployment properties.
 If we're not already targeting the ops vault, do so now to save frustration later.
 
 ```
-$ safe target "https://10.4.1.16:8200" ops
+$ safe target ops
 Now targeting ops at https://10.4.1.16:8200
-$ export VAULT_SKIP_VERIFY=1
-$export VAULT_ADDR=https://10.4.1.16:8200
 ```
 
 
@@ -1574,16 +1566,16 @@ Again starting with Meta lines:
 ---
 meta:
   availability_zone: "us-west-2a"   # Set this to match your first zone "aws_az1"
-  external_url: "https://ci.x.x.x.x.sslip.io"  # Set as IP address of the Bastion host to allow testing via SSH tunnel
+  external_url: "https://ci.x.x.x.x.sslip.io"  # Set as Elastic IP address of the Bastion host to allow testing via SSH tunnel
   ssl_pem: ~
   #  ssl_pem: (( vault meta.vault_prefix "/web_ui:pem" ))
 ```
 
-Be sure to replace the x.x.x.x in the external_url above with the IP address of the Bastion host.
+Be sure to replace the x.x.x.x in the external_url above with the Elastic IP address of the Bastion host.
 
 The `~` means we won't use SSL certs for now.  If you have proper certs or want to use self signed you can add them to vault under the `web_ui:pem` key
 
-For networking, we put this inside proto environment level. 
+For networking, we put this inside proto environment level.
 ```
 ~/ops/concourse-deployments/aws/proto$ cat networking.yml
 ---
@@ -1759,6 +1751,7 @@ Created environment aws/alpha:
 Now lets try to deploy:
 
 ```
+$ cd aws/alpha/
 $ make deploy
   checking https://genesis.starkandwayne.com for details on latest stemcell bosh-aws-xen-hvm-ubuntu-trusty-go_agent
   checking https://genesis.starkandwayne.com for details on release bosh/256.2
@@ -1797,9 +1790,6 @@ meta:
     range: 10.4.1.0/24
     gateway: 10.4.1.1
     dns: [10.4.0.2]
-  aws:
-    azs:
-      z1: us-west-2a
 ```
 
 Since there are a bunch of other deployments on the infrastructure network, we should take care
@@ -1818,9 +1808,6 @@ meta:
     static: [10.4.1.80]
     reserved: [10.4.1.2 - 10.4.1.79, 10.4.1.96 - 10.4.1.255]
     dns: [10.4.0.2]
-  aws:
-    azs:
-      z1: us-west-2a
 ```
 
 Lastly, we will need to add port-forwarding rules, so that things outside the bosh-lite can talk to its services.
@@ -1830,6 +1817,9 @@ Since we know we will be deploying Cloud Foundry, let's add rules for it:
 $ cat properties.yml
 ---
 meta:
+  aws:
+    azs:
+      z1: us-west-2a
   port_forwarding_rules:
   - internal_ip: 10.244.0.34
     internal_port: 80
@@ -1937,10 +1927,12 @@ $ bosh target alpha
 Target set to `aws-alpha-bosh-lite'
 ```
 
+Install manually the [certstrap](https://github.com/square/certstrap) tool.
+
 Now we'll create our deployment repo for cloudfoundry:
 
 ```
-$ genesis new deployment --template cf`
+$ genesis new deployment --template cf
 cloning from template https://github.com/starkandwayne/cf-deployment
 Cloning into '/home/gfranks/ops/cf-deployments'...
 remote: Counting objects: 268, done.
@@ -2010,11 +2002,7 @@ Created environment bosh-lite/alpha:
 
 ```
 
-Unlike all the other deployments so far, we won't use `make deploy` to vet the
-manifest for CF. This is because the bosh-lite CF comes out of the box ready to
-deploy to a Vagrant-based bosh-lite with no tweaks.  Since we are using it as
-the Cloud Foundry for our alpha environment, we will need to customize the Cloud
-Foundry base domain, with a domain resolving to the IP of our `alpha` bosh-lite VM:
+Unlike all the other deployments so far, we won't use `make manifest` to vet the manifest for CF. This is because the bosh-lite CF comes out of the box ready to deploy to a Vagrant-based bosh-lite with no tweaks.  Since we are using it as the Cloud Foundry for our alpha environment, we will need to customize the Cloud Foundry base domain, with a domain resolving to the IP of our `alpha` bosh-lite VM:
 
 ```
 cd bosh-lite/alpha
@@ -2074,7 +2062,7 @@ Now that our `alpha` environment has been deployed, we can deploy our first beta
 #### BOSH
 ```
 $ cd ~/ops/bosh-deployments
-$ bosh target proto
+$ bosh target proto-bosh
 $ ls
 aws  bin  global  LICENSE  README.md
 ```
@@ -2152,12 +2140,12 @@ $ cat > properties.yml <<EOF
 ---
 meta:
   aws:
+    region: us-west-2
+    azs:
+      z1: (( concat meta.aws.region "a" ))
     access_key: (( vault "secret/aws:access_key" ))
     secret_key: (( vault "secret/aws:secret_key" ))
     private_key: ~ # not needed, since not using bosh-lite
-    region: us-west-2
-    azs:
-      z1: (( concat meta.aws.region "a")
     ssh_key_name: your-ec2-keypair-name
     default_sgs: [wide-open]
   shield_public_key: (( vault "secret/aws/proto/shield/keys/core:public" ))
@@ -2172,8 +2160,7 @@ Verifying our changes worked, we see that we only need to provide networking con
 ```
 make deploy
 $ make deploy
-2 error(s) detected:
- - $.meta.aws.default_sgs: What security groups should VMs be placed in, if none are specified in the deployment manifest?
+1 error(s) detected:
  - $.networks.default.subnets: Specify subnets for your BOSH vm's network
 
 
@@ -2265,7 +2252,7 @@ This will take a little less time than Proto BOSH did (some packages were alread
 Once the deployment finishes, target the new BOSH director to verify it works:
 
 ```
-$ safe get secret/aws/sandbox/bosh/users/admin # grab the admin user's password for bosh
+$ safe get secret/aws/staging/bosh/users/admin # grab the admin user's password for bosh
 $ bosh target https://10.4.32.4:25555 aws-sandbox
 Target set to 'aws-staging-bosh'
 Your username: admin
@@ -2354,8 +2341,8 @@ Created environment aws/staging:
 As you might have guessed, the next step will be to see what parameters we need to fill in:
 
 ```
-$ make deploy
-$ make deploy
+$ cd aws/staging
+$ make manifest
 57 error(s) detected:
  - $.meta.azs.z1: What availability zone should the *_z1 vms be placed in?
  - $.meta.azs.z2: What availability zone should the *_z2 vms be placed in?
@@ -2426,11 +2413,12 @@ Oh boy. That's a lot. Cloud Foundry must be compilicated. Looks like a lot of th
 $ cat properties.yml
 ---
 meta:
-  aws:
-    fog_connection:
-      aws_access_key_id: (( vault "secret/aws:access_key" ))
-      aws_secret_access_key: (( vault "secret/aws:secret_key"))
-      region: us-east-1
+  cf:
+    blobstore_config:
+      fog_connection:
+        aws_access_key_id: (( vault "secret/aws:access_key" ))
+        aws_secret_access_key: (( vault "secret/aws:secret_key"))
+        region: us-east-1
 ```
 
 Next, lets tackle the database situation. We will need to create RDS instances for the `uaadb` and `ccdb`.
@@ -2444,10 +2432,11 @@ cat properties.yml
 ---
 meta:
   cf:
-    fog_connection:
-      aws_access_key_id:     (( vault "secret/aws:access_key" ))
-      aws_secret_access_key: (( vault "secret/aws:secret_key"))
-      region: us-east-1
+    blobstore_config:
+      fog_connection:
+        aws_access_key_id: (( vault "secret/aws:access_key" ))
+        aws_secret_access_key: (( vault "secret/aws:secret_key"))
+        region: us-east-1
     ccdb:
       host: (( vault meta.vault_prefix "/ccdb:host" ))
       user: (( vault meta.vault_prefix "/ccdb:user" ))
@@ -2465,10 +2454,11 @@ Lastly, let's make sure to add our Cloud Foundry domain to properties.yml:
 meta:
   cf:
     domain: your.staging.cf.example.com
-    fog_connection:
-      aws_access_key_id:     (( vault "secret/aws:access_key" ))
-      aws_secret_access_key: (( vault "secret/aws:secret_key"))
-      region: us-east-1
+    blobstore_config:
+      fog_connection:
+        aws_access_key_id: (( vault "secret/aws:access_key" ))
+        aws_secret_access_key: (( vault "secret/aws:secret_key"))
+        region: us-east-1
     ccdb:
       host: (( vault meta.vault_prefix "/ccdb:host" ))
       user: (( vault meta.vault_prefix "/ccdb:user" ))
@@ -2540,7 +2530,6 @@ Now, we can consult our [Network Plan][netplan] for the subnet information,  cro
 
 ```
 $ cat networking.yml
----
 ---
 meta:
   azs:
