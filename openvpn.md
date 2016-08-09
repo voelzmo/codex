@@ -1,4 +1,4 @@
-# How to Deploy OpenVPN and Setup Root Certificates with Vault
+# How to Deploy OpenVPN and Setup Root Certificates
 
 ## Enabling Remote Access
 
