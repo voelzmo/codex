@@ -159,22 +159,13 @@ $
 
 ### Setup Jumpbox
 
-Once on the bastion host, you'll want to use the `jumpbox` script, which you can get off of Github, like so:
+Once on the bastion host, you'll want to use the `jumpbox` script, which has been installed automatically by the Terraform configuration. This script installs some useful utilities like `jq`, `spruce`, `safe`, and `genesis` all of which will be important when we start using the bastion host to do deployments.
+
+SSH into your bastion host and check if the `jumpbox` utility is installed:
 
 ```
-sudo curl -o /usr/local/bin/jumpbox \
-https://raw.githubusercontent.com/starkandwayne/jumpbox/master/bin/jumpbox
-sudo chmod 0755 /usr/local/bin/jumpbox
+$ jumpbox
 ```
-
-Script in hand, you can go ahead and prepare the system with
-globally available utilities:
-
-```
-$ sudo jumpbox system
-```
-
-That should install some useful utilities like `jq`, `spruce`, `safe`, and `genesis` all of which will be important when we start using the bastion host to do deployments.
 
 Next up, you're going to want to provision some normal user accounts on the bastion host, so that operations staff can login via named accounts:
 

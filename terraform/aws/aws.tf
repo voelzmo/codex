@@ -6,10 +6,11 @@
 # created: 2016-06-14
 #
 
-variable "aws_access_key" {} # Your Access Key ID     (required)
-variable "aws_secret_key" {} # Your Secret Access Key (required)
-variable "aws_vpc_name"   {} # Name of your VPC       (required)
-variable "aws_key_name"   {} # Name of EC2 Keypair    (required)
+variable "aws_access_key" {} # Your Access Key ID                       (required)
+variable "aws_secret_key" {} # Your Secret Access Key                   (required)
+variable "aws_vpc_name"   {} # Name of your VPC                         (required)
+variable "aws_key_name"   {} # Name of EC2 Keypair                      (required)
+variable "aws_key_file"   {} # Location of the private EC2 Keypair file (required)
 
 variable "aws_region"     { default = "us-west-2" } # AWS Region
 variable "network"        { default = "10.4" }      # First 2 octets of your /16
@@ -1214,18 +1215,28 @@ output "box.nat.public" {
 ########  ##     ##  ######     ##    ####  #######  ##    ##
 
 resource "aws_instance" "bastion" {
-  ami             = "${lookup(var.aws_ubuntu_ami, var.aws_region)}"
-  instance_type   = "t2.small"
-  key_name        = "${var.aws_key_name}"
-  vpc_security_group_ids = ["${aws_security_group.dmz.id}"]
-  subnet_id       = "${aws_subnet.dmz.id}"
+  ami                         = "${lookup(var.aws_ubuntu_ami, var.aws_region)}"
+  instance_type               = "t2.small"
+  key_name                    = "${var.aws_key_name}"
+  vpc_security_group_ids      = ["${aws_security_group.dmz.id}"]
+  subnet_id                   = "${aws_subnet.dmz.id}"
+  associate_public_ip_address = true
 
   tags { Name = "bastion" }
-}
-resource "aws_eip" "bastion" {
-  instance = "${aws_instance.bastion.id}"
-  vpc      = true
+
+  provisioner "remote-exec" {
+    inline = [
+      "sudo curl -o /usr/local/bin/jumpbox https://raw.githubusercontent.com/starkandwayne/jumpbox/master/bin/jumpbox",
+      "sudo chmod 0755 /usr/local/bin/jumpbox",
+      "sudo jumpbox system"
+    ]
+    connection {
+        type = "ssh"
+        user = "ubuntu"
+        private_key = "${file("${var.aws_key_file}")}"
+    }
+  }
 }
 output "box.bastion.public" {
-  value = "${aws_eip.bastion.public_ip}"
+  value = "${aws_instance.bastion.public_ip}"
 }
