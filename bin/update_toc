@@ -67,6 +67,7 @@ generate_toc(){
 
   topics=(
     tls.md
+    openvpn.md
     vault.md
     network.md
     troubleshooting.md
