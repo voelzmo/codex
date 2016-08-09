@@ -2610,6 +2610,30 @@ networks:
     gateway: 10.4.38.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: runner1
+  subnets:
+  - range: 10.4.39.0/24
+    static: [10.4.39.4 - 10.4.39.100]
+    reserved: [10.4.39.2 - 10.4.39.3] # amazon reserves these
+    gateway: 10.4.39.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: runner2
+  subnets:
+  - range: 10.4.40.0/24
+    static: [10.4.40.4 - 10.4.40.100]
+    reserved: [10.4.40.2 - 10.4.40.3] # amazon reserves these
+    gateway: 10.4.40.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: runner3
+  subnets:
+  - range: 10.4.41.0/24
+    static: [10.4.41.4 - 10.4.41.100]
+    reserved: [10.4.41.2 - 10.4.41.3] # amazon reserves these
+    gateway: 10.4.41.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
 ```
 
 Let's see what's left now:
@@ -2676,6 +2700,30 @@ networks:
     static: [10.4.38.4 - 10.4.38.100]
     reserved: [10.4.38.2 - 10.4.38.3] # amazon reserves these
     gateway: 10.4.38.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: runner1
+  subnets:
+  - range: 10.4.39.0/24
+    static: [10.4.39.4 - 10.4.39.100]
+    reserved: [10.4.39.2 - 10.4.39.3] # amazon reserves these
+    gateway: 10.4.39.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: runner2
+  subnets:
+  - range: 10.4.40.0/24
+    static: [10.4.40.4 - 10.4.40.100]
+    reserved: [10.4.40.2 - 10.4.40.3] # amazon reserves these
+    gateway: 10.4.40.1
+    cloud_properties:
+      subnet: subnet-XXXXXX # <--- your subnet ID here
+- name: runner3
+  subnets:
+  - range: 10.4.41.0/24
+    static: [10.4.41.4 - 10.4.41.100]
+    reserved: [10.4.41.2 - 10.4.41.3] # amazon reserves these
+    gateway: 10.4.41.1
     cloud_properties:
       subnet: subnet-XXXXXX # <--- your subnet ID here
 
