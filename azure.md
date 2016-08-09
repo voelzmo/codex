@@ -51,7 +51,7 @@ Welcome to the Stark & Wayne guide to deploying Cloud Foundry on Microsoft Azure
 
 ### Accessing the Bastion host
  
- You now need to find the IP address of your Bastion host:
+ You now need to find the IP address of your Bastion host: </br>
  In your Azure dashboard, click Resource Groups on the left sidebar and then click on your resource group. 
  In the list of resources in this resource group, click `bastionvm`. 
  The IP address will appear under `Public IP address`. 
