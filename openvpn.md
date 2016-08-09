@@ -1,6 +1,6 @@
 # How to Deploy OpenVPN and Setup Root Certificates with Vault
 
-## Enabling Remote Access to Internal Services in Client Environments
+## Enabling Remote Access
 
 In order to access the user interfaces for Concourse, SHIELD, Bolo,
 and other internal-only services deployed for clients, your web browser
@@ -12,21 +12,20 @@ For the clients that provide VPN connections inside the infrastructure, use that
 If however we need to provide the client with a way in, we have the following options:
 
 1. Use ssh-tunneling. This unfortunately has some downsides:
-   a. The correct syntax for enabling the tunnels can be difficult to remember,
-      especially if you have multiple SSH hosts to jump through.
-   b. You might have forgotten to enable the tunnel when you originally SSH'd in,
-      but half-way through your investigations, you realize you need the web UI for
-      some task, and now have to start over.
-   c. Managing what services are on what ports, and preventing conflicts between you
-      and other users of the jumpboxes becomes very difficult.
+   1. The correct syntax for enabling the tunnels can be difficult to remember,
+   especially if you have multiple SSH hosts to jump through.
+   2. You might have forgotten to enable the tunnel when you originally SSH'd in,
+   but half-way through your investigations, you realize you need the web UI for
+    some task, and now have to start over.
+   3. Managing what services are on what ports, and preventing conflicts between
+  you and other users of the jumpboxes becomes very difficult.
 2. Expose the internal-only services publicly. This also has downsides:
-   a. Your internal-only services are now one misconfiguration away from being public.
-   b. ACLs to block traffic unless originating from certain areas can be circumvented,
+   1. Your internal-only services are now one misconfiguration away from being public.
+   2. ACLs to block traffic unless originating from certain areas can be circumvented,
       allow more people to access services than you might want, and cause issues for
       remote workers.
 3. Provide a VPN into the infrastructure. Hey, this one has no real downsides that I'm
    documenting, so we should chose this option!
-
 
 ## Enter the OpenVPN BOSH Release
 
