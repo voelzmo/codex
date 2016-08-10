@@ -2480,6 +2480,7 @@ Oh boy. That's a lot. Cloud Foundry must be compilicated. Looks like a lot of th
 $ cat properties.yml
 ---
 meta:
+  skip_ssl_validation: true
   cf:
     blobstore_config:
       fog_connection:
@@ -2498,6 +2499,7 @@ Now that we have RDS instances, lets refer to them in our `properties.yml` file:
 cat properties.yml
 ---
 meta:
+  skip_ssl_validation: true
   cf:
     blobstore_config:
       fog_connection:
@@ -2519,6 +2521,7 @@ Lastly, let's make sure to add our Cloud Foundry domain to properties.yml:
 ```
 ---
 meta:
+  skip_ssl_validation: true
   cf:
     domain: your.staging.cf.example.com
     blobstore_config:
