@@ -2785,7 +2785,7 @@ Deploying the production environment will be much like deploying the `beta` envi
 
 Lather, rinse, repeat for all additional environments (dev, prod, loadtest, whatever's applicable to the client).
 
-[//]: # (Links)
+[//]: # (Links, please keep in alphabetical order)
 
 [amazon-keys]:       https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
 [amazon-region-doc]: http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html
@@ -2803,6 +2803,6 @@ Lather, rinse, repeat for all additional environments (dev, prod, loadtest, what
 [slither]:           http://slither.io
 
 
-[//]: # (Images)
+[//]: # (Images, put in /images folder)
 
-[bosh_levels]:       https://github.com/starkandwayne/codex/blob/master/images/levels_of_bosh.png "Levels of Bosh"
+[bosh_levels]:       images/levels_of_bosh.png "Levels of Bosh"
