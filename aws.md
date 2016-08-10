@@ -38,20 +38,20 @@ credentials and resources needed.
 
 ### Generate Access Key
 
-The first thing you're going to need is a combination **Access Key ID** /
-**Secret Key ID**.  These are generated (for IAM users) via the IAM dashboard.
+  The first thing you're going to need is a combination **Access Key ID** /
+  **Secret Key ID**.  These are generated (for IAM users) via the IAM dashboard.
 
-To help keep things isolated, we're going to set up a brand new IAM user.  It's
-a good idea to name this user something like `cf` so that no one tries to
-re-purpose it later, and so that it doesn't get deleted.
+  To help keep things isolated, we're going to set up a brand new IAM user.  It's
+  a good idea to name this user something like `cf` so that no one tries to
+  re-purpose it later, and so that it doesn't get deleted.
 
 1. On the AWS web console, access the IAM service, and click on `Users` in the
 sidebar.  Then create a new user and select "Generate an access key for each user".
 
-NOTE: **Make sure you save the secret key somewhere secure**, like 1Password or a
-Vault instance.  Amazon will be unable to give you the **Secret Key ID** if you
-misplace it -- your only recourse at that point is to generate a new set of keys
-and start over.
+  NOTE: **Make sure you save the secret key somewhere secure**, like 1Password or a
+  Vault instance.  Amazon will be unable to give you the **Secret Key ID** if you
+  misplace it -- your only recourse at that point is to generate a new set of keys
+  and start over.
 
 2. Next, find the `cf` user and click on the username. This should bring up a
 summary of the user with things like the _User ARN_, _Groups_, etc.  In the
@@ -67,23 +67,23 @@ SSL listeners. At the same _Permissions_ tab, expand the _Inline Policies_ and
 then create one using the _Custom Policy_ editor. Name it `ServerCertificates`
 and paste the following content:
 
-```
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "iam:DeleteServerCertificate",
-                "iam:UploadServerCertificate",
-                "iam:ListServerCertificates",
-                "iam:GetServerCertificate"
-            ],
-            "Resource": "*"
-        }
-    ]
-}
-```
+    ```
+    {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Action": [
+                    "iam:DeleteServerCertificate",
+                    "iam:UploadServerCertificate",
+                    "iam:ListServerCertificates",
+                    "iam:GetServerCertificate"
+                ],
+                "Resource": "*"
+            }
+        ]
+    }
+    ```
 
 5. Click on _Apply Policy_ and you will be all set.
 
