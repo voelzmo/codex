@@ -166,11 +166,11 @@ Terraform will connect to AWS, using your **Access Key ID** and **Secret Key ID*
 If the `deploy` step fails with errors like:
 
 ```
- * aws_subnet.prod-cf-edge-1: Error creating subnet: InvalidParameterValue: Value (us-east-1a) for parameter availabilityZone is invalid. Subnets can currently only be created in the following availability zones: us-east-1c, us-east-1e, us-east-1b, us-east-1d.
+ * aws_subnet.prod-cf-edge-0: Error creating subnet: InvalidParameterValue: Value (us-east-1a) for parameter availabilityZone is invalid. Subnets can currently only be created in the following availability zones: us-east-1c, us-east-1e, us-east-1b, us-east-1d.
 	status code: 400, request id: 8ddbe059-0818-48c2-a936-b551cd76cdeb
- * aws_subnet.prod-infra-1: Error creating subnet: InvalidParameterValue: Value (us-east-1a) for parameter availabilityZone is invalid. Subnets can currently only be created in the following availability zones: us-east-1c, us-east-1b, us-east-1d, us-east-1e.
+ * aws_subnet.prod-infra-0: Error creating subnet: InvalidParameterValue: Value (us-east-1a) for parameter availabilityZone is invalid. Subnets can currently only be created in the following availability zones: us-east-1c, us-east-1b, us-east-1d, us-east-1e.
 	status code: 400, request id: 876f72b2-6bda-4499-98c3-502d213635eb
-* aws_subnet.dev-infra-3: Error creating subnet: InvalidParameterValue: Value (us-east-1a) for parameter availabilityZone is invalid. Subnets can currently only be created in the following availability zones: us-east-1c, us-east-1b, us-east-1d, us-east-1e.
+* aws_subnet.dev-infra-2: Error creating subnet: InvalidParameterValue: Value (us-east-1a) for parameter availabilityZone is invalid. Subnets can currently only be created in the following availability zones: us-east-1c, us-east-1b, us-east-1d, us-east-1e.
 	status code: 400, request id: 66fafa81-7718-46eb-a606-e4b98e3267b9
 ```
 
@@ -2236,7 +2236,7 @@ make: *** [deploy] Error 3
 
 ```
 
-All that remains is filling in our networking details, so lets go consult our [Network Plan](https://github.com/starkandwayne/codex/blob/master/network.md). We will place the BOSH director in the staging site's infrastructure network, in the first AZ we have defined (subnet name `staging-infra-1`, CIDR `10.4.32.0/24`). To do that, we'll need to update `networking.yml`:
+All that remains is filling in our networking details, so lets go consult our [Network Plan](https://github.com/starkandwayne/codex/blob/master/network.md). We will place the BOSH director in the staging site's infrastructure network, in the first AZ we have defined (subnet name `staging-infra-0`, CIDR `10.4.32.0/24`). To do that, we'll need to update `networking.yml`:
 
 ```
 $ cat > networking.yml <<EOF
@@ -2248,7 +2248,7 @@ networks:
         gateway:  10.4.32.1
         dns:     [10.4.0.2]
         cloud_properties:
-          subnet: subnet-xxxxxxxx # <-- the AWS Subnet ID for your staging-infra-1 network
+          subnet: subnet-xxxxxxxx # <-- the AWS Subnet ID for your staging-infra-0 network
           security_groups: [wide-open]
         reserved:
           - 10.4.32.2 - 10.4.32.3    # Amazon reserves these
