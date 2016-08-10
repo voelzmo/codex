@@ -1995,8 +1995,6 @@ $ bosh target alpha
 Target set to `aws-alpha-bosh-lite'
 ```
 
-Install manually the [certstrap](https://github.com/square/certstrap) tool.
-
 Now we'll create our deployment repo for cloudfoundry:
 
 ```
