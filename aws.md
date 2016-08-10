@@ -1,6 +1,16 @@
 # Part I - Deploying on AWS
 
-Welcome to the Stark & Wayne guide to deploying Cloud Foundry on Amazon Web Services.
+Welcome to the Stark & Wayne guide to deploying Cloud Foundry on Amazon Web
+Services.  This guide provides the steps to create authentication credentials,
+generate a Virtual Private Cloud (VPC), then use Terraform to prepare a bastion
+host.
+
+From this bastion, we setup a special BOSH director we call the proto-BOSH server.
+
+![Levels of Bosh][bosh_levels]
+
+In the above diagram, BOSH (1) is the proto-BOSH, while BOSH (2) and BOSH (3)
+are the per-site BOSH directors.
 
 ## AWS Checklist
 
@@ -2775,18 +2785,24 @@ Deploying the production environment will be much like deploying the `beta` envi
 
 Lather, rinse, repeat for all additional environments (dev, prod, loadtest, whatever's applicable to the client).
 
+[//]: # (Links)
 
-[aws-subnets]: http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html
-[bolo]:        https://github.com/cloudfoundry-community/bolo-boshrelease
-[cfconsul]:    https://docs.cloudfoundry.org/concepts/architecture/#bbs-consul
-[cfetcd]:      https://docs.cloudfoundry.org/concepts/architecture/#etcd
-[DRY]:         https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
-[jumpbox]:     https://github.com/starkandwayne/jumpbox
-[netplan]:     https://github.com/starkandwayne/codex/blob/master/network.md
-[infra-ips]:   https://github.com/starkandwayne/codex/blob/master/part3/network.md#global-infrastructure-ip-allocation
-[spruce-129]:  https://github.com/geofffranks/spruce/issues/129
-[slither]:     http://slither.io
-[amazon-keys]: https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
-[az]:          http://aws.amazon.com/about-aws/global-infrastructure/
+[amazon-keys]:       https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
 [amazon-region-doc]: http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html
-[ngrok-download]: https://ngrok.com/download
+[aws-subnets]:       http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html
+[az]:                http://aws.amazon.com/about-aws/global-infrastructure/
+[bolo]:              https://github.com/cloudfoundry-community/bolo-boshrelease
+[cfconsul]:          https://docs.cloudfoundry.org/concepts/architecture/#bbs-consul
+[cfetcd]:            https://docs.cloudfoundry.org/concepts/architecture/#etcd
+[DRY]:               https://en.wikipedia.org/wiki/Don%27t_repeat_yourself
+[jumpbox]:           https://github.com/starkandwayne/jumpbox
+[netplan]:           https://github.com/starkandwayne/codex/blob/master/network.md
+[ngrok-download]:    https://ngrok.com/download
+[infra-ips]:         https://github.com/starkandwayne/codex/blob/master/part3/network.md#global-infrastructure-ip-allocation
+[spruce-129]:        https://github.com/geofffranks/spruce/issues/129
+[slither]:           http://slither.io
+
+
+[//]: # (Images)
+
+[bosh_levels]:       https://github.com/starkandwayne/codex/blob/master/images/levels_of_bosh.png "Levels of Bosh"
