@@ -1,41 +1,71 @@
 # Part I - Deploying on AWS
 
+## Overview
+
 Welcome to the Stark & Wayne guide to deploying Cloud Foundry on Amazon Web
 Services.  This guide provides the steps to create authentication credentials,
 generate a Virtual Private Cloud (VPC), then use Terraform to prepare a bastion
 host.
 
-From this bastion, we setup a special BOSH director we call the proto-BOSH server.
+From this bastion, we setup a special BOSH director we call the proto-BOSH server
+where software like Vault, Concourse, Bolo and SHEILD are setup in order to give
+each of the environments created after the proto-BOSH key benefits of:
+
+* Secure Credential Storage
+* Pipeline Management
+* Monitoring Framework
+* Backup and Restore Datastores
 
 ![Levels of Bosh][bosh_levels]
 
 In the above diagram, BOSH (1) is the proto-BOSH, while BOSH (2) and BOSH (3)
 are the per-site BOSH directors.
 
-## AWS Checklist
+Now it's time to setup the credentials.
 
-To run the `terraform` commands in this repo or do work on AWS, other than an AWS account (obviously), you'll need the following:
+## Credential Checklist
 
-1. Your AWS Access Key ID
-2. Your AWS Secret Key ID
+So you've got an AWS account right?  Cause otherwise let me interest you in
+another guide like our OpenStack, Azure or vSphere, etc.  j/k  
+
+To begin, let's login to [Amazon Web Services][aws] and prepare the necessary
+credentials and resources needed.
+
+1. Access Key ID
+2. Secret Key ID
 3. A Name for your VPC
 4. An EC2 Key Pair
 
 ### Generate Access Key
 
-The first thing you're going to need is a combination **Access Key ID** / **Secret Key ID**.  These are generated (for IAM users) via the IAM dashboard.  If you aren't using IAM for this, you really should.
+The first thing you're going to need is a combination **Access Key ID** /
+**Secret Key ID**.  These are generated (for IAM users) via the IAM dashboard.
 
-To help keep things isolated, we're going to set up a brand new IAM user.  It's a good idea to name this user something like `cf` so that no one tries to re-purpose it later, and so that it doesn't get deleted.
+To help keep things isolated, we're going to set up a brand new IAM user.  It's
+a good idea to name this user something like `cf` so that no one tries to
+re-purpose it later, and so that it doesn't get deleted.
 
-On the AWS web console, access the IAM service, and click on `Users` in the sidebar.  Then create a new user and select "Generate an access key for each user".
+1. On the AWS web console, access the IAM service, and click on `Users` in the
+sidebar.  Then create a new user and select "Generate an access key for each user".
 
-**Make sure you save the secret key somewhere safe**, like 1Password or a Vault instance.  Amazon will be unable to give you the **Secret Key ID** if you misplace it -- your only recourse at that point is to generate a new set of keys and start over.
+NOTE: **Make sure you save the secret key somewhere secure**, like 1Password or a
+Vault instance.  Amazon will be unable to give you the **Secret Key ID** if you
+misplace it -- your only recourse at that point is to generate a new set of keys
+and start over.
 
-Then, find the user and click on the username. This should bring up a summary of the user with things like the _User ARN_, _Groups_, etc.  In the bottom half of the Summary panel, you should see some tabs, and one of those tabs should be _Permissions_.  Click on that one.
+2. Next, find the `cf` user and click on the username. This should bring up a
+summary of the user with things like the _User ARN_, _Groups_, etc.  In the
+bottom half of the Summary panel, you can see some tabs, and one of those tabs
+is _Permissions_.  Click on that one.
 
-Now assign the **PowerUserAccess** role to your user. This user will be able to do any operation except IAM operations.  You can do this by clicking on the _Permissions_ tab and then clicking on the _attach policy_ button.
+3. Now assign the **PowerUserAccess** role to your user. This user will be able to
+do any operation except IAM operations.  You can do this by clicking on the
+_Permissions_ tab and then clicking on the _attach policy_ button.
 
-We will also need to create a custom user policy in order to create ELBs with SSL listeners. At the same _Permissions_ tab, expand the _Inline Policies_ and then create one using the _Custom Policy_ editor. Name it `ServerCertificates` and paste the following content:
+4. We will also need to create a custom user policy in order to create ELBs with
+SSL listeners. At the same _Permissions_ tab, expand the _Inline Policies_ and
+then create one using the _Custom Policy_ editor. Name it `ServerCertificates`
+and paste the following content:
 
 ```
 {
@@ -55,7 +85,7 @@ We will also need to create a custom user policy in order to create ELBs with SS
 }
 ```
 
-Click on _Apply Policy_ and you will be all set.
+5. Click on _Apply Policy_ and you will be all set.
 
 ### Name Your VPC
 
@@ -2789,6 +2819,7 @@ Lather, rinse, repeat for all additional environments (dev, prod, loadtest, what
 
 [amazon-keys]:       https://console.aws.amazon.com/ec2/v2/home?#KeyPairs:sort=keyName
 [amazon-region-doc]: http://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html
+[aws]:               https://signin.aws.amazon.com/console
 [aws-subnets]:       http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Subnets.html
 [az]:                http://aws.amazon.com/about-aws/global-infrastructure/
 [bolo]:              https://github.com/cloudfoundry-community/bolo-boshrelease
