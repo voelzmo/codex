@@ -16,6 +16,16 @@ each of the environments created after the proto-BOSH key benefits of:
 * Monitoring Framework
 * Backup and Restore Datastores
 
+Once the proto-BOSH environment is setup, the child environments will have the
+added benefit of being able to update their BOSH software as a release, rather
+than having to re-initialize with bosh-init.
+
+This also increases the resiliency of all BOSH directors through monitoring and
+backups with software created by Stark & Wayne's engineers.
+
+And visibility into the progress and health of each application, release, or
+package is available through the power of Concourse pipelines.
+
 ![Levels of Bosh][bosh_levels]
 
 In the above diagram, BOSH (1) is the proto-BOSH, while BOSH (2) and BOSH (3)
