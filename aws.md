@@ -2523,7 +2523,7 @@ Lastly, let's make sure to add our Cloud Foundry domain to properties.yml:
 meta:
   skip_ssl_validation: true
   cf:
-    domain: your.staging.cf.example.com
+    base_domain: your.staging.cf.example.com
     blobstore_config:
       fog_connection:
         aws_access_key_id: (( vault "secret/aws:access_key" ))
