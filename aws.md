@@ -1980,7 +1980,7 @@ Config
 Tadaaa! Time to commit all the changes to deployment repo, and push to where we're storing
 them long-term.
 
-#### Cloud Foundry
+#### Alpha Cloud Foundry
 
 To deploy CF to our alpha environment, we will need to first ensure we're targeting the right
 Vault/BOSH:
@@ -2335,7 +2335,7 @@ Now it's time to move on to deploying our `beta` (staging) Cloud Foundry!
 
 #### Jumpboxen?
 
-#### Cloud Foundry
+#### Beta Cloud Foundry
 
 To deploy Cloud Foundry, we will go back into our ops directory, making use of `cf-deplyoments` repo
 created when we built our alpha site:
