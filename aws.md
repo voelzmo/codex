@@ -2474,7 +2474,7 @@ Failed to merge templates; bailing...
 make: *** [deploy] Error 3
 ```
 
-Oh boy. That's a lot. Cloud Foundry must be compilicated. Looks like a lot of the fog_connection properties are all duplicates though, so lets fill out `properties.yml` with those:
+Oh boy. That's a lot. Cloud Foundry must be complicated. Looks like a lot of the fog_connection properties are all duplicates though, so lets fill out `properties.yml` with those:
 
 ```
 $ cat properties.yml
@@ -2489,9 +2489,42 @@ meta:
         region: us-east-1
 ```
 
-Next, lets tackle the database situation. We will need to create RDS instances for the `uaadb` and `ccdb`.
+Next, lets tackle the database situation. We will need to create RDS instances for the `uaadb` and `ccdb`, but first we need to generate a password for the RDS instances:
 
-**TODO:** make a terraform repo/script for creating RDS instances for your and store their creds + address + dbname  in vault
+```
+$ safe gen 40 secret/aws/staging/rds password
+$ safe get secret/aws/staging/rds
+--- # secret/aws/staging/rds
+password: pqzTtCTz7u32Z8nVlmvPotxHsSfTOvawRjnY7jTW
+```
+
+Now let's go back to the `terraform/aws` sub-directory of this repository and add to the `aws.tfvars` file the following configurations:
+
+```
+aws_rds_staging_enabled = "1"
+aws_rds_staging_master_password = "<insert the generated RDS password>"
+```
+
+As a quick pre-flight check, run `make manifest` to compile your Terraform plan, a RDS Cluster and 3 RDS Instances should be created:
+
+```
+$ make manifest
+terraform get -update
+terraform plan -var-file aws.tfvars -out aws.tfplan
+Refreshing Terraform state in-memory prior to plan...
+
+...
+
+Plan: 4 to add, 0 to change, 0 to destroy.
+```
+
+If everything worked out you, deploy the changes:
+
+```
+$ make deploy
+```
+
+**TODO:** Create the `ccdb` and `uaadb` databases inside the RDS Cluster
 
 Now that we have RDS instances, lets refer to them in our `properties.yml` file:
 
@@ -2507,13 +2540,13 @@ meta:
         aws_secret_access_key: (( vault "secret/aws:secret_key"))
         region: us-east-1
     ccdb:
-      host: (( vault meta.vault_prefix "/ccdb:host" ))
-      user: (( vault meta.vault_prefix "/ccdb:user" ))
-      pass: (( vault meta.vault_prefix "/ccdb:password" ))
+      host: "xxxxxx.rds.amazonaws.com" # <- your RDS Cluster endpoint
+      user: "admin"
+      pass: (( vault meta.vault_prefix "/rds:password" ))
     uaadb:
-      host: (( vault meta.vault_prefix "/uaadb:host" ))
-      user: (( vault meta.vault_prefix "/uaadb:user" ))
-      pass: (( vault meta.vault_prefix "/uaadb:password" ))
+      host: "xxxxxx.rds.amazonaws.com" # <- your RDS Cluster endpoint
+      user: "admin"
+      pass: (( vault meta.vault_prefix "/rds:password" ))
 ```
 
 Lastly, let's make sure to add our Cloud Foundry domain to properties.yml:
@@ -2530,13 +2563,13 @@ meta:
         aws_secret_access_key: (( vault "secret/aws:secret_key"))
         region: us-east-1
     ccdb:
-      host: (( vault meta.vault_prefix "/ccdb:host" ))
-      user: (( vault meta.vault_prefix "/ccdb:user" ))
-      pass: (( vault meta.vault_prefix "/ccdb:password" ))
+      host: "xxxxxx.rds.amazonaws.com" # <- your RDS Cluster endpoint
+      user: "admin"
+      pass: (( vault meta.vault_prefix "/rds:password" ))
     uaadb:
-      host: (( vault meta.vault_prefix "/uaadb:host" ))
-      user: (( vault meta.vault_prefix "/uaadb:user" ))
-      pass: (( vault meta.vault_prefix "/uaadb:password" ))
+      host: "xxxxxx.rds.amazonaws.com" # <- your RDS Cluster endpoint
+      user: "admin"
+      pass: (( vault meta.vault_prefix "/rds:password" ))
 ```
 
 And let's see what's left to fill out now:
@@ -2772,7 +2805,7 @@ networks:
 properties:
   cc:
     security_group_definitions:
-    - name: load_balancer:
+    - name: load_balancer
       rules:
       - destination: YOUR LOAD BALANCER IP1
         protocol: all

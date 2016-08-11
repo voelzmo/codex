@@ -72,6 +72,9 @@ networks (i.e. cf-edge-0, cf-edge-1, cf-0, cf-1, etc.).
 |         |              | 10.4.26.0/24   |  254 |     1 | dev-cf-svc-0         | Cloud Foundry Services |
 |         |              | 10.4.27.0/24   |  254 |     2 | dev-cf-svc-1         | Cloud Foundry Services |
 |         |              | 10.4.28.0/24   |  254 |     3 | dev-cf-svc-2         | Cloud Foundry Services |
+|         |              | 10.4.29.0/28   |   14 |     1 | dev-cf-db-0          | Cloud Foundry Databases |
+|         |              | 10.4.29.16/28  |   14 |     2 | dev-cf-db-1          | Cloud Foundry Databases |
+|         |              | 10.4.29.32/28  |   14 |     3 | dev-cf-db-2          | Cloud Foundry Databases |
 | staging | 10.4.32.0/20 |                | 4096 |       |                      |                        |
 |         |              | 10.4.32.0/24   |  254 |     1 | staging-infra-0      | Site Infrastructure    |
 |         |              | 10.4.33.0/24   |  254 |     2 | staging-infra-1      | Site Infrastructure    |
@@ -87,6 +90,9 @@ networks (i.e. cf-edge-0, cf-edge-1, cf-0, cf-1, etc.).
 |         |              | 10.4.42.0/24   |  254 |     1 | staging-cf-svc-0     | Cloud Foundry Services |
 |         |              | 10.4.43.0/24   |  254 |     2 | staging-cf-svc-1     | Cloud Foundry Services |
 |         |              | 10.4.44.0/24   |  254 |     3 | staging-cf-svc-2     | Cloud Foundry Services |
+|         |              | 10.4.45.0/28   |   14 |     1 | staging-cf-db-0      | Cloud Foundry Databases |
+|         |              | 10.4.45.16/28  |   14 |     2 | staging-cf-db-1      | Cloud Foundry Databases |
+|         |              | 10.4.45.32/28  |   14 |     3 | staging-cf-db-2      | Cloud Foundry Databases |
 | prod    | 10.4.48.0/20 |                | 4096 |       |                      |                        |
 |         |              | 10.4.48.0/24   |  254 |     1 | prod-infra-0         | Site Infrastructure    |
 |         |              | 10.4.49.0/24   |  254 |     2 | prod-infra-1         | Site Infrastructure    |
@@ -102,7 +108,9 @@ networks (i.e. cf-edge-0, cf-edge-1, cf-0, cf-1, etc.).
 |         |              | 10.4.58.0/24   |  254 |     1 | prod-cf-svc-0        | Cloud Foundry Services |
 |         |              | 10.4.59.0/24   |  254 |     2 | prod-cf-svc-1        | Cloud Foundry Services |
 |         |              | 10.4.60.0/24   |  254 |     3 | prod-cf-svc-2        | Cloud Foundry Services |
-
+|         |              | 10.4.61.0/28   |   14 |     1 | prod-cf-db-0         | Cloud Foundry Databases |
+|         |              | 10.4.61.16/28  |   14 |     2 | prod-cf-db-1         | Cloud Foundry Databases |
+|         |              | 10.4.61.32/28  |   14 |     3 | prod-cf-db-2         | Cloud Foundry Databases |
 
 ## Global Infrastructure IP Allocation
 

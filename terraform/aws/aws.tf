@@ -19,6 +19,15 @@ variable "aws_az1"        { default = "a" }
 variable "aws_az2"        { default = "b" }
 variable "aws_az3"        { default = "c" }
 
+variable "aws_rds_dev_enabled"     { default = 0 } # Set to 1 to create the DEV RDS cluster
+variable "aws_rds_staging_enabled" { default = 0 } # Set to 1 to create the STAGING RDS cluster
+variable "aws_rds_prod_enabled"    { default = 0 } # Set to 1 to create the PROD RDS cluster
+
+variable "aws_rds_master_user"             { default = "admin" } # Username for RDS Databases
+variable "aws_rds_dev_master_password"     { default = "admin" } # Password for DEV RDS Databases
+variable "aws_rds_staging_master_password" { default = "admin" } # Password for STAGING RDS Databases
+variable "aws_rds_prod_master_password"    { default = "admin" } # Password for PROD RDS Databases
+
 #
 # VPC NAT AMI
 #
@@ -417,6 +426,60 @@ output "aws.network.dev-cf-svc-2.subnet" {
 }
 
 ###############################################################
+# DEV-CF-DB - Cloud Foundry Databases
+#
+#  These subnets house the internal Cloud Foundry
+#  databases (either MySQL release or RDS DBs).
+#
+resource "aws_subnet" "dev-cf-db-0" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.29.0/28"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-db-0" }
+}
+resource "aws_route_table_association" "dev-cf-db-0" {
+  subnet_id      = "${aws_subnet.dev-cf-db-0.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.dev-cf-db-0.subnet" {
+  value = "${aws_subnet.dev-cf-db-0.id}"
+}
+resource "aws_subnet" "dev-cf-db-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.29.16/28"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-db-1" }
+}
+resource "aws_route_table_association" "dev-cf-db-1" {
+  subnet_id      = "${aws_subnet.dev-cf-db-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.dev-cf-db-1.subnet" {
+  value = "${aws_subnet.dev-cf-db-1.id}"
+}
+resource "aws_subnet" "dev-cf-db-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.29.32/28"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-dev-cf-db-2" }
+}
+resource "aws_route_table_association" "dev-cf-db-2" {
+  subnet_id      = "${aws_subnet.dev-cf-db-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.dev-cf-db-2.subnet" {
+  value = "${aws_subnet.dev-cf-db-2.id}"
+}
+resource "aws_db_subnet_group" "dev-cf-db" {
+    name = "${var.aws_vpc_name}-dev-cf-db"
+    subnet_ids = ["${aws_subnet.dev-cf-db-0.id}", "${aws_subnet.dev-cf-db-1.id}", "${aws_subnet.dev-cf-db-2.id}"]
+    tags { Name = "${var.aws_vpc_name}-dev-cf-db" }
+}
+output "aws.rds.dev-cf-db.db_subnet_group" {
+  value = "${aws_db_subnet_group.dev-cf-db.id}"
+}
+
+###############################################################
 # STAGING-INFRA - Staging Site Infrastructure
 #
 #  Primarily used for BOSH directors, deployed by proto-BOSH
@@ -638,6 +701,60 @@ resource "aws_route_table_association" "staging-cf-svc-2" {
 }
 output "aws.network.staging-cf-svc-2.subnet" {
   value = "${aws_subnet.staging-cf-svc-2.id}"
+}
+
+###############################################################
+# STAGING-CF-DB - Cloud Foundry Databases
+#
+#  These subnets house the internal Cloud Foundry
+#  databases (either MySQL release or RDS DBs).
+#
+resource "aws_subnet" "staging-cf-db-0" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.45.0/28"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-db-0" }
+}
+resource "aws_route_table_association" "staging-cf-db-0" {
+  subnet_id      = "${aws_subnet.staging-cf-db-0.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.staging-cf-db-0.subnet" {
+  value = "${aws_subnet.staging-cf-db-0.id}"
+}
+resource "aws_subnet" "staging-cf-db-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.45.16/28"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-db-1" }
+}
+resource "aws_route_table_association" "staging-cf-db-1" {
+  subnet_id      = "${aws_subnet.staging-cf-db-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.staging-cf-db-1.subnet" {
+  value = "${aws_subnet.staging-cf-db-1.id}"
+}
+resource "aws_subnet" "staging-cf-db-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.45.32/28"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-staging-cf-db-2" }
+}
+resource "aws_route_table_association" "staging-cf-db-2" {
+  subnet_id      = "${aws_subnet.staging-cf-db-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.staging-cf-db-2.subnet" {
+  value = "${aws_subnet.staging-cf-db-2.id}"
+}
+resource "aws_db_subnet_group" "staging-cf-db" {
+    name = "${var.aws_vpc_name}-staging-cf-db"
+    subnet_ids = ["${aws_subnet.staging-cf-db-0.id}", "${aws_subnet.staging-cf-db-1.id}", "${aws_subnet.staging-cf-db-2.id}"]
+    tags { Name = "${var.aws_vpc_name}-staging-cf-db" }
+}
+output "aws.rds.staging-cf-db.db_subnet_group" {
+  value = "${aws_db_subnet_group.staging-cf-db.id}"
 }
 
 ###############################################################
@@ -864,6 +981,59 @@ output "aws.network.prod-cf-svc-2.subnet" {
   value = "${aws_subnet.prod-cf-svc-2.id}"
 }
 
+###############################################################
+# PROD-CF-DB - Cloud Foundry Databases
+#
+#  These subnets house the internal Cloud Foundry
+#  databases (either MySQL release or RDS DBs).
+#
+resource "aws_subnet" "prod-cf-db-0" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.61.0/28"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-db-0" }
+}
+resource "aws_route_table_association" "prod-cf-db-0" {
+  subnet_id      = "${aws_subnet.prod-cf-db-0.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.prod-cf-db-0.subnet" {
+  value = "${aws_subnet.prod-cf-db-0.id}"
+}
+resource "aws_subnet" "prod-cf-db-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.61.16/28"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-db-1" }
+}
+resource "aws_route_table_association" "prod-cf-db-1" {
+  subnet_id      = "${aws_subnet.prod-cf-db-1.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.prod-cf-db-1.subnet" {
+  value = "${aws_subnet.prod-cf-db-1.id}"
+}
+resource "aws_subnet" "prod-cf-db-2" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.61.32/28"
+  availability_zone = "${var.aws_region}${var.aws_az3}"
+  tags { Name = "${var.aws_vpc_name}-prod-cf-db-2" }
+}
+resource "aws_route_table_association" "prod-cf-db-2" {
+  subnet_id      = "${aws_subnet.prod-cf-db-2.id}"
+  route_table_id = "${aws_route_table.internal.id}"
+}
+output "aws.network.prod-cf-db-2.subnet" {
+  value = "${aws_subnet.prod-cf-db-2.id}"
+}
+resource "aws_db_subnet_group" "prod-cf-db" {
+    name = "${var.aws_vpc_name}-prod-cf-db"
+    subnet_ids = ["${aws_subnet.prod-cf-db-0.id}", "${aws_subnet.prod-cf-db-1.id}", "${aws_subnet.prod-cf-db-2.id}"]
+    tags { Name = "${var.aws_vpc_name}-prod-cf-db" }
+}
+output "aws.rds.prod-cf-db.db_subnet_group" {
+  value = "${aws_db_subnet_group.prod-cf-db.id}"
+}
 
 
 ##    ##    ###     ######  ##        ######
@@ -1173,7 +1343,25 @@ resource "aws_security_group" "wide-open" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+resource "aws_security_group" "cf-db" {
+  name        = "cf-db"
+  description = "Allow only ingress access to the MySQL port"
+  vpc_id      = "${aws_vpc.default.id}"
+  tags { Name = "${var.aws_vpc_name}-cf-db" }
 
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
 
 
 ##    ##    ###    ########
@@ -1202,6 +1390,124 @@ resource "aws_eip" "nat" {
 }
 output "box.nat.public" {
   value = "${aws_eip.nat.public_ip}"
+}
+
+
+
+########  ########   ######
+##     ## ##     ## ##    ##
+##     ## ##     ## ##
+########  ##     ##  ######
+##   ##   ##     ##       ##
+##    ##  ##     ## ##    ##
+##     ## ########   ######
+
+###############################################################
+# DEV-CF-DB MySQL Cluster (AWS Aurora)
+#
+resource "aws_rds_cluster" "dev-cf-db" {
+  count                   = "${var.aws_rds_dev_enabled}"
+  cluster_identifier      = "${var.aws_vpc_name}-dev-cf-db"
+  db_subnet_group_name    = "${aws_db_subnet_group.dev-cf-db.name}"
+  availability_zones      = ["${var.aws_region}${var.aws_az1}", "${var.aws_region}${var.aws_az2}","${var.aws_region}${var.aws_az3}"]
+  vpc_security_group_ids  = ["${aws_security_group.cf-db.id}"]
+  master_username         = "${var.aws_rds_master_user}"
+  master_password         = "${var.aws_rds_dev_master_password}"
+  backup_retention_period = 5
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+resource "aws_rds_cluster_instance" "dev-cf-db" {
+  count                = "${3 * var.aws_rds_dev_enabled}"
+  identifier           = "${var.aws_vpc_name}-dev-cf-db-${count.index}"
+  cluster_identifier   = "${aws_rds_cluster.dev-cf-db.id}"
+  db_subnet_group_name = "${aws_db_subnet_group.dev-cf-db.name}"
+  instance_class       = "db.r3.large"
+  publicly_accessible  = false
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+output "aws.rds.dev-cf-db.endpoint" {
+  value = "${aws_rds_cluster.dev-cf-db.endpoint}"
+}
+output "aws.rds.dev-cf-db.port" {
+  value = "${aws_rds_cluster.dev-cf-db.port}"
+}
+
+###############################################################
+# STAGING-CF-DB MySQL Cluster (AWS Aurora)
+#
+resource "aws_rds_cluster" "staging-cf-db" {
+  count                   = "${var.aws_rds_staging_enabled}"
+  cluster_identifier      = "${var.aws_vpc_name}-dev-staging-db"
+  db_subnet_group_name    = "${aws_db_subnet_group.staging-cf-db.name}"
+  availability_zones      = ["${var.aws_region}${var.aws_az1}", "${var.aws_region}${var.aws_az2}","${var.aws_region}${var.aws_az3}"]
+  vpc_security_group_ids  = ["${aws_security_group.cf-db.id}"]
+  master_username         = "${var.aws_rds_master_user}"
+  master_password         = "${var.aws_rds_staging_master_password}"
+  backup_retention_period = 5
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+resource "aws_rds_cluster_instance" "staging-cf-db" {
+  count                = "${3 * var.aws_rds_staging_enabled}"
+  identifier           = "${var.aws_vpc_name}-staging-cf-db-${count.index}"
+  cluster_identifier   = "${aws_rds_cluster.staging-cf-db.id}"
+  db_subnet_group_name = "${aws_db_subnet_group.staging-cf-db.name}"
+  instance_class       = "db.r3.large"
+  publicly_accessible  = false
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+output "aws.rds.staging-cf-db.endpoint" {
+  value = "${aws_rds_cluster.staging-cf-db.endpoint}"
+}
+output "aws.rds.staging-cf-db.port" {
+  value = "${aws_rds_cluster.staging-cf-db.port}"
+}
+
+###############################################################
+# PROD-CF-DB MySQL Cluster (AWS Aurora)
+#
+resource "aws_rds_cluster" "prod-cf-db" {
+  count                   = "${var.aws_rds_prod_enabled}"
+  cluster_identifier      = "${var.aws_vpc_name}-prod-staging-db"
+  db_subnet_group_name    = "${aws_db_subnet_group.prod-cf-db.name}"
+  availability_zones      = ["${var.aws_region}${var.aws_az1}", "${var.aws_region}${var.aws_az2}","${var.aws_region}${var.aws_az3}"]
+  vpc_security_group_ids  = ["${aws_security_group.cf-db.id}"]
+  master_username         = "${var.aws_rds_master_user}"
+  master_password         = "${var.aws_rds_prod_master_password}"
+  backup_retention_period = 5
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+resource "aws_rds_cluster_instance" "prod-cf-db" {
+  count                = "${3 * var.aws_rds_prod_enabled}"
+  identifier           = "${var.aws_vpc_name}-prod-cf-db-${count.index}"
+  cluster_identifier   = "${aws_rds_cluster.prod-cf-db.id}"
+  db_subnet_group_name = "${aws_db_subnet_group.prod-cf-db.name}"
+  instance_class       = "db.r3.large"
+  publicly_accessible  = false
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
+output "aws.rds.prod-cf-db.endpoint" {
+  value = "${aws_rds_cluster.prod-cf-db.endpoint}"
+}
+output "aws.rds.prod-cf-db.port" {
+  value = "${aws_rds_cluster.prod-cf-db.port}"
 }
 
 
@@ -1240,3 +1546,4 @@ resource "aws_instance" "bastion" {
 output "box.bastion.public" {
   value = "${aws_instance.bastion.public_ip}"
 }
+
