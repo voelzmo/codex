@@ -35,7 +35,7 @@
     + [First Beta Environment](aws.md#first-beta-environment)
       - [BOSH](aws.md#bosh)
       - [Jumpboxen?](aws.md#jumpboxen)
-      - [Beta Cloud Foundry](aws.md#beta-cloud-foundry-1)
+      - [Beta Cloud Foundry](aws.md#beta-cloud-foundry)
     + [Production Environment](aws.md#production-environment)
     + [Next Steps](aws.md#next-steps)
 - [Part II - Deploying on Azure](azure.md#part-ii---deploying-on-azure)
