@@ -200,6 +200,33 @@ output "aws.network.global-infra-2.subnet" {
   value = "${aws_subnet.global-infra-2.id}"
 }
 
+resource "aws_subnet" "global-openvpn-0" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.4.0/25"
+  availability_zone = "${var.aws_region}${var.aws_az1}"
+  tags { Name = "${var.aws_vpc_name}-global-openvpn-0" }
+}
+resource "aws_route_table_association" "global-openvpn-0" {
+  subnet_id      = "${aws_subnet.global-openvpn-0.id}"
+  route_table_id = "${aws_route_table.external.id}"
+}
+output "aws.network.global-openvpn-0" {
+  value = "${aws_subnet.global-openvpn-0.id}"
+}
+resource "aws_subnet" "global-openvpn-1" {
+  vpc_id            = "${aws_vpc.default.id}"
+  cidr_block        = "${var.network}.4.128/25"
+  availability_zone = "${var.aws_region}${var.aws_az2}"
+  tags { Name = "${var.aws_vpc_name}-global-openvpn-1" }
+}
+resource "aws_route_table_association" "global-openvpn-1" {
+  subnet_id      = "${aws_subnet.global-openvpn-1.id}"
+  route_table_id = "${aws_route_table.external.id}"
+}
+output "aws.network.global-openvpn-1" {
+  value = "${aws_subnet.global-openvpn-1.id}"
+}
+
 
 ###############################################################
 # DEV-INFRA - Development Site Infrastructure
@@ -1362,6 +1389,20 @@ resource "aws_security_group" "cf-db" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+resource "aws_security_group" "openvpn" {
+  name = "openvpn"
+  description = "Allow only 443 in"
+  vpc_id = "${aws_vpc.default.id}"
+  tags { Name = "${var.aws_vpc_name}-openvpn" }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 
 
 ##    ##    ###    ########
